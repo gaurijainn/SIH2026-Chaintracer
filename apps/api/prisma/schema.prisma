@@ -1,0 +1,385 @@
+// B1 data model. Workflow + evidence live here; the money-flow graph lives in Neo4j.
+// Conventions: amounts are Decimal (never Float); all DateTime columns are UTC (timestamptz) and
+// are only converted to IST at display time.
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  INVESTIGATOR
+  SUPERVISOR
+  ADMIN
+  VIEWER
+}
+
+enum CaseStatus {
+  OPEN
+  TRACING
+  ATTRIBUTED
+  CLOSED
+}
+
+enum TraceStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum TaintModel {
+  HAIRCUT
+  FIFO
+}
+
+enum VaspType {
+  CENTRALISED_EXCHANGE
+  INSTANT_SWAP
+  OTC
+  P2P
+}
+
+enum VaspAddressKind {
+  HOT_WALLET
+  DEPOSIT
+}
+
+enum RiskBand {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AlertRule {
+  A1_MOVEMENT
+  A2_VASP_LANDING
+  A3_OBFUSCATION
+  A4_LINKAGE
+  A5_BLACKLIST
+}
+
+enum AlertSeverity {
+  INFO
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AlertStatus {
+  NEW
+  ACKNOWLEDGED
+  ASSIGNED
+  SNOOZED
+}
+
+enum WatchTier {
+  HOT
+  WARM
+  COLD
+}
+
+enum NoticeStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  SENT
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role     @default(VIEWER)
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(3)
+
+  cases           Case[]
+  assignedAlerts  Alert[]         @relation("AlertAssignee")
+  watchlistItems  WatchlistItem[]
+  reports         Report[]
+  noticesCreated  FreezeNotice[]  @relation("NoticeCreator")
+  noticesApproved FreezeNotice[]  @relation("NoticeApprover")
+  auditLogs       AuditLog[]
+}
+
+model Complaint {
+  id         String             @id @default(cuid())
+  ackNo      String             @unique // NCRP acknowledgement number
+  reportedAt DateTime           @db.Timestamptz(3)
+  category   String
+  amountInr  Decimal            @db.Decimal(20, 2)
+  network    String? // "TRC20" | "ERC20" | "BEP20" as stated by victim
+  createdAt  DateTime           @default(now()) @db.Timestamptz(3)
+  addresses  ComplaintAddress[]
+  caseId     String?
+  case       Case?              @relation(fields: [caseId], references: [id], onDelete: SetNull)
+
+  @@index([caseId])
+  @@index([reportedAt])
+}
+
+model ComplaintAddress {
+  id          String    @id @default(cuid())
+  complaintId String
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  raw         String // exactly as submitted
+  address     String // normalised
+  chain       String? // TRON | ETH | BSC | POLYGON | BTC, set by intake (B2)
+
+  @@unique([complaintId, address])
+  @@index([chain, address]) // cross-complaint linkage lookups
+}
+
+model Case {
+  id        String     @id @default(cuid())
+  title     String
+  status    CaseStatus @default(OPEN)
+  firNumber String?
+  ownerId   String?
+  owner     User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  createdAt DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime   @updatedAt @db.Timestamptz(3)
+
+  complaints     Complaint[]
+  traces         TraceJob[]
+  alerts         Alert[]
+  watchlistItems WatchlistItem[]
+  reports        Report[]
+  freezeNotices  FreezeNotice[]
+
+  @@index([status])
+  @@index([ownerId])
+}
+
+model TraceJob {
+  id             String      @id @default(cuid())
+  caseId         String
+  case           Case        @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  seedChain      String
+  seedAddr       String
+  status         TraceStatus @default(QUEUED)
+  taintModel     TaintModel  @default(HAIRCUT)
+  maxHops        Int         @default(6)
+  minValueUsd    Decimal     @default(10) @db.Decimal(20, 6)
+  windowDays     Int         @default(30)
+  reportedAmount Decimal     @db.Decimal(38, 18)
+  error          String?
+  createdAt      DateTime    @default(now()) @db.Timestamptz(3)
+  startedAt      DateTime?   @db.Timestamptz(3)
+  finishedAt     DateTime?   @db.Timestamptz(3)
+
+  hops       Hop[]
+  riskScores RiskScore[]
+
+  @@index([caseId])
+  @@index([status])
+}
+
+model Hop {
+  id       String   @id @default(cuid())
+  traceId  String
+  trace    TraceJob @relation(fields: [traceId], references: [id], onDelete: Cascade)
+  hopNo    Int
+  chain    String
+  txHash   String
+  idx      Int      @default(0) // log/output index; pairs with txHash as the Neo4j TRANSFER key
+  fromAddr String
+  toAddr   String
+  token    String
+  amount   Decimal  @db.Decimal(38, 18)
+  usd      Decimal? @db.Decimal(20, 6)
+  ts       DateTime @db.Timestamptz(3)
+
+  alerts Alert[]
+
+  @@unique([traceId, txHash, fromAddr, toAddr])
+  @@index([traceId, hopNo])
+  @@index([fromAddr])
+  @@index([toAddr])
+  @@index([txHash])
+}
+
+model AddressProfile {
+  id        String    @id @default(cuid())
+  chain     String
+  addr      String
+  createdAt DateTime? @db.Timestamptz(3) // on-chain account creation
+  activator String? // TRON: wallet that activated the account
+  publicTag String?
+  flags     Json? // Tronscan/Chainabuse/blacklist flags with source + fetch time
+  fetchedAt DateTime  @default(now()) @db.Timestamptz(3)
+
+  @@unique([chain, addr])
+}
+
+model Label {
+  id         String   @id @default(cuid())
+  chain      String
+  addr       String
+  name       String
+  category   String // exchange | mixer | bridge | sanctioned | scam | ...
+  source     String // eth-labels | tronscan | ofac | chainabuse | manual
+  confidence Decimal  @db.Decimal(4, 3)
+  fetchedAt  DateTime @default(now()) @db.Timestamptz(3)
+  vaspId     String?
+  vasp       Vasp?    @relation(fields: [vaspId], references: [id], onDelete: SetNull)
+
+  @@unique([chain, addr, source, name])
+  @@index([chain, addr])
+  @@index([vaspId])
+}
+
+model Vasp {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  type          VaspType
+  jurisdiction  String
+  fiuStatus     String // e.g. REGISTERED | NOTICED | NOT_REGISTERED
+  fiuStatusDate DateTime? @db.Timestamptz(3)
+  fiuSource     String?
+  contactEmail  String?
+  contactPortal String?
+  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
+
+  addresses     VaspAddress[]
+  labels        Label[]
+  freezeNotices FreezeNotice[]
+}
+
+model VaspAddress {
+  id         String          @id @default(cuid())
+  vaspId     String
+  vasp       Vasp            @relation(fields: [vaspId], references: [id], onDelete: Cascade)
+  chain      String
+  addr       String
+  kind       VaspAddressKind @default(HOT_WALLET)
+  source     String
+  confidence Decimal         @db.Decimal(4, 3)
+
+  @@unique([chain, addr])
+  @@index([vaspId])
+}
+
+model RiskScore {
+  id                 String    @id @default(cuid())
+  chain              String
+  addr               String
+  score              Int
+  band               RiskBand
+  factors            Json // [{feature, impact, reason}]
+  overrides          String[]
+  typology           String?
+  typologyConfidence Decimal?  @db.Decimal(4, 3)
+  modelVersion       String
+  traceId            String?
+  trace              TraceJob? @relation(fields: [traceId], references: [id], onDelete: SetNull)
+  createdAt          DateTime  @default(now()) @db.Timestamptz(3)
+
+  @@index([chain, addr, createdAt])
+  @@index([traceId])
+}
+
+model Alert {
+  id           String        @id @default(cuid())
+  caseId       String
+  case         Case          @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  rule         AlertRule
+  severity     AlertSeverity
+  status       AlertStatus   @default(NEW)
+  chain        String
+  address      String
+  amount       Decimal?      @db.Decimal(38, 18)
+  message      String
+  hopId        String? // deep link to the exact hop
+  hop          Hop?          @relation(fields: [hopId], references: [id], onDelete: SetNull)
+  assigneeId   String?
+  assignee     User?         @relation("AlertAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  snoozedUntil DateTime?     @db.Timestamptz(3)
+  createdAt    DateTime      @default(now()) @db.Timestamptz(3)
+
+  @@index([caseId, createdAt])
+  @@index([status, severity])
+  @@index([chain, address])
+}
+
+model WatchlistItem {
+  id        String    @id @default(cuid())
+  caseId    String
+  case      Case      @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  chain     String
+  addr      String
+  reason    String // mule | frontier | manual
+  tier      WatchTier @default(HOT)
+  addedById String?
+  addedBy   User?     @relation(fields: [addedById], references: [id], onDelete: SetNull)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+
+  @@unique([caseId, chain, addr])
+  @@index([chain, addr])
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  version     String   @default("evidence.v1")
+  sha256      String // SHA-256 of the canonical JSON
+  payload     Json
+  pdfPath     String?
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([caseId])
+  @@index([sha256])
+}
+
+model FreezeNotice {
+  id                String       @id @default(cuid())
+  caseId            String
+  case              Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  vaspId            String
+  vasp              Vasp         @relation(fields: [vaspId], references: [id], onDelete: Restrict)
+  status            NoticeStatus @default(DRAFT)
+  legalProvision    String? // edited by the IO, confirmed with the legal cell
+  legalCellReviewed Boolean      @default(false)
+  body              Json
+  submissionId      String? // returned by the SAHYOG/NCRP adapter
+  createdById       String?
+  createdBy         User?        @relation("NoticeCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  approvedById      String?
+  approvedBy        User?        @relation("NoticeApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+  approvedAt        DateTime?    @db.Timestamptz(3)
+  sentAt            DateTime?    @db.Timestamptz(3)
+  createdAt         DateTime     @default(now()) @db.Timestamptz(3)
+
+  @@index([caseId])
+  @@index([vaspId])
+  @@index([status])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  seq       Int      @unique @default(autoincrement()) // total order for the hash chain (B9/B10)
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  meta      Json?
+  prevHash  String?
+  hash      String?
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([entity, entityId])
+  @@index([actorId])
+  @@index([createdAt])
+}

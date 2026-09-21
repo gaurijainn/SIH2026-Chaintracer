@@ -48,7 +48,8 @@ services:
 
   api:
     build: { context: ., dockerfile: Dockerfile.node }
-    command: pnpm --filter @ps26183/api start
+    # apply pending migrations, then serve
+    command: sh -c "pnpm --filter @ps26183/api db:migrate && pnpm --filter @ps26183/api start"
     env_file: .env
     environment:
       FIXTURES_DIR: /app/fixtures
