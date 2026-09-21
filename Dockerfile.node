@@ -8,6 +8,7 @@ COPY packages/shared/package.json packages/shared/
 COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY workers/package.json workers/
+COPY mocks/mock-server/package.json mocks/mock-server/
 RUN pnpm install --no-frozen-lockfile
 COPY . .
 RUN pnpm --filter @ps26183/api db:generate

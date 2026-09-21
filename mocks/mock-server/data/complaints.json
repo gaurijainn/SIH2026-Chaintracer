@@ -1,0 +1,63 @@
+{
+  "note": "Synthetic NCRP/CFCFRMS-style feed. No real victim data. Addresses are checksum-valid but not real wallets, except the Bitcoin example.",
+  "records": [
+    {
+      "acknowledgementNumber": "NCRP-MOCK-0001",
+      "incidentDateTime": "2026-09-01T08:30:00+05:30",
+      "categoryOfComplaint": "Investment fraud",
+      "amountLost": "850000",
+      "paymentNetwork": "TRC20",
+      "walletAddresses": ["TWHwSetUjUxYqsUqfbK73d3dVLAtHdTrV5", "TNkjQpcG1p8KV48rGzRVbxNBEfY8vHH6Go"],
+      "transactionHashes": ["3f7c1a0e9b6d4c2e8a5f1b7d9c3e6a2b4d8f0c1e5a7b9d3f6c2e8a4b1d7f9c05"],
+      "tokenContract": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      "firNumber": "FIR-MOCK-101"
+    },
+    {
+      "acknowledgementNumber": "NCRP-MOCK-0002",
+      "incidentDateTime": "03/09/2026 14:10",
+      "categoryOfComplaint": "Sextortion",
+      "amountLost": "1,20,000.00",
+      "paymentNetwork": "TRC20",
+      "walletAddresses": ["TNkjQpcG1p8KV48rGzRVbxNBEfY8vHH6Go", "TUqUxMMCCEwwV8yiNx4cBFhmuWUVx62cBs"],
+      "tokenContract": "TKX4tuVb4ApiutoibSFugfFW9nBcXaMNDe"
+    },
+    {
+      "acknowledgementNumber": "NCRP-MOCK-0003",
+      "incidentDateTime": "2026-09-05T19:45:00+05:30",
+      "categoryOfComplaint": "Phishing",
+      "amountLost": 45000.5,
+      "paymentNetwork": "TRC20",
+      "walletAddresses": ["TYc33fy9ArsjMj5e7iKDNk8aarfuzvRVWD"]
+    },
+    {
+      "acknowledgementNumber": "NCRP-MOCK-0004",
+      "incidentDateTime": "2026-09-07T11:00:00+05:30",
+      "categoryOfComplaint": "Investment fraud",
+      "amountLost": "300000",
+      "paymentNetwork": "ERC20",
+      "walletAddresses": ["0xC26CD860769C4404e7e0C407BD93f0Dbb429264e"]
+    },
+    {
+      "acknowledgementNumber": "NCRP-MOCK-0005",
+      "incidentDateTime": "2026-09-08T09:15:00+05:30",
+      "categoryOfComplaint": "Ransomware",
+      "amountLost": "2500000",
+      "walletAddresses": ["bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq"]
+    },
+    {
+      "acknowledgementNumber": "NCRP-MOCK-0006",
+      "incidentDateTime": "2026-09-09T16:20:00+05:30",
+      "categoryOfComplaint": "Investment fraud",
+      "amountLost": "610000",
+      "walletAddresses": ["0x8Ea58f742011C8808fc43D04d5951E7d3f7e693F"]
+    },
+    {
+      "acknowledgementNumber": "NCRP-MOCK-0007",
+      "incidentDateTime": "2026-09-10T10:00:00+05:30",
+      "categoryOfComplaint": "Investment fraud",
+      "amountLost": "99000",
+      "paymentNetwork": "TRC20",
+      "walletAddresses": ["TD8CY7q4y5YrcX6TRQaVpaZHzZG8kRQoJx"]
+    }
+  ]
+}

@@ -53,6 +53,8 @@ services:
     env_file: .env
     environment:
       FIXTURES_DIR: /app/fixtures
+      NCRP_BASE_URL: http://mock-ncrp:4010
+      NCRP_POLL_INTERVAL_S: ${NCRP_POLL_INTERVAL_S:-60}
     ports: ["4000:4000"]
     volumes: ["./fixtures:/app/fixtures"]
     depends_on:
@@ -66,6 +68,12 @@ services:
       timeout: 10s
       retries: 20
       start_period: 15s
+
+  # Mock NCRP/CFCFRMS complaint feed (contract: mocks/openapi/ncrp.yaml). Used in live/record mode; replay reads fixtures.
+  mock-ncrp:
+    build: { context: ., dockerfile: Dockerfile.node }
+    command: pnpm --filter @ps26183/mock-server start
+    ports: ["4010:4010"]
 
   workers:
     build: { context: ., dockerfile: Dockerfile.node }

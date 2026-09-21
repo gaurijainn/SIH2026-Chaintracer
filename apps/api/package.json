@@ -19,16 +19,21 @@
     "@prisma/client": "^6.19.3",
     "@ps26183/shared": "workspace:*",
     "axios": "^1.7.0",
+    "bullmq": "^6.3.8",
     "cors": "^2.8.5",
+    "csv-parse": "^7.0.2",
     "express": "^4.21.0",
     "helmet": "^8.0.0",
     "ioredis": "^5.4.0",
+    "multer": "^2.4.0",
     "neo4j-driver": "^5.26.0",
-    "pg": "^8.13.0"
+    "pg": "^8.13.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/multer": "^2.2.0",
     "@types/node": "^22.0.0",
     "@types/pg": "^8.11.0",
     "prisma": "^6.19.3",

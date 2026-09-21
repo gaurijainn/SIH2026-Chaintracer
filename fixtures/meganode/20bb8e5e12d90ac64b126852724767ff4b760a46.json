@@ -1,0 +1,25 @@
+{
+  "provider": "meganode",
+  "request": {
+    "method": "POST",
+    "url": "https://bsc-mainnet.nodereal.io/v1/{MEGANODE_KEY}",
+    "body": "[{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"eth_getTransactionCount\",\"params\":[\"0x8Ea58f742011C8808fc43D04d5951E7d3f7e693F\",\"latest\"]},{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"eth_getBalance\",\"params\":[\"0x8Ea58f742011C8808fc43D04d5951E7d3f7e693F\",\"latest\"]}]"
+  },
+  "response": {
+    "status": 200,
+    "data": [
+      {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x0"
+      },
+      {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "result": "0x0"
+      }
+    ]
+  },
+  "recordedAt": "2026-09-20T00:00:00.000Z",
+  "synthetic": true
+}

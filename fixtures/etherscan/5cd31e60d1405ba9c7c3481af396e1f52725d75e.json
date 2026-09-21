@@ -1,0 +1,17 @@
+{
+  "provider": "etherscan",
+  "request": {
+    "method": "GET",
+    "url": "https://api.etherscan.io/v2/api?chainid=137&module=account&action=txlist&address=0x8Ea58f742011C8808fc43D04d5951E7d3f7e693F&startblock=0&endblock=99999999&page=1&offset=1&sort=asc&apikey={ETHERSCAN_KEY}"
+  },
+  "response": {
+    "status": 200,
+    "data": {
+      "status": "0",
+      "message": "No transactions found",
+      "result": []
+    }
+  },
+  "recordedAt": "2026-09-20T00:00:00.000Z",
+  "synthetic": true
+}

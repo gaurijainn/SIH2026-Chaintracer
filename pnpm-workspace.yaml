@@ -2,6 +2,7 @@ packages:
   - apps/*
   - workers
   - packages/*
+  - mocks/mock-server
 allowBuilds:
   esbuild: true
   msgpackr-extract: true

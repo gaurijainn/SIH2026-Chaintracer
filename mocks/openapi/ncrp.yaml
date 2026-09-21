@@ -1,0 +1,53 @@
+openapi: 3.0.3
+info:
+  title: NCRP / CFCFRMS complaint feed (mock contract)
+  version: 1.0.0
+  description: >
+    Our own contract for the complaint feed the platform polls. NCRP/CFCFRMS expose no public API, so
+    this spec is what the mock server (mocks/mock-server) implements and what an official integration
+    would be mapped onto. Integration-ready, not integrated.
+servers:
+  - url: http://localhost:4010
+paths:
+  /ncrp/v1/complaints:
+    get:
+      summary: List complaints (paged, oldest first)
+      parameters:
+        - { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
+        - { name: perPage, in: query, schema: { type: integer, minimum: 1, maximum: 500, default: 100 } }
+      responses:
+        '200':
+          description: One page of complaint records
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [page, perPage, total, hasMore, items]
+                properties:
+                  page: { type: integer }
+                  perPage: { type: integer }
+                  total: { type: integer }
+                  hasMore: { type: boolean }
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/ComplaintRecord' }
+  /health:
+    get:
+      summary: Liveness
+      responses:
+        '200': { description: ok }
+components:
+  schemas:
+    ComplaintRecord:
+      type: object
+      required: [acknowledgementNumber, incidentDateTime, categoryOfComplaint, amountLost]
+      properties:
+        acknowledgementNumber: { type: string, description: NCRP acknowledgement number (unique) }
+        incidentDateTime: { type: string, description: 'ISO-8601 with offset, or DD/MM/YYYY [HH:mm] read as IST' }
+        categoryOfComplaint: { type: string }
+        amountLost: { oneOf: [{ type: string }, { type: number }], description: Amount in INR }
+        paymentNetwork: { type: string, enum: [TRC20, ERC20, BEP20] }
+        walletAddresses: { type: array, items: { type: string } }
+        transactionHashes: { type: array, items: { type: string } }
+        tokenContract: { type: string, description: Token contract the victim reports; checked against the official-stablecoin whitelist }
+        firNumber: { type: string }

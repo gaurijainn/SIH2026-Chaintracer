@@ -19,6 +19,11 @@ enum Role {
   VIEWER
 }
 
+enum ComplaintEntryKind {
+  ADDRESS
+  TX_HASH
+}
+
 enum CaseStatus {
   OPEN
   TRACING
@@ -111,28 +116,32 @@ model User {
 }
 
 model Complaint {
-  id         String             @id @default(cuid())
-  ackNo      String             @unique // NCRP acknowledgement number
-  reportedAt DateTime           @db.Timestamptz(3)
-  category   String
-  amountInr  Decimal            @db.Decimal(20, 2)
-  network    String? // "TRC20" | "ERC20" | "BEP20" as stated by victim
-  createdAt  DateTime           @default(now()) @db.Timestamptz(3)
-  addresses  ComplaintAddress[]
-  caseId     String?
-  case       Case?              @relation(fields: [caseId], references: [id], onDelete: SetNull)
+  id            String             @id @default(cuid())
+  ackNo         String             @unique // NCRP acknowledgement number
+  reportedAt    DateTime           @db.Timestamptz(3)
+  category      String
+  amountInr     Decimal            @db.Decimal(20, 2)
+  network       String? // "TRC20" | "ERC20" | "BEP20" as stated by victim
+  tokenContract String? // contract the victim named, normalised; checked against the whitelist
+  createdAt     DateTime           @default(now()) @db.Timestamptz(3)
+  addresses     ComplaintAddress[]
+  caseId        String?
+  case          Case?              @relation(fields: [caseId], references: [id], onDelete: SetNull)
 
   @@index([caseId])
   @@index([reportedAt])
 }
 
 model ComplaintAddress {
-  id          String    @id @default(cuid())
-  complaintId String
-  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
-  raw         String // exactly as submitted
-  address     String // normalised
-  chain       String? // TRON | ETH | BSC | POLYGON | BTC, set by intake (B2)
+  id              String             @id @default(cuid())
+  complaintId     String
+  complaint       Complaint          @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  raw             String // exactly as submitted
+  address         String // normalised
+  chain           String? // TRON | ETH | BSC | POLYGON | BTC, set by intake (B2)
+  kind            ComplaintEntryKind @default(ADDRESS)
+  candidateChains String[]           @default([]) // chains still possible when the EVM chain is ambiguous
+  flags           String[]           @default([]) // AMBIGUOUS_CHAIN, UNTRUSTED_TOKEN, UNVERIFIED_TX, ...
 
   @@unique([complaintId, address])
   @@index([chain, address]) // cross-complaint linkage lookups
@@ -170,7 +179,7 @@ model TraceJob {
   maxHops        Int         @default(6)
   minValueUsd    Decimal     @default(10) @db.Decimal(20, 6)
   windowDays     Int         @default(30)
-  reportedAmount Decimal     @db.Decimal(38, 18)
+  reportedAmount Decimal?    @db.Decimal(38, 18) // token amount; null until pricing (B3/B4) converts the INR complaint amount
   error          String?
   createdAt      DateTime    @default(now()) @db.Timestamptz(3)
   startedAt      DateTime?   @db.Timestamptz(3)
