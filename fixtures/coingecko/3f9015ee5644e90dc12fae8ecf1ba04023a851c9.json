@@ -1,0 +1,15 @@
+{
+  "provider": "coingecko",
+  "request": {
+    "method": "GET",
+    "url": "https://api.coingecko.com/api/v3/ping"
+  },
+  "response": {
+    "status": 200,
+    "data": {
+      "gecko_says": "(V3) To the Moon!"
+    }
+  },
+  "recordedAt": "2026-09-20T00:00:00.000Z",
+  "synthetic": true
+}

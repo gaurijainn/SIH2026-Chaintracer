@@ -1,0 +1,21 @@
+{
+  "name": "ps26183",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@12.5.1",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "fixtures:seed": "tsx scripts/seed-fixtures.mts",
+    "dev:api": "pnpm --filter @ps26183/api dev"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^2.1.0"
+  }
+}

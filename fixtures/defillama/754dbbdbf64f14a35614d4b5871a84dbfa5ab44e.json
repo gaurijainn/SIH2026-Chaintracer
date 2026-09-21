@@ -1,0 +1,20 @@
+{
+  "provider": "defillama",
+  "request": {
+    "method": "GET",
+    "url": "https://coins.llama.fi/prices/current/coingecko:tron"
+  },
+  "response": {
+    "status": 200,
+    "data": {
+      "coins": {
+        "coingecko:tron": {
+          "price": 0.25,
+          "symbol": "TRX"
+        }
+      }
+    }
+  },
+  "recordedAt": "2026-09-20T00:00:00.000Z",
+  "synthetic": true
+}

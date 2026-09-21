@@ -1,0 +1,11 @@
+# Shared image for api, workers and web. The command is chosen in docker-compose.yml.
+FROM node:22-alpine
+RUN corepack enable && corepack prepare pnpm@12.5.1 --activate || npm i -g pnpm
+WORKDIR /app
+COPY package.json pnpm-workspace.yaml ./
+COPY packages/shared/package.json packages/shared/
+COPY apps/api/package.json apps/api/
+COPY apps/web/package.json apps/web/
+COPY workers/package.json workers/
+RUN pnpm install --no-frozen-lockfile
+COPY . .

@@ -1,0 +1,13 @@
+{
+  "provider": "mempool",
+  "request": {
+    "method": "GET",
+    "url": "https://mempool.space/api/blocks/tip/height"
+  },
+  "response": {
+    "status": 200,
+    "data": 900000
+  },
+  "recordedAt": "2026-09-20T00:00:00.000Z",
+  "synthetic": true
+}

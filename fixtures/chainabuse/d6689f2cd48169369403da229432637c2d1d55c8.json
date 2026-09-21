@@ -1,0 +1,13 @@
+{
+  "provider": "chainabuse",
+  "request": {
+    "method": "GET",
+    "url": "https://api.chainabuse.com/v0/reports?page=1&perPage=1"
+  },
+  "response": {
+    "status": 200,
+    "data": []
+  },
+  "recordedAt": "2026-09-20T00:00:00.000Z",
+  "synthetic": true
+}
