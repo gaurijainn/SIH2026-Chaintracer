@@ -237,6 +237,7 @@ model Label {
   category   String // exchange | mixer | bridge | sanctioned | scam | ...
   source     String // eth-labels | tronscan | ofac | chainabuse | manual
   confidence Decimal  @db.Decimal(4, 3)
+  evidence   Json? // source reference: report URL, tx hash, raw flag payload, etc. (B5)
   fetchedAt  DateTime @default(now()) @db.Timestamptz(3)
   vaspId     String?
   vasp       Vasp?    @relation(fields: [vaspId], references: [id], onDelete: SetNull)
@@ -261,6 +262,7 @@ model Vasp {
   addresses     VaspAddress[]
   labels        Label[]
   freezeNotices FreezeNotice[]
+  attributions  Attribution[]
 }
 
 model VaspAddress {
@@ -275,6 +277,27 @@ model VaspAddress {
 
   @@unique([chain, addr])
   @@index([vaspId])
+}
+
+/**
+ * B5: the combined result of running H1-H4 against one address. `heuristics` holds every fired
+ * heuristic with its own confidence and evidence, e.g.
+ * [{"code":"H1_DEPOSIT_SWEEP","confidence":0.9,"evidence":{"forwardTx":"...","withinMinutes":40}}].
+ * `confidence` is the noisy-OR combination of those. Re-running attribution upserts this row.
+ */
+model Attribution {
+  id         String   @id @default(cuid())
+  chain      String
+  addr       String
+  vaspId     String
+  vasp       Vasp     @relation(fields: [vaspId], references: [id], onDelete: Cascade)
+  confidence Decimal  @db.Decimal(4, 3)
+  heuristics Json
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(3)
+
+  @@unique([chain, addr, vaspId])
+  @@index([chain, addr])
 }
 
 model RiskScore {

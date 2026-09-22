@@ -24,6 +24,8 @@ export interface EntityLink {
   entity: { name: string; type: string };
   heuristic: string;
   confidence: number;
+  /** B5: evidence for this heuristic (tx hashes, timestamps, etc.), stored as a JSON string. */
+  evidence?: string;
 }
 
 export function createDriver(env: Pick<Env, 'NEO4J_URI' | 'NEO4J_USER' | 'NEO4J_PASSWORD'>): Driver {
@@ -73,7 +75,7 @@ export async function writeHops(driver: Driver, hops: GraphHop[]): Promise<void>
   }
 }
 
-/** Attributes an address to a named entity: (:Address)-[:BELONGS_TO {heuristic, confidence}]->(:Entity). */
+/** Attributes an address to a named entity: (:Address)-[:BELONGS_TO {heuristic, confidence, evidence}]->(:Entity). */
 export async function linkToEntity(driver: Driver, l: EntityLink): Promise<void> {
   const session = driver.session();
   try {
@@ -82,10 +84,48 @@ export async function linkToEntity(driver: Driver, l: EntityLink): Promise<void>
         `MERGE (a:Address {chain: $chain, addr: $addr})
          MERGE (e:Entity {name: $name, type: $type})
          MERGE (a)-[b:BELONGS_TO {heuristic: $heuristic}]->(e)
-         SET b.confidence = $confidence`,
-        { chain: l.chain, addr: l.addr, name: l.entity.name, type: l.entity.type, heuristic: l.heuristic, confidence: l.confidence },
+         SET b.confidence = $confidence, b.evidence = $evidence`,
+        { chain: l.chain, addr: l.addr, name: l.entity.name, type: l.entity.type, heuristic: l.heuristic, confidence: l.confidence, evidence: l.evidence ?? null },
       ),
     );
+  } finally {
+    await session.close();
+  }
+}
+
+export interface ClusterLink {
+  chain: string;
+  addr: string;
+  clusterId: string;
+  heuristic: string;
+  /** evidence for this membership (e.g. the shared-input tx hash), stored as a JSON string. */
+  evidence?: string;
+}
+
+/** B5 H3: Bitcoin common-input clustering. (:Address)-[:IN_CLUSTER {heuristic, evidence}]->(:Cluster {id}). */
+export async function linkToCluster(driver: Driver, l: ClusterLink): Promise<void> {
+  const session = driver.session();
+  try {
+    await session.executeWrite((tx) =>
+      tx.run(
+        `MERGE (a:Address {chain: $chain, addr: $addr})
+         MERGE (c:Cluster {id: $clusterId})
+         MERGE (a)-[m:IN_CLUSTER {heuristic: $heuristic}]->(c)
+         SET m.evidence = $evidence`,
+        { chain: l.chain, addr: l.addr, clusterId: l.clusterId, heuristic: l.heuristic, evidence: l.evidence ?? null },
+      ),
+    );
+  } finally {
+    await session.close();
+  }
+}
+
+/** Every address already known to share a Bitcoin common-input cluster with this one. */
+export async function getClusterMembers(driver: Driver, clusterId: string): Promise<string[]> {
+  const session = driver.session();
+  try {
+    const res = await session.run(`MATCH (a:Address)-[:IN_CLUSTER]->(:Cluster {id: $clusterId}) RETURN DISTINCT a.addr AS addr`, { clusterId });
+    return res.records.map((r) => r.get('addr') as string);
   } finally {
     await session.close();
   }
