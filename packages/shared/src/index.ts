@@ -6,3 +6,4 @@ export * from './sampleCase';
 export * from './tokens';
 export * from './addressRules';
 export * from './chainTypes';
+export * from './traceEvents';
