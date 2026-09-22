@@ -4,9 +4,12 @@ import helmet from 'helmet';
 import { runHealth, type HealthDeps } from './health';
 import { createIntakeRouter, intakeErrorHandler } from './intake/routes';
 import type { IntakeService } from './intake/service';
+import { createMuleRouter, muleErrorHandler } from './mule/routes';
+import type { MuleService } from './mule/service';
 
 export interface AppServices {
   intake?: IntakeService;
+  mule?: MuleService;
 }
 
 export function createApp(deps: HealthDeps, services: AppServices = {}) {
@@ -22,7 +25,9 @@ export function createApp(deps: HealthDeps, services: AppServices = {}) {
 
   // /api/v1 routes (JWT + RBAC land in B10)
   if (services.intake) app.use('/api/v1', createIntakeRouter(services.intake));
+  if (services.mule) app.use('/api/v1', createMuleRouter(services.mule));
   app.use(intakeErrorHandler);
+  app.use(muleErrorHandler);
 
   return app;
 }

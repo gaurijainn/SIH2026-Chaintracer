@@ -97,6 +97,15 @@ enum NoticeStatus {
   SENT
 }
 
+/** B6 mule/layering rule codes (plan B6, Section "Mule and layering detection"). */
+enum MuleRuleCode {
+  PASS_THROUGH
+  FAN_OUT
+  PEEL_CHAIN
+  FRESH_WALLET
+  TRX_DUST_USDT
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -157,12 +166,13 @@ model Case {
   createdAt DateTime   @default(now()) @db.Timestamptz(3)
   updatedAt DateTime   @updatedAt @db.Timestamptz(3)
 
-  complaints     Complaint[]
-  traces         TraceJob[]
-  alerts         Alert[]
-  watchlistItems WatchlistItem[]
-  reports        Report[]
-  freezeNotices  FreezeNotice[]
+  complaints        Complaint[]
+  traces            TraceJob[]
+  alerts            Alert[]
+  watchlistItems    WatchlistItem[]
+  reports           Report[]
+  freezeNotices     FreezeNotice[]
+  addressCommunities AddressCommunity[]
 
   @@index([status])
   @@index([ownerId])
@@ -187,6 +197,7 @@ model TraceJob {
 
   hops       Hop[]
   riskScores RiskScore[]
+  muleFlags  MuleFlag[]
 
   @@index([caseId])
   @@index([status])
@@ -396,6 +407,67 @@ model FreezeNotice {
   @@index([caseId])
   @@index([vaspId])
   @@index([status])
+}
+
+/**
+ * B6: one fired mule/layering rule against one address, with its structured evidence. Recomputing
+ * mule detection for an address upserts each rule's row afresh (idempotent rerun), the same pattern
+ * B5's Attribution model uses for heuristics. `traceId` records which trace context produced the
+ * evidence; it is nullable because a wallet can be re-scored outside any single trace (e.g. cross-case).
+ */
+model MuleFlag {
+  id         String       @id @default(cuid())
+  chain      String
+  addr       String
+  rule       MuleRuleCode
+  confidence Decimal      @db.Decimal(4, 3)
+  evidence   Json
+  traceId    String?
+  trace      TraceJob?    @relation(fields: [traceId], references: [id], onDelete: SetNull)
+  createdAt  DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime     @updatedAt @db.Timestamptz(3)
+
+  @@unique([chain, addr, rule])
+  @@index([chain, addr])
+  @@index([traceId])
+}
+
+/**
+ * B6: Neo4j GDS results (WCC, Louvain, degree, betweenness) for one address within one case's
+ * subgraph, persisted so the API can serve mule-ring/collector-wallet queries without a live GDS
+ * call on every read. Recomputing a case's analysis upserts every address's row (idempotent rerun).
+ */
+model AddressCommunity {
+  id          String   @id @default(cuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  chain       String
+  addr        String
+  wccId       Int // weakly-connected-component id (mule-ring grouping)
+  louvainId   Int // Louvain community id
+  degree      Float // collector-wallet metric
+  betweenness Float // collector-wallet metric
+  computedAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  @@unique([caseId, chain, addr])
+  @@index([caseId, wccId])
+  @@index([caseId, louvainId])
+}
+
+/**
+ * B6 cross-case linkage: an address that appears in trace hops belonging to two or more cases is a
+ * shared-mule candidate (never labeled "criminal" — plan B6 neutrality rule). Recomputed by rescanning
+ * Hop rows across all traces; upserted by (chain, addr) so a rerun is idempotent.
+ */
+model SharedMuleFlag {
+  id        String   @id @default(cuid())
+  chain     String
+  addr      String
+  caseCount Int
+  caseIds   String[]
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@unique([chain, addr])
 }
 
 model AuditLog {
