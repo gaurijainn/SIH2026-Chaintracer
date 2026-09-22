@@ -1,0 +1,20 @@
+{
+  "provider": "coingecko",
+  "request": {
+    "method": "GET",
+    "url": "https://api.coingecko.com/api/v3/coins/tether/history?date=31-08-2026&localization=false"
+  },
+  "response": {
+    "status": 200,
+    "data": {
+      "market_data": {
+        "current_price": {
+          "usd": 1,
+          "inr": 88.1
+        }
+      }
+    }
+  },
+  "recordedAt": "2026-09-21T19:00:18.731Z",
+  "synthetic": true
+}

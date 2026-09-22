@@ -1,0 +1,40 @@
+{
+  "provider": "esplora",
+  "request": {
+    "method": "GET",
+    "url": "https://blockstream.info/api/address/1BWrhsLSGTPoM9vsiaFPtDahPQ73fhUdFN/txs"
+  },
+  "response": {
+    "status": 200,
+    "data": [
+      {
+        "txid": "3741a8ceb3235054c3287a17c4a2c0abf471af6a4f2180f1bf33ad83b41b1957",
+        "vin": [
+          {
+            "prevout": {
+              "scriptpubkey_address": "1BWrhsLSGTPoM9vsiaFPtDahPQ73fhUdFN",
+              "value": 50000000
+            }
+          }
+        ],
+        "vout": [
+          {
+            "scriptpubkey_address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+            "value": 30000000
+          },
+          {
+            "scriptpubkey_address": "1BWrhsLSGTPoM9vsiaFPtDahPQ73fhUdFN",
+            "value": 19990000
+          }
+        ],
+        "status": {
+          "confirmed": true,
+          "block_height": 900000,
+          "block_time": 1788264000
+        }
+      }
+    ]
+  },
+  "recordedAt": "2026-09-21T19:00:18.109Z",
+  "synthetic": true
+}

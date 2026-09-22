@@ -7,7 +7,7 @@
     "lint": "eslint .",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
-    "fixtures:seed": "tsx scripts/seed-fixtures.mts",
+    "fixtures:seed": "tsx scripts/seed-fixtures.mts && tsx scripts/seed-fixtures-b3.mts",
     "dev:api": "pnpm --filter @ps26183/api dev"
   },
   "devDependencies": {

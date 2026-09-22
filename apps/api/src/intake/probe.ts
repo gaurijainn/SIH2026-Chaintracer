@@ -1,87 +1,30 @@
-import { buildSecrets, createHttp, type Chain, type Env } from '@ps26183/shared';
+import { createChainLayer, type Cache, type ChainLayer } from '@ps26183/workers/adapters';
+import type { Chain, Env } from '@ps26183/shared';
 
 /**
- * Minimal on-chain existence probes used only to disambiguate EVM chains and verify tx hashes at intake.
- * Full provider adapters (paging, limiter, cache, failover) are B3; these are single calls that go
- * through the same record/replay client, so they work offline in replay mode.
+ * Chain probes used by complaint intake (B2) to disambiguate EVM chains and verify transaction hashes.
+ * Since B3 these are answered by the real provider layer (rate limiting, retries, cache, failover, record/replay).
  */
 export interface ChainProbe {
-  /** true = address has any activity on that chain, false = none. Throws when the provider cannot answer. */
+  /** true = address has any activity on that chain, false = none. Throws when no provider can answer. */
   addressActive(chain: Chain, addr: string): Promise<boolean>;
   txExists(chain: Chain, hash: string): Promise<boolean>;
 }
 
 export type ProbeStatus = 'active' | 'inactive' | 'unknown';
 
-export const ETHERSCAN_CHAIN_ID: Partial<Record<Chain, number>> = { ETH: 1, POLYGON: 137 };
+// Re-exported so fixture seeding hashes exactly the URLs the adapters request.
+export { MEGANODE_URL, bscActivityBody, etherscanUrl, txlistQuery } from '@ps26183/workers/adapters';
 
-// URL builders are exported so fixture seeding uses exactly the same strings (and hashes).
-export const etherscanUrl = (chain: Chain, query: string) =>
-  `https://api.etherscan.io/v2/api?chainid=${ETHERSCAN_CHAIN_ID[chain]}&${query}&apikey={ETHERSCAN_KEY}`;
-export const txlistQuery = (action: 'txlist' | 'tokentx', addr: string) =>
-  `module=account&action=${action}&address=${addr}&startblock=0&endblock=99999999&page=1&offset=1&sort=asc`;
-export const MEGANODE_URL = 'https://bsc-mainnet.nodereal.io/v1/{MEGANODE_KEY}';
-export const bscActivityBody = (addr: string) => [
-  { jsonrpc: '2.0', id: 1, method: 'eth_getTransactionCount', params: [addr, 'latest'] },
-  { jsonrpc: '2.0', id: 2, method: 'eth_getBalance', params: [addr, 'latest'] },
-];
-export const TRONGRID_TX_URL = 'https://api.trongrid.io/wallet/gettransactionbyid';
-export const esploraTxUrl = (hash: string) => `https://blockstream.info/api/tx/${hash}`;
-
-const nonZeroHex = (v: unknown) => typeof v === 'string' && /^0x[0-9a-f]+$/i.test(v) && BigInt(v) > 0n;
-
-export function createHttpProbe(env: Pick<Env, 'DATA_MODE' | 'FIXTURES_DIR'> & Record<string, unknown>): ChainProbe {
-  const secrets = buildSecrets(env);
-  const clients = new Map<string, ReturnType<typeof createHttp>>();
-  const http = (provider: string) => {
-    let c = clients.get(provider);
-    if (!c) clients.set(provider, (c = createHttp({ provider, mode: env.DATA_MODE, fixturesDir: env.FIXTURES_DIR, secrets, timeoutMs: 4000 })));
-    return c;
-  };
-
-  const etherscan = async (chain: Chain, query: string) => {
-    const { data } = await http('etherscan').get(etherscanUrl(chain, query));
-    return data as { status?: string; message?: string; result?: unknown };
-  };
-  const hasRows = (d: { status?: string; message?: string; result?: unknown }) => {
-    if (d.status === '1' && Array.isArray(d.result)) return d.result.length > 0;
-    if (d.status === '0' && Array.isArray(d.result) && d.result.length === 0) return false; // "No transactions found"
-    throw new Error(`etherscan: ${typeof d.result === 'string' ? d.result : (d.message ?? 'unexpected response')}`);
-  };
-
+export function createAdapterProbe(layer: ChainLayer): ChainProbe {
   return {
-    async addressActive(chain, addr) {
-      if (chain === 'BSC') {
-        const { data } = await http('meganode').post(MEGANODE_URL, bscActivityBody(addr));
-        if (!Array.isArray(data)) throw new Error('meganode: unexpected response');
-        return data.some((r: { result?: unknown }) => nonZeroHex(r.result));
-      }
-      if (chain === 'ETH' || chain === 'POLYGON') {
-        if (hasRows(await etherscan(chain, txlistQuery('txlist', addr)))) return true;
-        return hasRows(await etherscan(chain, txlistQuery('tokentx', addr))); // receive-only wallets
-      }
-      throw new Error(`no address probe for ${chain}`);
-    },
-
-    async txExists(chain, hash) {
-      if (chain === 'ETH' || chain === 'POLYGON') {
-        const d = await etherscan(chain, `module=proxy&action=eth_getTransactionByHash&txhash=${hash}`);
-        if (d.result && typeof d.result === 'object') return true;
-        if (d.result === null) return false;
-        throw new Error('etherscan: unexpected response');
-      }
-      if (chain === 'BSC') {
-        const { data } = await http('meganode').post(MEGANODE_URL, { jsonrpc: '2.0', id: 1, method: 'eth_getTransactionByHash', params: [hash] });
-        return !!data?.result;
-      }
-      if (chain === 'TRON') {
-        const { data } = await http('trongrid').post(TRONGRID_TX_URL, { value: hash }, { headers: { 'TRON-PRO-API-KEY': '{TRONGRID_KEY}' } });
-        return !!data?.txID;
-      }
-      const r = await http('esplora').get(esploraTxUrl(hash), { validateStatus: (s) => s === 200 || s === 404 });
-      return r.status === 200;
-    },
+    addressActive: (chain, addr) => layer.adapter(chain).hasActivity(addr),
+    txExists: (chain, hash) => layer.adapter(chain).txExists(hash),
   };
+}
+
+export function createHttpProbe(env: Pick<Env, 'DATA_MODE' | 'FIXTURES_DIR' | 'PROVIDER_LIMITS'> & Record<string, unknown>, cache?: Cache): ChainProbe {
+  return createAdapterProbe(createChainLayer({ env, cache, pricing: false }));
 }
 
 /** Memoises probe results per batch, caps concurrency and bounds each call, so one slow provider cannot stall an import. */

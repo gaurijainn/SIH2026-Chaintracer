@@ -1,0 +1,18 @@
+{
+  "provider": "tronscan",
+  "request": {
+    "method": "GET",
+    "url": "https://apilist.tronscanapi.com/api/security/account/data?address=TXRRRzmB7aFnBZMk16fxPYzWmLjGEvcUYb"
+  },
+  "response": {
+    "status": 200,
+    "data": {
+      "is_black_list": false,
+      "has_fraud_transaction": true,
+      "fraud_token_creator": false,
+      "send_ad_by_memo": false
+    }
+  },
+  "recordedAt": "2026-09-21T19:00:18.943Z",
+  "synthetic": true
+}

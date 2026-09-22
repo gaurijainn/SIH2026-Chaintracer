@@ -1,0 +1,42 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TXRRRzmB7aFnBZMk16fxPYzWmLjGEvcUYb/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": {
+      "data": [
+        {
+          "txID": "9853c286a41a76be9770210a4d37f8ea56dd57e65b26c1f094ae2aac8b32aef6",
+          "blockNumber": 61000000,
+          "block_timestamp": 1784808000000,
+          "ret": [
+            {
+              "contractRet": "SUCCESS"
+            }
+          ],
+          "raw_data": {
+            "contract": [
+              {
+                "type": "TransferContract",
+                "parameter": {
+                  "value": {
+                    "owner_address": "41cd9c058a1de464caf41275cf0be1a7ac8fd87312",
+                    "to_address": "41eb4fd51d097f7759f9f1fad8041c16e17cbe21cc",
+                    "amount": 1000000
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "success": true,
+      "meta": {}
+    }
+  },
+  "recordedAt": "2026-09-21T19:00:18.951Z",
+  "synthetic": true
+}

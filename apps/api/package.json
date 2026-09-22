@@ -28,7 +28,8 @@
     "multer": "^2.4.0",
     "neo4j-driver": "^5.26.0",
     "pg": "^8.13.0",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "@ps26183/workers": "workspace:*"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

@@ -1,9 +1,10 @@
+import { RedisCache, createChainLayer } from '@ps26183/workers/adapters';
 import { loadEnv } from '@ps26183/shared';
 import { createApp } from './app';
 import { buildDeps } from './deps';
 import { createPrisma } from './db/prisma';
 import { NcrpPoller, createHttpNcrpFeed } from './intake/ncrp';
-import { createHttpProbe } from './intake/probe';
+import { createAdapterProbe } from './intake/probe';
 import { BullTraceQueue } from './intake/queue';
 import { createIntakeService } from './intake/service';
 
@@ -12,10 +13,11 @@ const { deps, close } = buildDeps(env);
 
 const prisma = createPrisma();
 const queue = new BullTraceQueue(env.REDIS_URL);
+const providers = createChainLayer({ env, cache: new RedisCache(env.REDIS_URL), pricing: false });
 const intake = createIntakeService({
   prisma,
   queue,
-  probe: createHttpProbe(env),
+  probe: createAdapterProbe(providers),
   defaults: { maxHops: env.TRACE_MAX_HOPS, minValueUsd: env.TRACE_MIN_USD, windowDays: env.TRACE_WINDOW_DAYS, taintModel: 'HAIRCUT' },
 });
 const poller = new NcrpPoller(createHttpNcrpFeed(env), intake, env.NCRP_POLL_INTERVAL_S * 1000);

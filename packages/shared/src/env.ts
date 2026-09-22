@@ -24,6 +24,8 @@ const schema = z.object({
   TRACE_WINDOW_DAYS: z.coerce.number().int().default(30),
   TRACE_TOP_K: z.coerce.number().int().default(10),
   HIGH_DEGREE_CUTOFF: z.coerce.number().int().default(5000),
+  TRON_BACKUP_URL: z.string().default('https://rpc.ankr.com/http/tron'), // Chainstack/Ankr TRON full node (include key in the URL)
+  PROVIDER_LIMITS: z.string().default(''), // optional JSON overriding per-provider rate limits
   NCRP_BASE_URL: z.string().default('http://localhost:4010'),
   NCRP_POLL_INTERVAL_S: z.coerce.number().int().min(0).default(0), // 0 = poller off
   API_PORT: z.coerce.number().int().default(4000),

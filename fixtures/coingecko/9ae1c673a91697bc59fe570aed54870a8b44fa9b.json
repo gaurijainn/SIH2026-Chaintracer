@@ -1,0 +1,20 @@
+{
+  "provider": "coingecko",
+  "request": {
+    "method": "GET",
+    "url": "https://api.coingecko.com/api/v3/coins/bitcoin/history?date=01-09-2026&localization=false"
+  },
+  "response": {
+    "status": 200,
+    "data": {
+      "market_data": {
+        "current_price": {
+          "usd": 112000,
+          "inr": 9867200
+        }
+      }
+    }
+  },
+  "recordedAt": "2026-09-21T19:00:18.202Z",
+  "synthetic": true
+}

@@ -1,0 +1,16 @@
+{
+  "provider": "tronscan",
+  "request": {
+    "method": "GET",
+    "url": "https://apilist.tronscanapi.com/api/accountv2?address=TXRRRzmB7aFnBZMk16fxPYzWmLjGEvcUYb"
+  },
+  "response": {
+    "status": 200,
+    "data": {
+      "date_created": 1784721600000,
+      "addressTag": ""
+    }
+  },
+  "recordedAt": "2026-09-21T19:00:18.936Z",
+  "synthetic": true
+}

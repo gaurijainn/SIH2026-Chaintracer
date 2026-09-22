@@ -1,0 +1,27 @@
+{
+  "provider": "esplora",
+  "request": {
+    "method": "GET",
+    "url": "https://blockstream.info/api/tx/3741a8ceb3235054c3287a17c4a2c0abf471af6a4f2180f1bf33ad83b41b1957/outspends"
+  },
+  "response": {
+    "status": 200,
+    "data": [
+      {
+        "spent": true,
+        "txid": "7af6415323f5387025963bceef01399cd4bef691d943100c6976cc80aa174e87",
+        "vin": 0,
+        "status": {
+          "confirmed": true,
+          "block_height": 900010,
+          "block_time": 1788264600
+        }
+      },
+      {
+        "spent": false
+      }
+    ]
+  },
+  "recordedAt": "2026-09-21T19:00:19.003Z",
+  "synthetic": true
+}

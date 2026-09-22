@@ -1,0 +1,28 @@
+{
+  "provider": "etherscan",
+  "request": {
+    "method": "GET",
+    "url": "https://api.etherscan.io/v2/api?chainid=1&module=account&action=tokentx&address=0x73fE180027a6F3e1461906039b2Fa0f90E0C8863&startblock=0&endblock=99999999&page=1&offset=1000&sort=asc&contractaddress=0xdAC17F958D2ee523a2206206994597C13D831ec7&apikey={ETHERSCAN_KEY}"
+  },
+  "response": {
+    "status": 200,
+    "data": {
+      "status": "1",
+      "message": "OK",
+      "result": [
+        {
+          "hash": "0x9c689365b5e78b2bab2d1b0f4e0734540fb719f1fb176432210213a9dba9957f",
+          "from": "0x73fe180027a6f3e1461906039b2fa0f90e0c8863",
+          "to": "0x69b4f1a692b0b79b628ab251da4b328eadf20bc5",
+          "value": "2500000000",
+          "tokenDecimal": "6",
+          "contractAddress": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+          "blockNumber": "23000000",
+          "timeStamp": "1788264000"
+        }
+      ]
+    }
+  },
+  "recordedAt": "2026-09-21T19:00:18.962Z",
+  "synthetic": true
+}

@@ -5,3 +5,4 @@ export * from './constants';
 export * from './sampleCase';
 export * from './tokens';
 export * from './addressRules';
+export * from './chainTypes';

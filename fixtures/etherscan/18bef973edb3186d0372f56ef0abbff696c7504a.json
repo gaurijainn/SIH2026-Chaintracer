@@ -1,0 +1,27 @@
+{
+  "provider": "etherscan",
+  "request": {
+    "method": "GET",
+    "url": "https://api.etherscan.io/v2/api?chainid=1&module=account&action=txlist&address=0x73fE180027a6F3e1461906039b2Fa0f90E0C8863&startblock=0&endblock=99999999&page=1&offset=1000&sort=asc&apikey={ETHERSCAN_KEY}"
+  },
+  "response": {
+    "status": 200,
+    "data": {
+      "status": "1",
+      "message": "OK",
+      "result": [
+        {
+          "hash": "0x3fd46b7f98547e8f512ecf54fce075dded3fd13e3a4298a0bb1315c5468cd017",
+          "from": "0x73fe180027a6f3e1461906039b2fa0f90e0c8863",
+          "to": "0x2944020fb7f05677a39e1aacafcb44be907163f9",
+          "value": "1000000000000000000",
+          "isError": "0",
+          "blockNumber": "23000010",
+          "timeStamp": "1788264060"
+        }
+      ]
+    }
+  },
+  "recordedAt": "2026-09-21T19:00:18.980Z",
+  "synthetic": true
+}

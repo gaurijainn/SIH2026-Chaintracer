@@ -50,6 +50,8 @@ export interface HttpOptions {
   fixturesDir: string;
   secrets?: Record<string, string>;
   timeoutMs?: number;
+  /** mark recorded fixtures as synthetic (data came from a simulated provider, not a live one) */
+  synthetic?: boolean;
   /** Underlying transport; defaults to axios' node http adapter. Injectable for tests. */
   transport?: AxiosAdapter;
 }
@@ -102,6 +104,7 @@ export function createHttp(opts: HttpOptions): AxiosInstance {
         request: { method, url, body },
         response: { status: res.status, data: res.data },
         recordedAt: new Date().toISOString(),
+        ...(opts.synthetic ? { synthetic: true } : {}),
       };
       await mkdir(path.dirname(file), { recursive: true });
       await writeFile(file, JSON.stringify(fx, null, 2));
