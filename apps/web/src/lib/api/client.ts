@@ -36,7 +36,7 @@ export const API_PREFIX = '/api/v1';
 export function createApiClient(opts: ApiClientOptions) {
   const doFetch = opts.fetchImpl ?? ((...a: Parameters<typeof fetch>) => fetch(...a));
   const base = (opts.baseUrl ?? '').replace(/\/+$/, '');
-  let refreshing: Promise<boolean> | null = null;
+  let refreshing: Promise<'ok' | 'rejected' | 'unavailable'> | null = null;
 
   const url = (path: string, query?: RequestOptions['query']) => {
     const u = `${base}${API_PREFIX}${path.startsWith('/') ? path : `/${path}`}`;
@@ -62,20 +62,25 @@ export function createApiClient(opts: ApiClientOptions) {
     }
   }
 
-  /** One refresh at a time; concurrent 401s share the same promise. */
-  function refresh(): Promise<boolean> {
+  /**
+   * One refresh at a time; concurrent 401s share the same promise.
+   * 'rejected' = the server refused our refresh token (session is over); 'unavailable' = we could not find out
+   * (network / 5xx / rate limit), so the session is kept and the original request fails with a retryable error.
+   */
+  function refresh(): Promise<'ok' | 'rejected' | 'unavailable'> {
     refreshing ??= (async () => {
       const t = opts.getTokens();
-      if (!t?.refreshToken) return false;
+      if (!t?.refreshToken) return 'rejected' as const;
       try {
         const res = await send('/auth/refresh', { method: 'POST', body: { refreshToken: t.refreshToken }, auth: false });
-        if (!res.ok) return false;
+        if (res.status === 400 || res.status === 401 || res.status === 403) return 'rejected' as const;
+        if (!res.ok) return 'unavailable' as const;
         const data = (await res.json()) as Partial<TokenPair>;
-        if (!data.accessToken || !data.refreshToken) return false;
+        if (!data.accessToken || !data.refreshToken) return 'unavailable' as const;
         opts.onTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken });
-        return true;
+        return 'ok' as const;
       } catch {
-        return false;
+        return 'unavailable' as const;
       }
     })().finally(() => {
       refreshing = null;
@@ -101,10 +106,14 @@ export function createApiClient(opts: ApiClientOptions) {
     const authed = o.auth !== false;
     let res = await send(path, o, authed ? opts.getTokens()?.accessToken : undefined);
     if (res.status === 401 && authed) {
-      if (await refresh()) {
+      const outcome = await refresh();
+      if (outcome === 'ok') {
         res = await send(path, o, opts.getTokens()?.accessToken);
-      } else {
+        if (res.status === 401) opts.onAuthFailure(); // a freshly issued token was refused too
+      } else if (outcome === 'rejected') {
         opts.onAuthFailure();
+      } else {
+        throw new ApiError(0, 'NETWORK', humanMessage(0));
       }
     }
     return parse<T>(res);

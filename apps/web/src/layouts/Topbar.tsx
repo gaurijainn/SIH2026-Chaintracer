@@ -1,18 +1,15 @@
-import { Bell, LogOut, Menu, Moon, PanelLeft, Sun } from 'lucide-react';
+import { Bell, Menu, Moon, PanelLeft, Sun } from 'lucide-react';
 import { useEffect, useRef, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { DemoModeBadge } from '@/components/common/DemoModeBadge';
 import { SearchInput } from '@/components/common/SearchInput';
-import { StatusBadge } from '@/components/common/badges';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useAuthStore } from '@/stores/auth';
 import { toast } from '@/stores/toast';
 import { resolveDark, useUiStore } from '@/stores/ui';
+import { UserMenu } from './UserMenu';
 
 export function Topbar() {
-  const user = useAuthStore((s) => s.user);
-  const clearSession = useAuthStore((s) => s.clearSession);
   const theme = useUiStore((s) => s.theme);
   const toggleTheme = useUiStore((s) => s.toggleTheme);
   const toggleSidebar = useUiStore((s) => s.toggleSidebar);
@@ -65,18 +62,8 @@ export function Topbar() {
             {dark ? <Sun /> : <Moon />}
           </Button>
         </Tooltip>
-        <div className="mx-1 hidden h-6 w-px bg-border lg:block" aria-hidden="true" />
-        <div className="hidden items-center gap-2 lg:flex">
-          <div className="text-right leading-tight">
-            <p className="max-w-32 truncate text-sm font-medium">{user?.name ?? 'Not signed in'}</p>
-          </div>
-          {user && <StatusBadge tone="info">{user.role}</StatusBadge>}
-        </div>
-        <Tooltip label="Sign out" side="bottom">
-          <Button variant="ghost" size="icon" aria-label="Sign out" onClick={clearSession}>
-            <LogOut />
-          </Button>
-        </Tooltip>
+        <div className="mx-1 hidden h-6 w-px bg-border sm:block" aria-hidden="true" />
+        <UserMenu />
       </div>
     </header>
   );

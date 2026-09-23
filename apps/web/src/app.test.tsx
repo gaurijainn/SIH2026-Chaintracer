@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
@@ -39,8 +39,7 @@ describe('routing and auth guard', () => {
     const router = mount('/');
     expect(router.state.location.pathname).toBe('/dashboard');
     expect(screen.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeInTheDocument();
-    expect(screen.getByText('Asha Rao')).toBeInTheDocument();
-    expect(screen.getByText('INVESTIGATOR')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Account menu, Asha Rao, Investigator' })).toBeInTheDocument();
   });
 
   it.each([
@@ -68,8 +67,9 @@ describe('routing and auth guard', () => {
   it('returns to /login on sign-out', async () => {
     signIn();
     const router = mount('/dashboard');
-    await userEvent.click(screen.getByRole('button', { name: 'Sign out' }));
-    expect(router.state.location.pathname).toBe('/login');
+    await userEvent.click(screen.getByRole('button', { name: /account menu/i }));
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Sign out' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/login'));
   });
 });
 

@@ -3,6 +3,8 @@ import { NavLink } from 'react-router-dom';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/cn';
+import { canAny } from '@/lib/permissions';
+import { useAuthStore } from '@/stores/auth';
 import { useUiStore } from '@/stores/ui';
 import { NAV_ITEMS } from './nav';
 
@@ -21,10 +23,12 @@ function Brand({ collapsed }: { collapsed: boolean }) {
 }
 
 function NavList({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {
+  const role = useAuthStore((s) => s.user?.role);
+  const items = NAV_ITEMS.filter((i) => !i.anyOf || canAny(role, i.anyOf));
   return (
     <nav aria-label="Primary" className="flex-1 overflow-y-auto p-2">
       <ul className="space-y-0.5">
-        {NAV_ITEMS.map(({ to, label, icon: Icon }) => {
+        {items.map(({ to, label, icon: Icon }) => {
           const link = (
             <NavLink
               to={to}

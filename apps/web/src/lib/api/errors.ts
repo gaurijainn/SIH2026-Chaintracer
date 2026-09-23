@@ -34,14 +34,22 @@ const FALLBACK: Record<number, string> = {
   429: 'Too many requests. Wait a moment and try again.',
 };
 
-/** Maps a status + body to a message an investigator can act on. 5xx bodies are deliberately discarded. */
-export function humanMessage(status: number, body?: { message?: unknown }): string {
+const BY_CODE: Record<string, string> = {
+  INVALID_CREDENTIALS: 'Incorrect email or password.',
+  RATE_LIMITED: 'Too many attempts. Wait a few minutes and try again.',
+  TOKEN_MISSING: FALLBACK[401]!,
+  TOKEN_EXPIRED: FALLBACK[401]!,
+  TOKEN_INVALID: FALLBACK[401]!,
+  REFRESH_REVOKED: FALLBACK[401]!,
+  FORBIDDEN: FALLBACK[403]!,
+};
+
+/** Maps a status + body to a message an investigator can act on. Server text is never shown verbatim. */
+export function humanMessage(status: number, body?: { error?: unknown }): string {
   if (status === 0) return 'Cannot reach the server. Check your connection and try again.';
   if (status >= 500) return 'The server hit a problem processing this request. Try again shortly; if it persists, contact your administrator.';
-  const serverMsg = typeof body?.message === 'string' ? body.message : '';
-  // 4xx messages from our own API are short and safe (e.g. "invalid credentials"); still cap length.
-  if (status === 400 || status === 401 || status === 403 || status === 404 || status === 409) return FALLBACK[status]!;
-  return (serverMsg && serverMsg.length <= 160 ? serverMsg : FALLBACK[status]) ?? 'The request could not be completed.';
+  const byCode = typeof body?.error === 'string' ? BY_CODE[body.error] : undefined;
+  return byCode ?? FALLBACK[status] ?? 'The request could not be completed.';
 }
 
 export function toApiError(err: unknown): ApiError {

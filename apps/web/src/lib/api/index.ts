@@ -10,7 +10,7 @@ export const api = createApiClient({
     return accessToken && refreshToken ? { accessToken, refreshToken } : null;
   },
   onTokens: (t) => useAuthStore.getState().setTokens(t),
-  onAuthFailure: () => useAuthStore.getState().clearSession(),
+  onAuthFailure: () => useAuthStore.getState().expireSession(),
 });
 
 export { ApiError, errorMessage, toApiError } from './errors';

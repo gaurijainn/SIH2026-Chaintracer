@@ -1,11 +1,16 @@
+import type { ReactElement } from 'react';
 import { createBrowserRouter, createMemoryRouter, Navigate, type RouteObject } from 'react-router-dom';
+import { RequirePermission } from '@/features/auth/access';
 import { ProtectedRoute } from '@/features/auth/ProtectedRoute';
 import { AppShell } from '@/layouts/AppShell';
-import type { RouteHandle } from '@/layouts/nav';
+import { INTAKE_ACCESS, REPORT_ACCESS, type RouteHandle } from '@/layouts/nav';
+import type { Permission } from '@/lib/permissions';
 import { LoginPage } from '@/pages/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { AlertsPage, CaseDetailPage, CasesPage, DashboardPage, IntakePage, ReportsPage, VaspsPage, WatchlistPage } from '@/pages/placeholders';
 import { SettingsPage } from '@/pages/SettingsPage';
+
+const gate = (permission: Permission, el: ReactElement) => <RequirePermission permission={permission}>{el}</RequirePermission>;
 
 const h = (title: string, parent?: RouteHandle['parent']): RouteHandle => ({ title, parent });
 
@@ -20,13 +25,13 @@ export const routes: RouteObject[] = [
         children: [
           { path: '/', element: <Navigate to="/dashboard" replace /> },
           { path: '/dashboard', element: <DashboardPage />, handle: h('Dashboard') },
-          { path: '/intake', element: <IntakePage />, handle: h('Intake') },
-          { path: '/cases', element: <CasesPage />, handle: h('Cases') },
-          { path: '/cases/:id', element: <CaseDetailPage />, handle: h('Case', { label: 'Cases', to: '/cases' }) },
-          { path: '/alerts', element: <AlertsPage />, handle: h('Alerts') },
-          { path: '/watchlist', element: <WatchlistPage />, handle: h('Watchlist') },
-          { path: '/vasps', element: <VaspsPage />, handle: h('VASP Registry') },
-          { path: '/reports', element: <ReportsPage />, handle: h('Reports') },
+          { path: '/intake', element: <RequirePermission anyOf={INTAKE_ACCESS}><IntakePage /></RequirePermission>, handle: h('Intake') },
+          { path: '/cases', element: gate('case:read', <CasesPage />), handle: h('Cases') },
+          { path: '/cases/:id', element: gate('case:read', <CaseDetailPage />), handle: h('Case', { label: 'Cases', to: '/cases' }) },
+          { path: '/alerts', element: gate('alert:read', <AlertsPage />), handle: h('Alerts') },
+          { path: '/watchlist', element: gate('watchlist:read', <WatchlistPage />), handle: h('Watchlist') },
+          { path: '/vasps', element: gate('vasp:read', <VaspsPage />), handle: h('VASP Registry') },
+          { path: '/reports', element: <RequirePermission anyOf={REPORT_ACCESS}><ReportsPage /></RequirePermission>, handle: h('Reports') },
           { path: '/settings', element: <SettingsPage />, handle: h('Settings') },
           { path: '*', element: <NotFoundPage />, handle: h('Not found') },
         ],
