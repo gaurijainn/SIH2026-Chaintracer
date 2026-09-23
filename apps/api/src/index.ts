@@ -10,6 +10,8 @@ import { BullTraceQueue } from './intake/queue';
 import { createIntakeService } from './intake/service';
 import { MuleService } from './mule/service';
 import { attachTraceSocket } from './realtime/socket';
+import { HttpMlClient } from './risk/mlClient';
+import { RiskService } from './risk/service';
 
 const env = loadEnv();
 const { deps, close } = buildDeps(env);
@@ -25,9 +27,11 @@ const intake = createIntakeService({
   defaults: { maxHops: env.TRACE_MAX_HOPS, minValueUsd: env.TRACE_MIN_USD, windowDays: env.TRACE_WINDOW_DAYS, taintModel: 'HAIRCUT' },
 });
 const mule = new MuleService({ prisma, driver: muleDriver });
+const mlClient = new HttpMlClient(env.ML_URL);
+const risk = new RiskService({ prisma, mlClient });
 const poller = new NcrpPoller(createHttpNcrpFeed(env), intake, env.NCRP_POLL_INTERVAL_S * 1000);
 
-const server = createApp(deps, { intake, mule }).listen(env.API_PORT, () => {
+const server = createApp(deps, { intake, mule, risk }).listen(env.API_PORT, () => {
   console.log(`api listening on :${env.API_PORT} (DATA_MODE=${env.DATA_MODE})`);
   poller.start();
 });
