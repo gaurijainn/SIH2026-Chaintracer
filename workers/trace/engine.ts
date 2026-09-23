@@ -69,6 +69,14 @@ export interface TraceEngineDeps {
   now?: () => number;
   /** Safety valve against runaway loops; not part of the plan's stop conditions. */
   maxNodes?: number;
+  /**
+   * B8 hook: called once per terminal after the trace completes, before returning. Used to
+   * auto-populate the watchlist with frontier addresses (terminals with reason 'max_hops' -- the
+   * trace stopped only because it ran out of hops, not because it reached a known exit point, so
+   * B8 keeps watching past where B4 stopped looking). Best-effort: a failure here must never fail
+   * the trace itself, so runTrace catches and logs, never throws, from this callback.
+   */
+  onTerminal?: (terminal: TraceTerminal, caseId: string) => Promise<void>;
 }
 
 export interface RunTraceOptions {
@@ -294,6 +302,15 @@ export async function runTrace(traceId: string, deps: TraceEngineDeps, opts: Run
     await flush();
     const durationMs = now() - start;
     await deps.prisma.traceJob.update({ where: { id: traceId }, data: { status: 'COMPLETED', finishedAt: new Date(now()) } });
+
+    if (deps.onTerminal) {
+      await Promise.all(
+        terminals.map((t) =>
+          deps.onTerminal!(t, job.caseId).catch((e) => console.error('B8 onTerminal hook failed (trace still completes)', e)),
+        ),
+      );
+    }
+
     await deps.publish({ event: 'trace.completed', payload: { traceId, caseId: job.caseId, terminals, durationMs } });
     return { terminals, hopsWritten };
   } catch (err) {

@@ -1,5 +1,6 @@
 import { RedisCache, createChainLayer } from '@ps26183/workers/adapters';
 import { loadEnv } from '@ps26183/shared';
+import { AlertService } from './alerts/service';
 import { createApp } from './app';
 import { buildDeps } from './deps';
 import { createPrisma } from './db/prisma';
@@ -12,6 +13,7 @@ import { MuleService } from './mule/service';
 import { attachTraceSocket } from './realtime/socket';
 import { HttpMlClient } from './risk/mlClient';
 import { RiskService } from './risk/service';
+import { WatchlistService } from './watchlist/service';
 
 const env = loadEnv();
 const { deps, close } = buildDeps(env);
@@ -29,9 +31,11 @@ const intake = createIntakeService({
 const mule = new MuleService({ prisma, driver: muleDriver });
 const mlClient = new HttpMlClient(env.ML_URL);
 const risk = new RiskService({ prisma, mlClient });
+const watchlist = new WatchlistService({ prisma });
+const alerts = new AlertService({ prisma });
 const poller = new NcrpPoller(createHttpNcrpFeed(env), intake, env.NCRP_POLL_INTERVAL_S * 1000);
 
-const server = createApp(deps, { intake, mule, risk }).listen(env.API_PORT, () => {
+const server = createApp(deps, { intake, mule, risk, watchlist, alerts }).listen(env.API_PORT, () => {
   console.log(`api listening on :${env.API_PORT} (DATA_MODE=${env.DATA_MODE})`);
   poller.start();
 });

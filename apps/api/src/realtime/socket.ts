@@ -1,13 +1,16 @@
 import type { Server as HttpServer } from 'node:http';
 import { Redis } from 'ioredis';
 import { Server as SocketIOServer } from 'socket.io';
-import { TRACE_EVENTS_CHANNEL, type TraceEventEnvelope } from '@ps26183/shared';
+import { ALERT_EVENTS_CHANNEL, TRACE_EVENTS_CHANNEL, type AlertEventEnvelope, type TraceEventEnvelope } from '@ps26183/shared';
+
+type RelayEnvelope = TraceEventEnvelope | AlertEventEnvelope;
 
 /**
- * B4 real-time transport. The trace worker (a separate process) publishes trace.progress/trace.hop/
- * trace.completed on a Redis channel (workers/trace/events.ts); this subscribes once per API process
- * and relays each event into a Socket.IO room scoped to its case, so the dashboard only sees events
- * for cases it has joined.
+ * B4/B8 real-time transport. The trace worker publishes trace.progress/trace.hop/trace.completed on
+ * TRACE_EVENTS_CHANNEL (workers/trace/events.ts); the B8 monitor worker publishes alert.new on
+ * ALERT_EVENTS_CHANNEL (workers/monitor/events.ts) the same way. This subscribes to both channels
+ * once per API process and relays every event into a Socket.IO room scoped to its case, so the
+ * dashboard only sees events for cases it has joined.
  */
 export function attachTraceSocket(httpServer: HttpServer, redisUrl: string): { io: SocketIOServer; close: () => Promise<void> } {
   const io = new SocketIOServer(httpServer, { cors: { origin: '*' } });
@@ -23,11 +26,13 @@ export function attachTraceSocket(httpServer: HttpServer, redisUrl: string): { i
     });
   });
 
-  sub.subscribe(TRACE_EVENTS_CHANNEL).catch((e) => console.error('trace socket subscribe failed', e));
+  Promise.all([sub.subscribe(TRACE_EVENTS_CHANNEL), sub.subscribe(ALERT_EVENTS_CHANNEL)]).catch((e) =>
+    console.error('realtime socket subscribe failed', e),
+  );
   sub.on('message', (_channel, message) => {
-    let envelope: TraceEventEnvelope;
+    let envelope: RelayEnvelope;
     try {
-      envelope = JSON.parse(message) as TraceEventEnvelope;
+      envelope = JSON.parse(message) as RelayEnvelope;
     } catch {
       return;
     }

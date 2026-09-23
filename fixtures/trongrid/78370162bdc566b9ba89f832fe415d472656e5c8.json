@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/0x0a92a78d509dfec14d2d9eadde31f83fc72788fd/transactions/trc20?limit=200&contract_address=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&only_confirmed=true&only_from=true"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[],\"success\":true,\"meta\":{\"at\":1790114395663,\"page_size\":0}}"
+  },
+  "recordedAt": "2026-09-22T21:59:55.358Z"
+}

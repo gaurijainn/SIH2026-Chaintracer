@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/THsKxBwWKogMmk7kCueFU6xqjoxmgJzGCn/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"ret\":[{\"contractRet\":\"SUCCESS\",\"fee\":1100000}],\"signature\":[\"340410fc4d1274328df8d9bc4a524ddeb42aec91be93db1e62b7de795f33cb0693fbd6aac7d5aa6d340c51c46127b0c73feef749e7b09983a77a1a924770badb00\"],\"txID\":\"0631f92f06687215b4c103183c8f67f548c9b6418d65fe2bec5d873fcfeb5521\",\"net_usage\":0,\"raw_data_hex\":\"0a026a942208151de1412e63cd2740c884af9fb0335a65080112610a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412300a154175fed5a31a7d9f232c2cf69e82aefd0358c7471012154156a45000597a57861e69ff2859ffea927ba63014180170a0c4ab9fb033\",\"net_fee\":100000,\"energy_usage\":0,\"blockNumber\":78211752,\"block_timestamp\":1765297287000,\"energy_fee\":0,\"energy_usage_total\":0,\"raw_data\":{\"contract\":[{\"parameter\":{\"value\":{\"amount\":1,\"owner_address\":\"4175fed5a31a7d9f232c2cf69e82aefd0358c74710\",\"to_address\":\"4156a45000597a57861e69ff2859ffea927ba63014\"},\"type_url\":\"type.googleapis.com/protocol.TransferContract\"},\"type\":\"TransferContract\"}],\"ref_block_bytes\":\"6a94\",\"ref_block_hash\":\"151de1412e63cd27\",\"expiration\":1765297341000,\"timestamp\":1765297283616},\"internal_transactions\":[]}],\"success\":true,\"meta\":{\"at\":1790140685097,\"fingerprint\":\"2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTUzUYawtU5zXqrDWJNpJ9795edFQmReFafAHZRmkBUnPGGh5D1228pxQBXkGvSoDqVpni8HeQio4CQ9nYMAEmVv3KVEKGUTDdEq2bvKNmEGLKzyTgFon8vd1ZHiKL3CRnj3UKUrZnS7x6rAfa7ESydWSAP1AGAJrnWTdx7ssPe7T12uVc\",\"links\":{\"next\":\"https://api.trongrid.io/v1/accounts/THsKxBwWKogMmk7kCueFU6xqjoxmgJzGCn/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc&fingerprint=2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTUzUYawtU5zXqrDWJNpJ9795edFQmReFafAHZRmkBUnPGGh5D1228pxQBXkGvSoDqVpni8HeQio4CQ9nYMAEmVv3KVEKGUTDdEq2bvKNmEGLKzyTgFon8vd1ZHiKL3CRnj3UKUrZnS7x6rAfa7ESydWSAP1AGAJrnWTdx7ssPe7T12uVc\"},\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:18:05.467Z"
+}

@@ -1,0 +1,13 @@
+[
+  {
+    "chain": "BTC",
+    "addr": "bc1qwatchedaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "direction": "out",
+    "counterparty": "bc1qcounterpartybbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "txHash": "b1a2c3d4e5f6000000000000000000000000000000000000000000000000aaaa",
+    "token": "BTC",
+    "amount": "50000000",
+    "usd": 30000,
+    "ts": 1758600000000
+  }
+]

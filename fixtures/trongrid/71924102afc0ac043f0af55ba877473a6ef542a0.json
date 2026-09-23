@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TCWJaooYd247snReNyp1K6FVcVFMDHxV9o/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"ret\":[{\"contractRet\":\"SUCCESS\",\"fee\":1100000}],\"signature\":[\"b2e6b6eff3b0a4d138294935611df8193edd43eed7a1797439379bd085ad9188710cf07e37bc8bcef64a14faa3f2056274fd94b8b88e607ce855b5c0b502c12401\"],\"txID\":\"6c34cd836c693d4b263a3af783873945d18d80687712f8a327fae5db9b429bd1\",\"net_usage\":0,\"raw_data_hex\":\"0a02ece52208aaad057c9d4ec0df40f892a882e6325a68080112640a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412330a1541ff6ed465288767f987e9fc128b42935c252b13751215411bd1ce4f50257eca85e499588260df3806b7329c18ea9df54370f8f092f1e532\",\"net_fee\":100000,\"energy_usage\":0,\"blockNumber\":71560423,\"block_timestamp\":1745336193000,\"energy_fee\":0,\"energy_usage_total\":0,\"raw_data\":{\"contract\":[{\"parameter\":{\"value\":{\"amount\":142429930,\"owner_address\":\"41ff6ed465288767f987e9fc128b42935c252b1375\",\"to_address\":\"411bd1ce4f50257eca85e499588260df3806b7329c\"},\"type_url\":\"type.googleapis.com/protocol.TransferContract\"},\"type\":\"TransferContract\"}],\"ref_block_bytes\":\"ece5\",\"ref_block_hash\":\"aaad057c9d4ec0df\",\"expiration\":1745372187000,\"timestamp\":1745336187000},\"internal_transactions\":[]}],\"success\":true,\"meta\":{\"at\":1790140312669,\"fingerprint\":\"2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTTBzhNGwrUuD4iZKxya4cpwxTaMaiH1XPCxhnQENuXK1yfZ71UUtijiiRHxwEbujwsdvJD6m1P5bATdcWHE3SEtp1QMyqCT5Kox7UZqTygWKoHnrAk18To2tbKwtRnS3EoBxVydBivZUj8yxhjMkzfbY8PBh1A79BVrZL7XfCbmdmmNYS\",\"links\":{\"next\":\"https://api.trongrid.io/v1/accounts/TCWJaooYd247snReNyp1K6FVcVFMDHxV9o/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc&fingerprint=2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTTBzhNGwrUuD4iZKxya4cpwxTaMaiH1XPCxhnQENuXK1yfZ71UUtijiiRHxwEbujwsdvJD6m1P5bATdcWHE3SEtp1QMyqCT5Kox7UZqTygWKoHnrAk18To2tbKwtRnS3EoBxVydBivZUj8yxhjMkzfbY8PBh1A79BVrZL7XfCbmdmmNYS\"},\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:11:53.024Z"
+}

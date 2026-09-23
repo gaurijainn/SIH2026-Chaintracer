@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TEoxiuPsHuLxztX7r3bK3W1b4r2nqUwBqN"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"owner_permission\":{\"keys\":[{\"address\":\"TEoxiuPsHuLxztX7r3bK3W1b4r2nqUwBqN\",\"weight\":1}],\"threshold\":1,\"permission_name\":\"owner\"},\"account_resource\":{\"energy_window_optimized\":true,\"latest_consume_time_for_energy\":1781923083000,\"energy_window_size\":28800000},\"active_permission\":[{\"operations\":\"7fff1fc0033ec30f000000000000000000000000000000000000000000000000\",\"keys\":[{\"address\":\"TEoxiuPsHuLxztX7r3bK3W1b4r2nqUwBqN\",\"weight\":1}],\"threshold\":1,\"id\":2,\"type\":\"Active\",\"permission_name\":\"active\"}],\"address\":\"413518f75544a4e46f829c30eb56bd3d15c1b586df\",\"create_time\":1766800029000,\"latest_consume_time\":1770021834000,\"latest_opration_time\":1781921160000,\"free_asset_net_usageV2\":[{\"value\":0,\"key\":\"1005108\"},{\"value\":0,\"key\":\"1005119\"},{\"value\":0,\"key\":\"1005129\"},{\"value\":0,\"key\":\"1005138\"},{\"value\":0,\"key\":\"1005114\"},{\"value\":0,\"key\":\"1005136\"},{\"value\":0,\"key\":\"1005157\"},{\"value\":0,\"key\":\"1005122\"},{\"value\":0,\"key\":\"1005121\"},{\"value\":0,\"key\":\"1005120\"},{\"value\":0,\"key\":\"1005141\"},{\"value\":0,\"key\":\"1005163\"},{\"value\":0,\"key\":\"1005074\"},{\"value\":0,\"key\":\"1005151\"},{\"value\":0,\"key\":\"1005162\"}],\"assetV2\":[{\"value\":10000000,\"key\":\"1005108\"},{\"value\":8888880,\"key\":\"1005119\"},{\"value\":100,\"key\":\"1005129\"},{\"value\":138138000,\"key\":\"1005138\"},{\"value\":9999990,\"key\":\"1005114\"},{\"value\":999999999,\"key\":\"1005136\"},{\"value\":8888888,\"key\":\"1005157\"},{\"value\":660000,\"key\":\"1005122\"},{\"value\":1000000,\"key\":\"1005121\"},{\"value\":7110000,\"key\":\"1005120\"},{\"value\":970000,\"key\":\"1005141\"},{\"value\":8888022,\"key\":\"1005163\"},{\"value\":2222222,\"key\":\"1005074\"},{\"value\":138138000,\"key\":\"1005151\"},{\"value\":2135133000,\"key\":\"1005162\"}],\"frozenV2\":[{},{\"type\":\"ENERGY\"},{\"type\":\"TRON_POWER\"}],\"balance\":12772571,\"trc20\":[{\"THxYWbzAgzQgQaYi9G4mjeL1tq1hdrZe55\":\"138138\"}],\"latest_consume_free_time\":1781921160000,\"net_window_size\":28800000,\"net_window_optimized\":true}],\"success\":true,\"meta\":{\"at\":1790140456324,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:14:16.694Z"
+}

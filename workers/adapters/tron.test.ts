@@ -5,6 +5,7 @@ import type { AxiosAdapter } from 'axios';
 import { describe, expect, it } from 'vitest';
 import { USDT_TRC20, loadEnv } from '@ps26183/shared';
 import { MemoryCache } from './cache';
+import { collectAddedBlackListEvents } from './tron';
 import { createChainLayer, collectTransfers, type ChainLayer } from './index';
 import { DEMO, demoRoutes, demoTransport, fakeTransport, hexAddr, reply, throttled, tronAddr, type Route } from './testing';
 
@@ -247,6 +248,72 @@ describe('B3 done-when: page 1,000+ transfers of a busy TRON address', () => {
     const { items } = await collectTransfers(layer(demoTransport()).tron, DEMO.tronBusy, 'out', { since });
     expect(items).toHaveLength(100);
     expect(Math.min(...items.map((i) => i.ts))).toBeGreaterThanOrEqual(since);
+  });
+});
+
+describe('TronAdapter.getAddedBlackListEvents (B7.4 bootstrap collector)', () => {
+  const blEvent = (id: string, userHex: string, block: number, ts: number) => ({
+    transaction_id: id, block_number: block, block_timestamp: ts, event_name: 'AddedBlackList', result: { _user: userHex },
+  });
+
+  it('requests the USDT-TRC20 contract event stream with the documented params', async () => {
+    const t = fakeTransport([[/./, () => ({ data: [], success: true, meta: {} })]]);
+    await layer(t).tron.getAddedBlackListEvents();
+    const u = new URL(t.calls[0].url);
+    expect(u.origin + u.pathname).toBe(`https://api.trongrid.io/v1/contracts/${USDT_TRC20}/events`);
+    expect(Object.fromEntries(u.searchParams)).toEqual({ event_name: 'AddedBlackList', only_confirmed: 'true', limit: '200' });
+  });
+
+  it('paginates via meta.fingerprint across 3 pages and terminates when no fingerprint remains', async () => {
+    const t = fakeTransport([
+      [/fingerprint=FP2/, () => ({ data: [blEvent('c'.repeat(64), hexAddr('bl-3'), 3, 300)], success: true, meta: {} })],
+      [/fingerprint=FP1/, () => ({ data: [blEvent('b'.repeat(64), hexAddr('bl-2'), 2, 200)], success: true, meta: { fingerprint: 'FP2' } })],
+      [/events\?/, () => ({ data: [blEvent('a'.repeat(64), hexAddr('bl-1'), 1, 100)], success: true, meta: { fingerprint: 'FP1' } })],
+    ]);
+    const a = layer(t).tron;
+    const { items, pages, truncated } = await collectAddedBlackListEvents(a);
+    expect(pages).toBe(3);
+    expect(truncated).toBe(false);
+    expect(items.map((i) => i.address)).toEqual([tronAddr('bl-1'), tronAddr('bl-2'), tronAddr('bl-3')]);
+    expect(items[0]).toEqual({ address: tronAddr('bl-1'), txHash: 'a'.repeat(64), blockNumber: 1, blockTimestampMs: 100 });
+  });
+
+  it('de-duplicates events that a provider retry/failover resurfaces across pages', async () => {
+    const t = fakeTransport([
+      [/fingerprint=FP1/, () => ({ data: [blEvent('a'.repeat(64), hexAddr('bl-1'), 1, 100)], success: true, meta: {} })], // same event repeated
+      [/events\?/, () => ({ data: [blEvent('a'.repeat(64), hexAddr('bl-1'), 1, 100)], success: true, meta: { fingerprint: 'FP1' } })],
+    ]);
+    const { items, pages } = await collectAddedBlackListEvents(layer(t).tron);
+    expect(pages).toBe(2);
+    expect(items).toHaveLength(1);
+  });
+
+  it('stops instead of looping forever if a fingerprint repeats', async () => {
+    const t = fakeTransport([[/./, () => ({ data: [blEvent('a'.repeat(64), hexAddr('bl-1'), 1, 100)], success: true, meta: { fingerprint: 'SAME' } })]]);
+    const { pages, truncated } = await collectAddedBlackListEvents(layer(t).tron, { maxPages: 10 });
+    expect(pages).toBe(2); // first page returns SAME, second page also returns SAME -> stop, no third call
+    expect(truncated).toBe(false);
+  });
+
+  it('is cached: a rerun of the same cursor makes no further calls', async () => {
+    const t = fakeTransport([[/./, () => ({ data: [], success: true, meta: {} })]]);
+    const a = layer(t).tron;
+    await a.getAddedBlackListEvents();
+    const n = t.calls.length;
+    await a.getAddedBlackListEvents();
+    expect(t.calls.length).toBe(n);
+  });
+
+  it('decodes a bare 20-byte 0x-prefixed EVM address (TronGrid contract-event ABI decoding, no Tron 0x41 version byte) to the same base58 address as the 41-prefixed form', async () => {
+    // Regression test: TronGrid's contract-events endpoint decodes the ABI `address` param as a
+    // plain 20-byte EVM value (e.g. "0x0006b3a8104775e7b9eaba2c6e1ce75212aa785d"), NOT the 21-byte
+    // 0x41-prefixed hex its REST account APIs use. A live run once silently passed these through
+    // unconverted (raw.startsWith('41') was false), producing invalid addresses that then failed
+    // downstream address normalization for every single blacklist-derived row.
+    const bare20Byte = `0x${hexAddr('bl-bare').slice(2)}`; // strip the '41' the helper adds, keep '0x' prefix
+    const t = fakeTransport([[/./, () => ({ data: [blEvent('a'.repeat(64), bare20Byte, 1, 100)], success: true, meta: {} })]]);
+    const { items } = await collectAddedBlackListEvents(layer(t).tron);
+    expect(items[0].address).toBe(tronAddr('bl-bare'));
   });
 });
 

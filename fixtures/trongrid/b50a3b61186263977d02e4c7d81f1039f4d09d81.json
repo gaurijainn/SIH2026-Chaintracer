@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TGwGQ3skkQqUdGo1gwuanXy6VCCgQceSAj/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"ret\":[{\"contractRet\":\"SUCCESS\",\"fee\":2100000}],\"signature\":[\"af1a9339a48ee7cb95e46235ac441fdb5687037a343b312a100c606d44038b973e54e4ed4dac0cf16bdacc3c4b5ebd3b6450629995c1d85302438f74c1bdebfd00\",\"f081baf5ac6b06ecee560787b5bca280fb81d43d6787253edca1c35b24ddce90669c05db31b710c81b53885d3ac7c49bc450361c0baf990a982fda2c05ccb3b501\"],\"txID\":\"441f653ad6f2815f2410a8d60c5c24216ab03d00b7438128247888fc8c855095\",\"net_usage\":0,\"raw_data_hex\":\"0a022f7122080debc1017f5c67d240f5a0a1fdad325a68080112640a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412330a1541eb0ac3d23f4b0eebf361a7db0743ab1f78d1686f1215414c6ae23c9f02b8c5b42184b1b98ae803fcd6aee1188084af5f70c9ce87d4ad32\",\"net_fee\":100000,\"energy_usage\":0,\"blockNumber\":66531196,\"block_timestamp\":1730242830000,\"energy_fee\":0,\"energy_usage_total\":0,\"raw_data\":{\"contract\":[{\"parameter\":{\"value\":{\"amount\":200000000,\"owner_address\":\"41eb0ac3d23f4b0eebf361a7db0743ab1f78d1686f\",\"to_address\":\"414c6ae23c9f02b8c5b42184b1b98ae803fcd6aee1\"},\"type_url\":\"type.googleapis.com/protocol.TransferContract\"},\"type\":\"TransferContract\"}],\"ref_block_bytes\":\"2f71\",\"ref_block_hash\":\"0debc1017f5c67d2\",\"expiration\":1730329202805,\"timestamp\":1730242799433},\"internal_transactions\":[]}],\"success\":true,\"meta\":{\"at\":1790140609466,\"fingerprint\":\"2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTUYV4Sd469BRTbwrTHMb8BS1sWUTU8axjrZ3op5HpwqwVZ5LpPWnRUz8Zgph2pRVyQw3WRNe9BKFzGYs88rn9pGVPK24cJh7JDJ3dJm7EhL3rnVf5HUFRyauzUe536EraXexrEY1PoMR6kqwE7KwonSFiJ6oEqWsHvqWdm1GzzbXWpYc2\",\"links\":{\"next\":\"https://api.trongrid.io/v1/accounts/TGwGQ3skkQqUdGo1gwuanXy6VCCgQceSAj/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc&fingerprint=2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTUYV4Sd469BRTbwrTHMb8BS1sWUTU8axjrZ3op5HpwqwVZ5LpPWnRUz8Zgph2pRVyQw3WRNe9BKFzGYs88rn9pGVPK24cJh7JDJ3dJm7EhL3rnVf5HUFRyauzUe536EraXexrEY1PoMR6kqwE7KwonSFiJ6oEqWsHvqWdm1GzzbXWpYc2\"},\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:16:49.827Z"
+}

@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TAxuvTVnS8LNTbqvtRito1iUKumDbftZfw"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"owner_permission\":{\"keys\":[{\"address\":\"TAxuvTVnS8LNTbqvtRito1iUKumDbftZfw\",\"weight\":1}],\"threshold\":1,\"permission_name\":\"owner\"},\"account_resource\":{\"energy_window_optimized\":true,\"latest_consume_time_for_energy\":1772556141000,\"energy_window_size\":28800000},\"active_permission\":[{\"operations\":\"7fff1fc0033ec30f000000000000000000000000000000000000000000000000\",\"keys\":[{\"address\":\"TAxuvTVnS8LNTbqvtRito1iUKumDbftZfw\",\"weight\":1}],\"threshold\":1,\"id\":2,\"type\":\"Active\",\"permission_name\":\"active\"}],\"address\":\"410ae9de616c18609fb016fff04afa226bf4dcf4fb\",\"create_time\":1768984743000,\"latest_opration_time\":1771848657000,\"free_asset_net_usageV2\":[{\"value\":0,\"key\":\"1005108\"},{\"value\":0,\"key\":\"1005119\"},{\"value\":0,\"key\":\"1005118\"},{\"value\":0,\"key\":\"1005129\"},{\"value\":0,\"key\":\"1005127\"},{\"value\":0,\"key\":\"1005114\"},{\"value\":0,\"key\":\"1005125\"},{\"value\":0,\"key\":\"1005122\"},{\"value\":0,\"key\":\"1005121\"},{\"value\":0,\"key\":\"1005132\"},{\"value\":0,\"key\":\"1005120\"},{\"value\":0,\"key\":\"1005131\"},{\"value\":0,\"key\":\"1005142\"},{\"value\":0,\"key\":\"1005141\"}],\"assetV2\":[{\"value\":10000000,\"key\":\"1005108\"},{\"value\":8888880,\"key\":\"1005119\"},{\"value\":10000,\"key\":\"1005118\"},{\"value\":300,\"key\":\"1005129\"},{\"value\":88888888,\"key\":\"1005127\"},{\"value\":9999990,\"key\":\"1005114\"},{\"value\":200,\"key\":\"1005125\"},{\"value\":660000,\"key\":\"1005122\"},{\"value\":2000000,\"key\":\"1005121\"},{\"value\":88888888,\"key\":\"1005132\"},{\"value\":7110000,\"key\":\"1005120\"},{\"value\":88888888,\"key\":\"1005131\"},{\"value\":6666666,\"key\":\"1005142\"},{\"value\":970000,\"key\":\"1005141\"}],\"frozenV2\":[{},{\"type\":\"ENERGY\"},{\"type\":\"TRON_POWER\"}],\"balance\":1017000,\"trc20\":[{\"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t\":\"199066\"}],\"latest_consume_free_time\":1770962319000,\"net_window_size\":28800000,\"net_window_optimized\":true}],\"success\":true,\"meta\":{\"at\":1790140162811,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:09:23.174Z"
+}

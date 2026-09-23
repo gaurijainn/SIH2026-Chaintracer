@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/THxo11xQS1s43URnjwvQoRBrHDCDPSWP5X"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"owner_permission\":{\"keys\":[{\"address\":\"THxo11xQS1s43URnjwvQoRBrHDCDPSWP5X\",\"weight\":1}],\"threshold\":1,\"permission_name\":\"owner\"},\"account_resource\":{\"energy_window_optimized\":true,\"latest_consume_time_for_energy\":1771156797000,\"energy_window_size\":28800000},\"active_permission\":[{\"operations\":\"7fff1fc0033ec30f000000000000000000000000000000000000000000000000\",\"keys\":[{\"address\":\"THxo11xQS1s43URnjwvQoRBrHDCDPSWP5X\",\"weight\":1}],\"threshold\":1,\"id\":2,\"type\":\"Active\",\"permission_name\":\"active\"}],\"address\":\"4157acf8b2d56ca4f760fddeba63868e2dc9f6055e\",\"create_time\":1760258145000,\"latest_consume_time\":1771156782000,\"latest_opration_time\":1771156542000,\"free_asset_net_usageV2\":[{\"value\":0,\"key\":\"1005119\"},{\"value\":0,\"key\":\"1005129\"},{\"value\":0,\"key\":\"1005114\"},{\"value\":0,\"key\":\"1005125\"},{\"value\":0,\"key\":\"1005124\"},{\"value\":0,\"key\":\"1005112\"},{\"value\":0,\"key\":\"1005122\"},{\"value\":0,\"key\":\"1005110\"},{\"value\":0,\"key\":\"1005121\"},{\"value\":0,\"key\":\"1005120\"},{\"value\":0,\"key\":\"1005141\"},{\"value\":0,\"key\":\"1005084\"}],\"assetV2\":[{\"value\":88888888,\"key\":\"1005119\"},{\"value\":100,\"key\":\"1005129\"},{\"value\":88888800,\"key\":\"1005114\"},{\"value\":400,\"key\":\"1005125\"},{\"value\":10000,\"key\":\"1005124\"},{\"value\":7777777,\"key\":\"1005112\"},{\"value\":98247286,\"key\":\"1005122\"},{\"value\":8101001,\"key\":\"1005110\"},{\"value\":58585858,\"key\":\"1005121\"},{\"value\":7110000,\"key\":\"1005120\"},{\"value\":970000,\"key\":\"1005141\"},{\"value\":6602772,\"key\":\"1005084\"}],\"frozenV2\":[{},{\"type\":\"ENERGY\"},{\"type\":\"TRON_POWER\"}],\"balance\":17,\"trc20\":[{\"TF6f9yCXxGSpySRGv59eTyzWGVtKCd8oa7\":\"292292\"}],\"latest_consume_free_time\":1763476404000,\"net_window_size\":28800000,\"net_window_optimized\":true}],\"success\":true,\"meta\":{\"at\":1790140698683,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:18:19.041Z"
+}

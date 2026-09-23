@@ -30,6 +30,9 @@ const schema = z.object({
   NCRP_POLL_INTERVAL_S: z.coerce.number().int().min(0).default(0), // 0 = poller off
   API_PORT: z.coerce.number().int().default(4000),
   FIXTURES_DIR: z.string().default('fixtures'),
+  // B8: live ETH (chainid=1) USDT monitoring stays disabled until someone manually confirms the USDT
+  // contract address against Etherscan and flips this -- see workers/src/index.ts's USDT_EVM comment.
+  ETH_USDT_CONTRACT_VERIFIED: z.enum(['true', 'false']).default('false'),
 });
 
 export type Env = z.infer<typeof schema>;

@@ -10,6 +10,7 @@ import { bfsDepths, hopsToNearest } from './graphDistance';
 import { persistMuleFlags, type MulePrisma } from './persist';
 import { detectBtcPeelChain } from './rules/peelChain';
 import type { HopLike, MuleFeatures, MuleFlagResult } from './types';
+import { upsertWatchlistItem } from '@ps26183/workers/monitor/watchlist';
 
 /** Label categories that make an address a stop condition/exit point (mirrors workers/trace/stopConditions.ts). */
 const SERVICE_CATEGORIES = new Set(['exchange', 'mixer', 'bridge']);
@@ -153,6 +154,22 @@ export async function analyzeMuleRings(deps: AnalyzeCaseDeps, caseId: string): P
   }
 
   await persistMuleFlags({ prisma: mulePrisma }, flags);
+
+  // B8 auto-populate watchlist: every address flagged by mule/layering detection joins this case's
+  // watchlist with reason 'mule'. Best-effort -- a watchlist hiccup must never fail mule analysis.
+  const watchlistPrisma = {
+    watchlistItem: {
+      upsert: (args: { where: Record<string, unknown>; create: Record<string, unknown>; update: Record<string, unknown> }) =>
+        deps.prisma.watchlistItem.upsert(args as never),
+    },
+  };
+  await Promise.all(
+    flags.map((f) =>
+      upsertWatchlistItem(watchlistPrisma, { caseId, chain: f.chain, addr: f.addr, reason: 'mule' }).catch((e) =>
+        console.error('B8 watchlist auto-add (mule) failed', e),
+      ),
+    ),
+  );
 
   // --- Appendix B feature vector per address (informational; some fields need live provider data B6 does not fetch) ---
   const muleCandidateKeys = new Set(flags.map((f) => addrKey(f.chain, f.addr)));

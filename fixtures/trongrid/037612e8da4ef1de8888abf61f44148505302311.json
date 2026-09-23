@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TDLA54VyhR5giYjzBjUZ6dhBYGT4daVUSr"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"free_asset_net_usageV2\":[{\"value\":0,\"key\":\"1005108\"},{\"value\":0,\"key\":\"1005119\"},{\"value\":0,\"key\":\"1005107\"},{\"value\":0,\"key\":\"1005118\"},{\"value\":0,\"key\":\"1005127\"},{\"value\":0,\"key\":\"1005138\"},{\"value\":0,\"key\":\"1005114\"},{\"value\":0,\"key\":\"1005136\"},{\"value\":0,\"key\":\"1005157\"},{\"value\":0,\"key\":\"1005112\"},{\"value\":0,\"key\":\"1005178\"},{\"value\":0,\"key\":\"1005122\"},{\"value\":0,\"key\":\"1005121\"},{\"value\":0,\"key\":\"1005120\"},{\"value\":0,\"key\":\"1005141\"},{\"value\":0,\"key\":\"1005074\"},{\"value\":0,\"key\":\"1005151\"}],\"account_resource\":{\"energy_window_optimized\":true,\"energy_window_size\":28800000},\"assetV2\":[{\"value\":10000000,\"key\":\"1005108\"},{\"value\":8888880,\"key\":\"1005119\"},{\"value\":18745498,\"key\":\"1005107\"},{\"value\":20000,\"key\":\"1005118\"},{\"value\":88888888,\"key\":\"1005127\"},{\"value\":138138000,\"key\":\"1005138\"},{\"value\":88888800,\"key\":\"1005114\"},{\"value\":999999999,\"key\":\"1005136\"},{\"value\":8888888,\"key\":\"1005157\"},{\"value\":7777777,\"key\":\"1005112\"},{\"value\":10,\"key\":\"1005178\"},{\"value\":660000,\"key\":\"1005122\"},{\"value\":58585858,\"key\":\"1005121\"},{\"value\":7110000,\"key\":\"1005120\"},{\"value\":970000,\"key\":\"1005141\"},{\"value\":2222222,\"key\":\"1005074\"},{\"value\":138138000,\"key\":\"1005151\"}],\"frozenV2\":[{},{\"type\":\"ENERGY\"},{\"type\":\"TRON_POWER\"}],\"address\":\"4124deaa76d21099f0eac0ff4bbeb234bb78119539\",\"balance\":328,\"trc20\":[{\"TF6f9yCXxGSpySRGv59eTyzWGVtKCd8oa7\":\"292292\"},{\"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t\":\"48528814089\"}],\"account_name\":\"437265617465644279436f6e7472616374\",\"net_window_size\":28800000,\"type\":\"Contract\",\"net_window_optimized\":true}],\"success\":true,\"meta\":{\"at\":1790140364924,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:12:45.304Z"
+}

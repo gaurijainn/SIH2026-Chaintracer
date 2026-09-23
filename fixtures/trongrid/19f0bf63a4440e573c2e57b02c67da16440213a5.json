@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TAEAgm4YsAb5spzNLyGqA3MjwpbQijKLbp/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"ret\":[{\"contractRet\":\"SUCCESS\",\"fee\":1100000}],\"signature\":[\"32fe3a7aae47d3dae01363f75927f5bd4c61a05fd876f14eaaddf955a98c4cee0da74c42d19fe06a82f754880ecaa307d7936b2f53af3f7e38de453c4a00687501\"],\"txID\":\"f1d954d5e777181e3afb91cfbd77a4ce620a7b69c76bcd19a9cecd9b63767848\",\"net_usage\":0,\"raw_data_hex\":\"0a02111c2208c27fd185dcd3d8314094fbbe8b8c335a67080112630a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412320a15411d7f346f9d25d88fa5bf08f9d2c0da55f485c9b212154102d44e7a2f041f074083281ef3728aebcea7d8c718c0843d70b4a6bb8b8c33\",\"net_fee\":100000,\"energy_usage\":0,\"blockNumber\":74977583,\"block_timestamp\":1755591927000,\"energy_fee\":0,\"energy_usage_total\":0,\"raw_data\":{\"contract\":[{\"parameter\":{\"value\":{\"amount\":1000000,\"owner_address\":\"411d7f346f9d25d88fa5bf08f9d2c0da55f485c9b2\",\"to_address\":\"4102d44e7a2f041f074083281ef3728aebcea7d8c7\"},\"type_url\":\"type.googleapis.com/protocol.TransferContract\"},\"type\":\"TransferContract\"}],\"ref_block_bytes\":\"111c\",\"ref_block_hash\":\"c27fd185dcd3d831\",\"expiration\":1755591982484,\"timestamp\":1755591922484},\"internal_transactions\":[]}],\"success\":true,\"meta\":{\"at\":1790140829039,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:20:29.372Z"
+}

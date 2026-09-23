@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TAad1BY7oUjMNepYVmThHEfCswbpDYAtFz/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"ret\":[{\"contractRet\":\"SUCCESS\",\"fee\":1100000}],\"signature\":[\"b2195b57a83c76e2b2a9b8906b6499c5b6d2db19f96432b76353681cb266194676b17ce1b56e5290927c4855ffe7d3207775e8f82037596b416cf73ae3cac4cb1b\"],\"txID\":\"cad38eefad0dcd93ef12eae6a0f342955aaca80a1ed1c623fb379c8424de574f\",\"net_usage\":0,\"raw_data_hex\":\"0a0287242208c1b935e35772c7eb40f8adefccf9335a78080212740a32747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e736665724173736574436f6e7472616374123e0a0731303035303932121541aed6fb17be8d99fb8335faa16d777df0aec350ad1a154106b29839baff3d64e4d42bb075380da7e45086192081e9debade057098d9ebccf933\",\"net_fee\":100000,\"energy_usage\":0,\"blockNumber\":84772645,\"block_timestamp\":1784988498000,\"energy_fee\":0,\"energy_usage_total\":0,\"raw_data\":{\"contract\":[{\"parameter\":{\"value\":{\"amount\":197154813057,\"asset_name\":\"1005092\",\"owner_address\":\"41aed6fb17be8d99fb8335faa16d777df0aec350ad\",\"to_address\":\"4106b29839baff3d64e4d42bb075380da7e4508619\"},\"type_url\":\"type.googleapis.com/protocol.TransferAssetContract\"},\"type\":\"TransferAssetContract\"}],\"ref_block_bytes\":\"8724\",\"ref_block_hash\":\"c1b935e35772c7eb\",\"expiration\":1784988555000,\"timestamp\":1784988495000},\"internal_transactions\":[]}],\"success\":true,\"meta\":{\"at\":1790140929428,\"fingerprint\":\"2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTVuNrze5bZZi8qYfBr8i4p5YfNs2ZBrzKkyzrRpwvgkoTuRz9Atpg57pmT8VDn43LEMXLN9yW7N8A5tMcLraH58xNgnJs2xzFgQBzqhMtAgLqjfE81NWNgf4eVbFZKyCcgpddKBN9XtkqB12kSh6ZT31ZcvKhg7Kvz7iLvEe2KPLjG5dc\",\"links\":{\"next\":\"https://api.trongrid.io/v1/accounts/TAad1BY7oUjMNepYVmThHEfCswbpDYAtFz/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc&fingerprint=2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTVuNrze5bZZi8qYfBr8i4p5YfNs2ZBrzKkyzrRpwvgkoTuRz9Atpg57pmT8VDn43LEMXLN9yW7N8A5tMcLraH58xNgnJs2xzFgQBzqhMtAgLqjfE81NWNgf4eVbFZKyCcgpddKBN9XtkqB12kSh6ZT31ZcvKhg7Kvz7iLvEe2KPLjG5dc\"},\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:22:09.780Z"
+}

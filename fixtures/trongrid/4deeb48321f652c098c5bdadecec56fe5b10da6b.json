@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TCeiDeAgJ3upoZC47Vw8yvsdigRGU7uspn"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"owner_permission\":{\"keys\":[{\"address\":\"TCeiDeAgJ3upoZC47Vw8yvsdigRGU7uspn\",\"weight\":1}],\"threshold\":1,\"permission_name\":\"owner\"},\"account_resource\":{\"energy_window_optimized\":true,\"latest_consume_time_for_energy\":1769166912000,\"energy_window_size\":28800000},\"active_permission\":[{\"operations\":\"7fff1fc0033ec30f000000000000000000000000000000000000000000000000\",\"keys\":[{\"address\":\"TCeiDeAgJ3upoZC47Vw8yvsdigRGU7uspn\",\"weight\":1}],\"threshold\":1,\"id\":2,\"type\":\"Active\",\"permission_name\":\"active\"}],\"address\":\"411d68dcf789d32603b5a1d31fcc35e16aeaafc351\",\"create_time\":1763354913000,\"latest_opration_time\":1769166909000,\"free_asset_net_usageV2\":[{\"value\":0,\"key\":\"1005141\"},{\"value\":0,\"key\":\"1005122\"}],\"assetV2\":[{\"value\":660000,\"key\":\"1005122\"},{\"value\":970000,\"key\":\"1005141\"}],\"frozenV2\":[{},{\"type\":\"ENERGY\"},{\"type\":\"TRON_POWER\"}],\"balance\":1,\"trc20\":[{\"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t\":\"5154\"}],\"latest_consume_free_time\":1769166909000,\"net_window_size\":28800000,\"net_window_optimized\":true}],\"success\":true,\"meta\":{\"at\":1790140322813,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:12:03.187Z"
+}

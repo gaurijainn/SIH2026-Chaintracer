@@ -1,0 +1,20 @@
+{
+  "_comment": "B8 deterministic replay fixture: an outbound transfer from a watched TRON wallet that lands directly on an exchange-attributed (Label category='exchange') address -- exercises A2 VASP-landing (CRITICAL) and A1 Movement together on the same event. See tron-watched-transfer.json for fixture-format rationale and address-validity note.",
+  "watchedAddr": "TBUEAwjGR68iDTdT5g2qfAa8mgTW7UPpCu",
+  "vaspAddr": "TTy5wSJAd9M9vrXd7NFTbjSXDXgUxVND5F",
+  "vaspName": "Fixture Exchange Ltd",
+  "transfers": [
+    {
+      "chain": "TRON",
+      "txHash": "c9d1e2f3a4b5960000000000000000000000000000000000000000000000bbbb",
+      "idx": 1,
+      "from": "TBUEAwjGR68iDTdT5g2qfAa8mgTW7UPpCu",
+      "to": "TTy5wSJAd9M9vrXd7NFTbjSXDXgUxVND5F",
+      "token": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      "amount": "25000000000",
+      "usd": 25000,
+      "ts": 1758600100000,
+      "block": 12345679
+    }
+  ]
+}

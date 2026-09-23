@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TDd7coWrGnFfAS5TPYMJykv4vVxr2ymNYN"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"owner_permission\":{\"keys\":[{\"address\":\"TDd7coWrGnFfAS5TPYMJykv4vVxr2ymNYN\",\"weight\":1}],\"threshold\":1,\"permission_name\":\"owner\"},\"account_resource\":{\"energy_window_optimized\":true,\"latest_consume_time_for_energy\":1775737287000,\"energy_window_size\":28800000},\"active_permission\":[{\"operations\":\"7fff1fc0033ec30f000000000000000000000000000000000000000000000000\",\"keys\":[{\"address\":\"TDd7coWrGnFfAS5TPYMJykv4vVxr2ymNYN\",\"weight\":1}],\"threshold\":1,\"id\":2,\"type\":\"Active\",\"permission_name\":\"active\"}],\"address\":\"412813b0960ff9a49576d8b28e0198bcf0fc328df7\",\"create_time\":1758352968000,\"latest_consume_time\":1774038840000,\"latest_opration_time\":1775737281000,\"free_asset_net_usageV2\":[{\"value\":0,\"key\":\"1005119\"},{\"value\":0,\"key\":\"1005129\"},{\"value\":0,\"key\":\"1005138\"},{\"value\":0,\"key\":\"1005126\"},{\"value\":0,\"key\":\"1005114\"},{\"value\":0,\"key\":\"1005136\"},{\"value\":0,\"key\":\"1005002\"},{\"value\":0,\"key\":\"1005122\"},{\"value\":0,\"key\":\"1005121\"},{\"value\":0,\"key\":\"1005120\"},{\"value\":0,\"key\":\"1005141\"}],\"assetV2\":[{\"value\":8888880,\"key\":\"1005119\"},{\"value\":100,\"key\":\"1005129\"},{\"value\":138138000,\"key\":\"1005138\"},{\"value\":100,\"key\":\"1005126\"},{\"value\":8888888,\"key\":\"1005114\"},{\"value\":999999999,\"key\":\"1005136\"},{\"value\":1000000,\"key\":\"1005002\"},{\"value\":660000,\"key\":\"1005122\"},{\"value\":1000000,\"key\":\"1005121\"},{\"value\":7110000,\"key\":\"1005120\"},{\"value\":970000,\"key\":\"1005141\"}],\"frozenV2\":[{},{\"type\":\"ENERGY\"},{\"type\":\"TRON_POWER\"}],\"trc20\":[],\"latest_consume_free_time\":1775737281000,\"net_window_size\":28800000,\"net_window_optimized\":true}],\"success\":true,\"meta\":{\"at\":1790140387703,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:13:08.185Z"
+}

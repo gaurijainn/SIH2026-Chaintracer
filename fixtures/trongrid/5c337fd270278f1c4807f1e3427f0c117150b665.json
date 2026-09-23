@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TJ3hRDhwbhLi5ZeXasMaSKtiKr5JWKog6T/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"ret\":[{\"contractRet\":\"SUCCESS\",\"fee\":1100000}],\"signature\":[\"87d1e094397f74ade03a70cf6551b34bf67a2eb90710e42eb0fe5fe211aadc12f6df2ced11da4e56b6ad57c1a67d8444302532422be7684626b36c5eba84f62b01\"],\"txID\":\"bbee72bbdd0e851ed09cb6bf436e417fe5cb3e8bfd00406fb6953072414acd5c\",\"net_usage\":0,\"raw_data_hex\":\"0a02a0802208d2f916e59dbe898140b8d5dbc3b5335a67080112630a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412320a1541ca9ddce47b18d52210d702ffbbb2dff816c47f04121541589a641d5a9b771b3dfe1739323023203189e9521880ea30709c98d8c3b533\",\"net_fee\":100000,\"energy_usage\":0,\"blockNumber\":78684308,\"block_timestamp\":1766715693000,\"energy_fee\":0,\"energy_usage_total\":0,\"raw_data\":{\"contract\":[{\"parameter\":{\"value\":{\"amount\":800000,\"owner_address\":\"41ca9ddce47b18d52210d702ffbbb2dff816c47f04\",\"to_address\":\"41589a641d5a9b771b3dfe1739323023203189e952\"},\"type_url\":\"type.googleapis.com/protocol.TransferContract\"},\"type\":\"TransferContract\"}],\"ref_block_bytes\":\"a080\",\"ref_block_hash\":\"d2f916e59dbe8981\",\"expiration\":1766715747000,\"timestamp\":1766715690012},\"internal_transactions\":[]}],\"success\":true,\"meta\":{\"at\":1790140719587,\"fingerprint\":\"2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTUzt88ZwTREPQzL1NujQu85hd7WWa7818kcycBwG24m3hAp7h9qpmgHUocyPdZrbrpTSqA5y3gfyRz8hPT1pVDiD4PoC75qZ8FAtZk5KD58R9UEgMTBBsYH9297fhG8PEf7RmgZN26hNBdQGrNyoiw5rqDi5uYAck2fJP13BFyAoYbyqt\",\"links\":{\"next\":\"https://api.trongrid.io/v1/accounts/TJ3hRDhwbhLi5ZeXasMaSKtiKr5JWKog6T/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc&fingerprint=2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTUzt88ZwTREPQzL1NujQu85hd7WWa7818kcycBwG24m3hAp7h9qpmgHUocyPdZrbrpTSqA5y3gfyRz8hPT1pVDiD4PoC75qZ8FAtZk5KD58R9UEgMTBBsYH9297fhG8PEf7RmgZN26hNBdQGrNyoiw5rqDi5uYAck2fJP13BFyAoYbyqt\"},\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:18:39.931Z"
+}

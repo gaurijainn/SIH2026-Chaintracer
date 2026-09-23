@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TFZ6WhWvteWSFDUuDexhXNBUVPhcYGmc6u/transactions/trc20?limit=200&contract_address=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&only_confirmed=true&only_from=true"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"transaction_id\":\"390dd2a6a373f9c87ef3eccfbb9104564904f8628b37e9df61c029bc01b4616d\",\"token_info\":{\"symbol\":\"USDT\",\"address\":\"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t\",\"decimals\":6,\"name\":\"Tether USD\"},\"block_timestamp\":1770034410000,\"from\":\"TFZ6WhWvteWSFDUuDexhXNBUVPhcYGmc6u\",\"to\":\"TA1S6Bqo2vp8hKvm5Fi8HUf7erRfU8bLRM\",\"type\":\"Transfer\",\"value\":\"2000090\"}],\"success\":true,\"meta\":{\"at\":1790140513298,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:15:13.655Z"
+}

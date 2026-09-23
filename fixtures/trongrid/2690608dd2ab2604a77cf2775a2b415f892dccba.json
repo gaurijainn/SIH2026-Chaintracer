@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TDXNC76JA75WekpCiRDiY9ezjeMTgXTLTN"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"owner_permission\":{\"keys\":[{\"address\":\"TDXNC76JA75WekpCiRDiY9ezjeMTgXTLTN\",\"weight\":1}],\"threshold\":1,\"permission_name\":\"owner\"},\"account_resource\":{\"energy_window_optimized\":true,\"latest_consume_time_for_energy\":1774970700000,\"energy_window_size\":28800000},\"active_permission\":[{\"operations\":\"7fff1fc0033ec30f000000000000000000000000000000000000000000000000\",\"keys\":[{\"address\":\"TDXNC76JA75WekpCiRDiY9ezjeMTgXTLTN\",\"weight\":1}],\"threshold\":1,\"id\":2,\"type\":\"Active\",\"permission_name\":\"active\"}],\"address\":\"4126fd5c251050eeabe33306c2fe4971bc92dfe7c4\",\"create_time\":1754043696000,\"latest_consume_time\":1764488196000,\"latest_opration_time\":1774967688000,\"free_asset_net_usageV2\":[{\"value\":0,\"key\":\"1005119\"},{\"value\":0,\"key\":\"1005107\"},{\"value\":0,\"key\":\"1005138\"},{\"value\":0,\"key\":\"1005027\"},{\"value\":0,\"key\":\"1005114\"},{\"value\":0,\"key\":\"1005136\"},{\"value\":0,\"key\":\"1005047\"},{\"value\":0,\"key\":\"1005002\"},{\"value\":0,\"key\":\"1005065\"},{\"value\":0,\"key\":\"1005074\"}],\"assetV2\":[{\"value\":8888,\"key\":\"1005119\"},{\"value\":21603259,\"key\":\"1005107\"},{\"value\":138138000,\"key\":\"1005138\"},{\"value\":8888880000,\"key\":\"1005027\"},{\"value\":8888888,\"key\":\"1005114\"},{\"value\":999999999,\"key\":\"1005136\"},{\"value\":888800000,\"key\":\"1005047\"},{\"value\":21000000,\"key\":\"1005002\"},{\"value\":8888880000,\"key\":\"1005065\"},{\"value\":33333333,\"key\":\"1005074\"}],\"frozenV2\":[{},{\"type\":\"ENERGY\"},{\"type\":\"TRON_POWER\"}],\"balance\":18,\"trc20\":[{\"TUVhjGTJJcXyeutJjNsCtAooQJLU6mBrVK\":\"8888888\"},{\"TEeMFiaKyHsot4zM1k1xRLtimMDCH6vCfM\":\"888123456\"},{\"TGKBroumSbjwsPyyJ3J5X2H8dSKiajBCrd\":\"292292000000000000000\"},{\"THyrPFManv2pYezTVmT6EU8oSiANHhW2Le\":\"644053427352\"},{\"TMiKtBavjpiGqVBLwSNccrP5LZqGzmKpri\":\"8888888\"}],\"latest_consume_free_time\":1774967688000,\"net_window_size\":28800000,\"net_window_optimized\":true}],\"success\":true,\"meta\":{\"at\":1790140382560,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:13:02.917Z"
+}

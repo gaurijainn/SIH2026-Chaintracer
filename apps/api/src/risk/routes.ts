@@ -101,6 +101,12 @@ export function riskErrorHandler(err: unknown, _req: Request, res: Response, nex
     return;
   }
 
-  console.error(err);
-  res.status(500).json({ error: 'INTERNAL', message: 'unexpected error' });
+  // Anything else (e.g. a body-parser SyntaxError from an unrelated route) isn't ours to answer --
+  // pass it on rather than swallowing it as a generic 500. This handler is registered ahead of
+  // intake/muleErrorHandler (see app.ts's comment), so claiming every unrecognized error here would
+  // prevent those modules' own error handling from ever running. B8 surfaced this via its own
+  // integration suite (apps/api/src/intake/intake.int.test.ts's malformed-JSON-body case was
+  // getting 500 instead of intake's correct 400) -- fixed here since it's the same
+  // recognize-or-pass-on convention watchlistErrorHandler/alertErrorHandler already follow.
+  next(err);
 }

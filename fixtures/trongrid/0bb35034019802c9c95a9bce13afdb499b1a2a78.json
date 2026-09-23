@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TCJYLzsb4B4Pj5hd95Xh2anLuSLwoT8mSA/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"ret\":[{\"contractRet\":\"SUCCESS\",\"fee\":0}],\"signature\":[\"b4c8ba412d5371993f66e2a21d1bc5c71f5842485696d0bf081b58b08323fb226429c64100bec1be5eadee02f1bdffdd6ca92a759098b68cbf69ddd56bcbe20c1b\"],\"txID\":\"6243434ab9dcd9c2d149ee6293652db006b6c628025a92c18d98a3acfee38e01\",\"net_usage\":345,\"raw_data_hex\":\"0a027ddf22085aee76ad7e4413d740e888ced8ec2f5aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a154192c47b086eae54ed142d75ce4806df751bac7551121541a614f803b6fd780986a42c78ec9c7f77e6ded13c2244a9059cbb00000000000000000000000019984d5e5ffc983d125d4fb4019428ced39528b5000000000000000000000000000000000000000000000000000000000d6a99d07092c0cad8ec2f900180ade204\",\"net_fee\":0,\"energy_usage\":29631,\"blockNumber\":37846514,\"block_timestamp\":1644084504000,\"energy_fee\":0,\"energy_usage_total\":29631,\"raw_data\":{\"contract\":[{\"parameter\":{\"value\":{\"data\":\"a9059cbb00000000000000000000000019984d5e5ffc983d125d4fb4019428ced39528b5000000000000000000000000000000000000000000000000000000000d6a99d0\",\"owner_address\":\"4192c47b086eae54ed142d75ce4806df751bac7551\",\"contract_address\":\"41a614f803b6fd780986a42c78ec9c7f77e6ded13c\"},\"type_url\":\"type.googleapis.com/protocol.TriggerSmartContract\"},\"type\":\"TriggerSmartContract\"}],\"ref_block_bytes\":\"7ddf\",\"ref_block_hash\":\"5aee76ad7e4413d7\",\"expiration\":1644084561000,\"fee_limit\":10000000,\"timestamp\":1644084502546},\"internal_transactions\":[]}],\"success\":true,\"meta\":{\"at\":1790140303304,\"fingerprint\":\"2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTTBtiSQE2v8dcgqpBAtaj7UaqroBLgXcRACydVHGXxZu8vDhHFyf1PrCAKYjcLS2G1uwaPbPLkKXvaQiS35a4Y1QVXZKGgFw8M17cFZ7GATgqKvsYovqzFU8CTvLNiEQTUY7ghJHB7YmiwdBsU7ZBx2VWNsYEe2gNUsmeKfQLCGxND7aJ\",\"links\":{\"next\":\"https://api.trongrid.io/v1/accounts/TCJYLzsb4B4Pj5hd95Xh2anLuSLwoT8mSA/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc&fingerprint=2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTTBtiSQE2v8dcgqpBAtaj7UaqroBLgXcRACydVHGXxZu8vDhHFyf1PrCAKYjcLS2G1uwaPbPLkKXvaQiS35a4Y1QVXZKGgFw8M17cFZ7GATgqKvsYovqzFU8CTvLNiEQTUY7ghJHB7YmiwdBsU7ZBx2VWNsYEe2gNUsmeKfQLCGxND7aJ\"},\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:11:43.661Z"
+}

@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/THhzquHRVnRwXvEQnXi8xsPTUJngCXvzjm/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"ret\":[{\"contractRet\":\"SUCCESS\",\"fee\":1000000}],\"signature\":[\"b6bebee6b0c23c764b307752a650b58ae98d4c43cb7b39decf3bbce241d8a7260af4c276026ad3446335f9488e6e58a40cab2bb45c8939b7aac4e15b98369d0b01\"],\"txID\":\"162837fcdc5d95304efab37d528af77954cd3f80f2a8cd42cf8afceacf3f9143\",\"net_usage\":272,\"raw_data_hex\":\"0a02594d22084a45d6a43806cf1140f5b0d0a8c0335a6612640a32747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e4163636f756e74437265617465436f6e7472616374122e0a1541b58ed4220832df7c387fbb1182c6ad2a0bd6bb0912154154e09e32a7bc4c8ebc3def00850cdd32c03fad537095dccca8c033900180c2d72f\",\"net_fee\":0,\"energy_usage\":0,\"blockNumber\":79649120,\"block_timestamp\":1769611671000,\"energy_fee\":0,\"energy_usage_total\":0,\"raw_data\":{\"contract\":[{\"parameter\":{\"value\":{\"owner_address\":\"41b58ed4220832df7c387fbb1182c6ad2a0bd6bb09\",\"account_address\":\"4154e09e32a7bc4c8ebc3def00850cdd32c03fad53\"},\"type_url\":\"type.googleapis.com/protocol.AccountCreateContract\"},\"type\":\"AccountCreateContract\"}],\"ref_block_bytes\":\"594d\",\"ref_block_hash\":\"4a45d6a43806cf11\",\"expiration\":1769611729013,\"fee_limit\":100000000,\"timestamp\":1769611669013},\"internal_transactions\":[]}],\"success\":true,\"meta\":{\"at\":1790140672383,\"fingerprint\":\"2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTUzNVd6bnjf4kRYt6SB462H8jdhJf6GkxC6WtjhFUnEuSJiLzeGxNyrUeCSY8zMCocrAEf8qYB191j9YyjGWEmswjthJ2TaqAobCsfyvbhfzvmP5EFG1Kad9Kg8RTMJkfPnUDL1WPoZMC4ouyfV3Bot6M85mb5EEL5GTMPpXh2Moyw2Dg\",\"links\":{\"next\":\"https://api.trongrid.io/v1/accounts/THhzquHRVnRwXvEQnXi8xsPTUJngCXvzjm/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc&fingerprint=2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTUzNVd6bnjf4kRYt6SB462H8jdhJf6GkxC6WtjhFUnEuSJiLzeGxNyrUeCSY8zMCocrAEf8qYB191j9YyjGWEmswjthJ2TaqAobCsfyvbhfzvmP5EFG1Kad9Kg8RTMJkfPnUDL1WPoZMC4ouyfV3Bot6M85mb5EEL5GTMPpXh2Moyw2Dg\"},\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:17:52.753Z"
+}

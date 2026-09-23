@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TBMznqYRP78FWHmAfBB49YZBxqpQpw7Gye/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"ret\":[{\"contractRet\":\"SUCCESS\",\"fee\":1000000}],\"signature\":[\"12576fcd30722626f1b6e7025ab16012f7ace0adb6806e9742a3cd88251630b737a34e3016e342a25edef4b700db3e89607f2186bf9cf32738d3eb8457d3149601\"],\"txID\":\"9627588fda9ac75b6d247e7d2017950876c1dec9c0f9ca2fe2c33f108ad0fd6a\",\"net_usage\":265,\"raw_data_hex\":\"0a0268e7220831f635ebcb70a3524088e68db7bd335a65080112610a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412300a1541bf5e73a6f4fb5146272c584a17cd7de8fd616c8f1215410f477ffa8614fa020de81c23a542b109ddb5edc3180a70f8988ab7bd33\",\"net_fee\":0,\"energy_usage\":0,\"blockNumber\":79390970,\"block_timestamp\":1768836732000,\"energy_fee\":0,\"energy_usage_total\":0,\"raw_data\":{\"contract\":[{\"parameter\":{\"value\":{\"amount\":10,\"owner_address\":\"41bf5e73a6f4fb5146272c584a17cd7de8fd616c8f\",\"to_address\":\"410f477ffa8614fa020de81c23a542b109ddb5edc3\"},\"type_url\":\"type.googleapis.com/protocol.TransferContract\"},\"type\":\"TransferContract\"}],\"ref_block_bytes\":\"68e7\",\"ref_block_hash\":\"31f635ebcb70a352\",\"expiration\":1768836789000,\"timestamp\":1768836729976},\"internal_transactions\":[]}],\"success\":true,\"meta\":{\"at\":1790140212289,\"fingerprint\":\"2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTSjoFNCfqQYwnQreYGkPpUJ9T2TpfnzQcJr1ixdhortLXTGZARyBai1QHWCx6Saai5JDesB1Qa5gUZatwade59UT3UYQ3zJgbrX8oet7VfJjyjm5jdNBbDf52jnVvKiri4tsys8X1L9Fs8Ay5mgK68RzZbscsvorx3HgU18S2upubHKu4\",\"links\":{\"next\":\"https://api.trongrid.io/v1/accounts/TBMznqYRP78FWHmAfBB49YZBxqpQpw7Gye/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc&fingerprint=2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTSjoFNCfqQYwnQreYGkPpUJ9T2TpfnzQcJr1ixdhortLXTGZARyBai1QHWCx6Saai5JDesB1Qa5gUZatwade59UT3UYQ3zJgbrX8oet7VfJjyjm5jdNBbDf52jnVvKiri4tsys8X1L9Fs8Ay5mgK68RzZbscsvorx3HgU18S2upubHKu4\"},\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:10:12.645Z"
+}

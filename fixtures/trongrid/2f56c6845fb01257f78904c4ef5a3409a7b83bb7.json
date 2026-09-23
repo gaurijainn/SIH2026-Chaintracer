@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/THJCAYtf5nZFV9ADtiUqhoQMsXksDEBtD9/transactions/trc20?limit=200&contract_address=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&only_confirmed=true&only_from=true"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"transaction_id\":\"ede8d06a3f5146609b0c7d8f82f465b6cbaad353579954608cf2ef6caa00b5c0\",\"token_info\":{\"symbol\":\"USDT\",\"address\":\"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t\",\"decimals\":6,\"name\":\"Tether USD\"},\"block_timestamp\":1775955165000,\"from\":\"THJCAYtf5nZFV9ADtiUqhoQMsXksDEBtD9\",\"to\":\"TDqSquXBgUCLYvYC4XZgrprLK589dkhSCf\",\"type\":\"Transfer\",\"value\":\"2500000000\"},{\"transaction_id\":\"043a2b3928f665ef333293f22ee217bd635dd84f9c26c6a6673f27e2ddecdc08\",\"token_info\":{\"symbol\":\"USDT\",\"address\":\"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t\",\"decimals\":6,\"name\":\"Tether USD\"},\"block_timestamp\":1774566963000,\"from\":\"THJCAYtf5nZFV9ADtiUqhoQMsXksDEBtD9\",\"to\":\"TDqSquXBgUCLYvYC4XZgrprLK589dkhSCf\",\"type\":\"Transfer\",\"value\":\"1301000000\"},{\"transaction_id\":\"26291b143ca5e8b5ecae5f409827e5a72f1f2bef476ef82e1707cab8771d9540\",\"token_info\":{\"symbol\":\"USDT\",\"address\":\"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t\",\"decimals\":6,\"name\":\"Tether USD\"},\"block_timestamp\":1765690974000,\"from\":\"THJCAYtf5nZFV9ADtiUqhoQMsXksDEBtD9\",\"to\":\"TDqSquXBgUCLYvYC4XZgrprLK589dkhSCf\",\"type\":\"Transfer\",\"value\":\"200000000\"},{\"transaction_id\":\"e26f95b993811dd62ad5120ee1e6b93c6461ee2bedabface8924f4e240cbc4d1\",\"token_info\":{\"symbol\":\"USDT\",\"address\":\"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t\",\"decimals\":6,\"name\":\"Tether USD\"},\"block_timestamp\":1765421571000,\"from\":\"THJCAYtf5nZFV9ADtiUqhoQMsXksDEBtD9\",\"to\":\"TDqSquXBgUCLYvYC4XZgrprLK589dkhSCf\",\"type\":\"Transfer\",\"value\":\"4500000000\"},{\"transaction_id\":\"928545b9e4d530f02320e51d1f44f8a6aa00e91d722627e625a1479c98a601fe\",\"token_info\":{\"symbol\":\"USDT\",\"address\":\"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t\",\"decimals\":6,\"name\":\"Tether USD\"},\"block_timestamp\":1764906366000,\"from\":\"THJCAYtf5nZFV9ADtiUqhoQMsXksDEBtD9\",\"to\":\"TDqSquXBgUCLYvYC4XZgrprLK589dkhSCf\",\"type\":\"Transfer\",\"value\":\"4500000000\"}],\"success\":true,\"meta\":{\"at\":1790140636784,\"page_size\":5}}"
+  },
+  "recordedAt": "2026-09-23T05:17:17.136Z"
+}

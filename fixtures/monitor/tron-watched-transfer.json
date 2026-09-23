@@ -1,0 +1,18 @@
+{
+  "_comment": "B8 deterministic replay fixture: a single outbound USDT-TRC20 transfer from a watched TRON wallet, above the A1 HIGH threshold. Shaped as workers/adapters TransferPage.items (Transfer[]) and fed to a fake ChainAdapter in tests -- not a B0 record/replay HTTP fixture (see B8 report: fabricating a byte-correct TronGrid fixture requires either a live call or reverse-engineering the request-hash algorithm, out of scope/forbidden without a live-call go-ahead). The fake adapter conforms to the same ChainAdapter interface B3 already tests. Addresses are real Base58Check-valid TRON addresses (deterministically derived, not on-chain) so they pass classifyIdentifier in integration tests that go through the real WatchlistService.",
+  "watchedAddr": "TFUpeW6J3tvvbBruc96KefirqPMgWK7LfL",
+  "transfers": [
+    {
+      "chain": "TRON",
+      "txHash": "b7f0e1c2d3a4950000000000000000000000000000000000000000000000aaaa",
+      "idx": 1,
+      "from": "TFUpeW6J3tvvbBruc96KefirqPMgWK7LfL",
+      "to": "TVCKu4gWE8j9wcKXvWi2hZ1cLuyhpfQbpo",
+      "token": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+      "amount": "15000000000",
+      "usd": 15000,
+      "ts": 1758600000000,
+      "block": 12345678
+    }
+  ]
+}

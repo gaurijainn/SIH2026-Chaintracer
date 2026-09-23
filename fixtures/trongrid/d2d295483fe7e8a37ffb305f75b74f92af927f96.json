@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TCdnQURGNhxsnMCKcPp2Z4fECa38jnQ6f3"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"owner_permission\":{\"keys\":[{\"address\":\"TCdnQURGNhxsnMCKcPp2Z4fECa38jnQ6f3\",\"weight\":1}],\"threshold\":1,\"permission_name\":\"owner\"},\"account_resource\":{\"energy_window_optimized\":true,\"latest_consume_time_for_energy\":1769588565000,\"energy_window_size\":28800000},\"active_permission\":[{\"operations\":\"7fff1fc0033ec30f000000000000000000000000000000000000000000000000\",\"keys\":[{\"address\":\"TCdnQURGNhxsnMCKcPp2Z4fECa38jnQ6f3\",\"weight\":1}],\"threshold\":1,\"id\":2,\"type\":\"Active\",\"permission_name\":\"active\"}],\"address\":\"411d3bf12ebb6c6f9d1751dae3780bf031a9486a82\",\"create_time\":1755241806000,\"latest_opration_time\":1769588646000,\"free_asset_net_usageV2\":[{\"value\":0,\"key\":\"1005119\"},{\"value\":0,\"key\":\"1005107\"},{\"value\":0,\"key\":\"1005118\"},{\"value\":0,\"key\":\"1005027\"},{\"value\":0,\"key\":\"1005114\"},{\"value\":0,\"key\":\"1005002\"},{\"value\":0,\"key\":\"1005122\"},{\"value\":0,\"key\":\"1005121\"},{\"value\":0,\"key\":\"1005065\"},{\"value\":0,\"key\":\"1005120\"},{\"value\":0,\"key\":\"1005141\"},{\"value\":0,\"key\":\"1005074\"},{\"value\":0,\"key\":\"1005084\"}],\"assetV2\":[{\"value\":8888880,\"key\":\"1005119\"},{\"value\":19165950,\"key\":\"1005107\"},{\"value\":10000,\"key\":\"1005118\"},{\"value\":8888880000,\"key\":\"1005027\"},{\"value\":88888800,\"key\":\"1005114\"},{\"value\":10000000,\"key\":\"1005002\"},{\"value\":95965791,\"key\":\"1005122\"},{\"value\":1000000,\"key\":\"1005121\"},{\"value\":17777760000,\"key\":\"1005065\"},{\"value\":7110000,\"key\":\"1005120\"},{\"value\":970000,\"key\":\"1005141\"},{\"value\":33333333,\"key\":\"1005074\"},{\"value\":6192131,\"key\":\"1005084\"}],\"frozenV2\":[{},{\"type\":\"ENERGY\"},{\"type\":\"TRON_POWER\"}],\"balance\":32013,\"trc20\":[{\"TF6f9yCXxGSpySRGv59eTyzWGVtKCd8oa7\":\"292292\"},{\"TUYu2QzgNxTsFBovRf5Woy2ubkEjztHJpT\":\"668668\"},{\"TD4YUnmTJ5TZ4PppMVa6SeESzEf8sc2YTn\":\"8888888\"}],\"latest_consume_free_time\":1769588553000,\"net_window_size\":28800000,\"net_window_optimized\":true}],\"success\":true,\"meta\":{\"at\":1790140318436,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:11:58.820Z"
+}

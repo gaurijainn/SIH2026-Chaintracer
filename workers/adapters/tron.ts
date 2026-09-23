@@ -52,6 +52,50 @@ interface TrxItem {
   raw_data?: { contract?: { type?: string; parameter?: { value?: { owner_address?: string; to_address?: string; amount?: number | string } } }[] };
 }
 
+const BLACKLIST_EVENT = 'AddedBlackList';
+
+interface TronGridEventItem {
+  transaction_id: string;
+  block_number: number;
+  block_timestamp: number;
+  event_name: string;
+  /** TronGrid's contract-event decoder names the indexed param after the ABI; USDT-TRC20's
+   * AddedBlackList(address _user) surfaces it as `result._user` (hex, 41-prefixed). Fall back to
+   * any other single-value result shape rather than assuming the exact key never changes. */
+  result?: Record<string, string>;
+}
+
+/** One `AddedBlackList` event: the address Tether blacklisted, and the tx/block evidence for it. */
+export interface BlacklistEvent {
+  address: string;
+  txHash: string;
+  blockNumber: number;
+  blockTimestampMs: number;
+}
+
+export interface BlacklistEventPage {
+  items: BlacklistEvent[];
+  next?: string;
+}
+
+function normalizeBlacklistEvent(r: TronGridEventItem): BlacklistEvent | null {
+  const raw = r.result?._user ?? r.result?.user ?? r.result?.addr ?? Object.values(r.result ?? {})[0];
+  if (!raw) return null;
+  const clean = raw.replace(/^0x/, '');
+  let address: string;
+  if (/^41[0-9a-fA-F]{40}$/.test(clean)) {
+    // Tron's own 21-byte hex convention (0x41-prefixed), as used by its REST account APIs.
+    address = tronHexToBase58(clean);
+  } else if (/^[0-9a-fA-F]{40}$/.test(clean)) {
+    // TronGrid's contract-event decoder emits the ABI `address` type as a bare 20-byte EVM value
+    // (no Tron 0x41 version byte) -- unlike its REST APIs. Prepend the version byte before converting.
+    address = tronHexToBase58(`41${clean}`);
+  } else {
+    address = raw; // already base58, or an unrecognized shape -- pass through rather than drop
+  }
+  return { address, txHash: r.transaction_id, blockNumber: r.block_number, blockTimestampMs: r.block_timestamp };
+}
+
 export interface TronDeps {
   guard: ProviderGuard;
   http: HttpFactory;
@@ -236,5 +280,57 @@ export class TronAdapter implements ChainAdapter, ProbeCapable {
       ]);
       return !!data?.txID;
     });
+  }
+
+  private blacklistUrl(cursor?: string): string {
+    const q = [`event_name=${BLACKLIST_EVENT}`, 'only_confirmed=true', `limit=${PAGE}`];
+    if (cursor) q.push(`fingerprint=${encodeURIComponent(cursor)}`);
+    return `${TRONGRID}/v1/contracts/${USDT_TRC20}/events?${q.join('&')}`;
+  }
+
+  /**
+   * One page of USDT-TRC20 `AddedBlackList` contract events (Tether's on-chain blacklist), newest
+   * first as TronGrid returns them, following `meta.fingerprint` exactly like `getTransfers`'s
+   * TRC-20 stage. Cached forever per cursor (blacklist events never change once confirmed).
+   */
+  async getAddedBlackListEvents(o: { cursor?: string } = {}): Promise<BlacklistEventPage> {
+    const key = `blacklist:TRON:${USDT_TRC20}:${o.cursor ?? ''}`;
+    return this.d.guard.cached(key, TTL_FOREVER, async () => {
+      const res = await this.trongrid<TronGridEventItem>(this.blacklistUrl(o.cursor));
+      const items = (res.data ?? []).filter((r) => r.event_name === BLACKLIST_EVENT).map(normalizeBlacklistEvent).filter((e): e is BlacklistEvent => e !== null);
+      const fp = res.meta?.fingerprint;
+      return fp ? { items, next: fp } : { items };
+    });
+  }
+}
+
+/**
+ * Walks every page of USDT-TRC20 `AddedBlackList` events and returns them de-duplicated by
+ * (txHash, address) — a provider retry/failover can otherwise resurface the same event twice.
+ * Terminates when TronGrid stops returning a fingerprint, when a fingerprint repeats, or at the
+ * page ceiling (same shape as `collectTransfers` in paginate.ts).
+ */
+export async function collectAddedBlackListEvents(tron: TronAdapter, opts: { maxPages?: number } = {}): Promise<{ items: BlacklistEvent[]; pages: number; truncated: boolean }> {
+  const maxPages = opts.maxPages ?? 500;
+  const seen = new Set<string>();
+  const items: BlacklistEvent[] = [];
+  const cursors = new Set<string>();
+  let cursor: string | undefined;
+  let pages = 0;
+  for (;;) {
+    const page = await tron.getAddedBlackListEvents({ cursor });
+    pages++;
+    for (const e of page.items) {
+      const k = `${e.txHash}|${e.address}`;
+      if (!seen.has(k)) {
+        seen.add(k);
+        items.push(e);
+      }
+    }
+    if (!page.next) return { items, pages, truncated: false };
+    if (cursors.has(page.next) || page.next === cursor) return { items, pages, truncated: false };
+    cursors.add(page.next);
+    cursor = page.next;
+    if (pages >= maxPages) return { items, pages, truncated: true };
   }
 }

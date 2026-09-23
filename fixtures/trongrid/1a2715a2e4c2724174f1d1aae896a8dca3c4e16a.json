@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/0x087bf59f3b5f9affc3c2738b0295f3ff708a1776/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[],\"success\":true,\"meta\":{\"at\":1790114347466,\"page_size\":0}}"
+  },
+  "recordedAt": "2026-09-22T21:59:07.165Z"
+}

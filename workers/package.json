@@ -16,15 +16,25 @@
     "ioredis": "^5.4.0",
     "bottleneck": "^2.19.5",
     "axios": "^1.7.0",
-    "neo4j-driver": "^5.26.0"
+    "neo4j-driver": "^5.26.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@types/ws": "^8.5.12",
     "bitcoinjs-lib": "^6.1.8",
     "tsx": "^4.19.0"
   },
   "exports": {
     "./adapters": "./adapters/index.ts",
-    "./adapters/testing": "./adapters/testing.ts"
+    "./adapters/testing": "./adapters/testing.ts",
+    "./monitor/watchlist": "./monitor/watchlist.ts",
+    "./monitor/rules": "./monitor/rules.ts",
+    "./monitor/config": "./monitor/config.ts",
+    "./monitor/checkpoint": "./monitor/checkpoint.ts",
+    "./monitor/alerts": "./monitor/alerts.ts",
+    "./monitor/events": "./monitor/events.ts",
+    "./monitor/tronPoller": "./monitor/tronPoller.ts",
+    "./monitor/ruleContextPrisma": "./monitor/ruleContextPrisma.ts"
   }
 }

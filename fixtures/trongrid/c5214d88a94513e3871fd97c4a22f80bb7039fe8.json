@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TGLsJBJR6i6PmzuwzJTzXJszAx1ZnMuJdG/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"ret\":[{\"contractRet\":\"SUCCESS\",\"fee\":1100000}],\"signature\":[\"80c8fb6a0696005b73a56d37aaf3e3c305de7df73236936059f60a5df82e57da14876eb3d6c68805364100d4552166f56165f3eb6f260644b51889ad5c64b49100\"],\"txID\":\"09e6801d0bb22535dcdeb462197bb45cb43669070d55089aa338c08141ca6b1c\",\"net_usage\":0,\"raw_data_hex\":\"0a02fef9220853ec2f39866831a940f8f7a2bac4335a65080112610a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412300a1541a7b668c25718cbd3078a23a201f69adb671c857312154145e97503f7c7f011510e20fc4a8a7cc2a809fddd180170d9b39fbac433\",\"net_fee\":100000,\"energy_usage\":0,\"blockNumber\":80019212,\"block_timestamp\":1770722418000,\"energy_fee\":0,\"energy_usage_total\":0,\"raw_data\":{\"contract\":[{\"parameter\":{\"value\":{\"amount\":1,\"owner_address\":\"41a7b668c25718cbd3078a23a201f69adb671c8573\",\"to_address\":\"4145e97503f7c7f011510e20fc4a8a7cc2a809fddd\"},\"type_url\":\"type.googleapis.com/protocol.TransferContract\"},\"type\":\"TransferContract\"}],\"ref_block_bytes\":\"fef9\",\"ref_block_hash\":\"53ec2f39866831a9\",\"expiration\":1770722475000,\"timestamp\":1770722417113},\"internal_transactions\":[]}],\"success\":true,\"meta\":{\"at\":1790140558716,\"fingerprint\":\"2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTU6oJyzgbXyNVFyQjC43JHyM3iPc5QJfowGrybr1bhjmHRXt9zomiewDsgV6YRa38qTHDE3TFo23fRGdTXkxCBq5oc2jbDUgnfjaXcrhfXKWSBFEhZcgB5Yo9XCzFi1BcPJ1mpwekztzPmbcYEK3bibamJt4QBxoXfeBvLVvYDCXSF5wg\",\"links\":{\"next\":\"https://api.trongrid.io/v1/accounts/TGLsJBJR6i6PmzuwzJTzXJszAx1ZnMuJdG/transactions?limit=1&only_confirmed=true&only_to=true&order_by=block_timestamp,asc&fingerprint=2NgPQPX6b8trTFg794AmwhsxTf2usY7cRJN6QpPViaTU6oJyzgbXyNVFyQjC43JHyM3iPc5QJfowGrybr1bhjmHRXt9zomiewDsgV6YRa38qTHDE3TFo23fRGdTXkxCBq5oc2jbDUgnfjaXcrhfXKWSBFEhZcgB5Yo9XCzFi1BcPJ1mpwekztzPmbcYEK3bibamJt4QBxoXfeBvLVvYDCXSF5wg\"},\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:15:59.090Z"
+}

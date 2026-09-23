@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TEyCGkLpqpRyxftyhhXr66feWvFa8rGuB2"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"owner_permission\":{\"keys\":[{\"address\":\"TEyCGkLpqpRyxftyhhXr66feWvFa8rGuB2\",\"weight\":1}],\"threshold\":1,\"permission_name\":\"owner\"},\"account_resource\":{\"energy_window_optimized\":true,\"latest_consume_time_for_energy\":1771848900000,\"energy_window_size\":28800000},\"active_permission\":[{\"operations\":\"7fff1fc0033ec30f000000000000000000000000000000000000000000000000\",\"keys\":[{\"address\":\"TEyCGkLpqpRyxftyhhXr66feWvFa8rGuB2\",\"weight\":1}],\"threshold\":1,\"id\":2,\"type\":\"Active\",\"permission_name\":\"active\"}],\"address\":\"4136d8051c607e162ee77bb23a5a2d17165a0b8248\",\"create_time\":1769865972000,\"latest_opration_time\":1771848897000,\"free_asset_net_usageV2\":[{\"value\":0,\"key\":\"1005108\"},{\"value\":0,\"key\":\"1005119\"},{\"value\":0,\"key\":\"1005118\"},{\"value\":0,\"key\":\"1005129\"},{\"value\":0,\"key\":\"1005126\"},{\"value\":0,\"key\":\"1005114\"},{\"value\":0,\"key\":\"1005125\"},{\"value\":0,\"key\":\"1005122\"},{\"value\":0,\"key\":\"1005120\"},{\"value\":0,\"key\":\"1005141\"}],\"assetV2\":[{\"value\":10000000,\"key\":\"1005108\"},{\"value\":8888880,\"key\":\"1005119\"},{\"value\":10000,\"key\":\"1005118\"},{\"value\":100,\"key\":\"1005129\"},{\"value\":200,\"key\":\"1005126\"},{\"value\":9999990,\"key\":\"1005114\"},{\"value\":100,\"key\":\"1005125\"},{\"value\":660000,\"key\":\"1005122\"},{\"value\":7110000,\"key\":\"1005120\"},{\"value\":970000,\"key\":\"1005141\"}],\"frozenV2\":[{},{\"type\":\"ENERGY\"},{\"type\":\"TRON_POWER\"}],\"balance\":5736523,\"trc20\":[{\"TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t\":\"1554587\"}],\"latest_consume_free_time\":1771848891000,\"net_window_size\":28800000,\"net_window_optimized\":true}],\"success\":true,\"meta\":{\"at\":1790140467187,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:14:27.563Z"
+}

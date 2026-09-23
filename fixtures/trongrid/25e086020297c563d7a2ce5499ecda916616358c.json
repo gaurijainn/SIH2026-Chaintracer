@@ -1,0 +1,12 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/THj4mSf9A4vQi2AYUNeKPtUJF9ifUKu9VC"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"data\":[{\"owner_permission\":{\"keys\":[{\"address\":\"THj4mSf9A4vQi2AYUNeKPtUJF9ifUKu9VC\",\"weight\":1}],\"threshold\":1,\"permission_name\":\"owner\"},\"account_resource\":{\"energy_window_optimized\":true,\"latest_consume_time_for_energy\":1780535754000,\"energy_window_size\":28800000},\"active_permission\":[{\"operations\":\"7fff1fc0033ec30f000000000000000000000000000000000000000000000000\",\"keys\":[{\"address\":\"THj4mSf9A4vQi2AYUNeKPtUJF9ifUKu9VC\",\"weight\":1}],\"threshold\":1,\"id\":2,\"type\":\"Active\",\"permission_name\":\"active\"}],\"address\":\"4155144f0c0c1d20a74abe35e3b18f23e79bae2c24\",\"create_time\":1773269850000,\"latest_opration_time\":1780535754000,\"free_asset_net_usageV2\":[{\"value\":0,\"key\":\"1005119\"},{\"value\":0,\"key\":\"1005138\"},{\"value\":0,\"key\":\"1005114\"},{\"value\":0,\"key\":\"1005125\"},{\"value\":0,\"key\":\"1005157\"},{\"value\":0,\"key\":\"1005168\"},{\"value\":0,\"key\":\"1005002\"},{\"value\":0,\"key\":\"1005145\"},{\"value\":0,\"key\":\"1005121\"},{\"value\":0,\"key\":\"1005141\"},{\"value\":0,\"key\":\"1005163\"},{\"value\":0,\"key\":\"1005151\"},{\"value\":0,\"key\":\"1005162\"}],\"assetV2\":[{\"value\":8888,\"key\":\"1005119\"},{\"value\":138138000,\"key\":\"1005138\"},{\"value\":8888888,\"key\":\"1005114\"},{\"value\":100,\"key\":\"1005125\"},{\"value\":8888888,\"key\":\"1005157\"},{\"value\":4444444444,\"key\":\"1005168\"},{\"value\":1000000,\"key\":\"1005002\"},{\"value\":1250000,\"key\":\"1005145\"},{\"value\":1000000,\"key\":\"1005121\"},{\"value\":970000,\"key\":\"1005141\"},{\"value\":8888022,\"key\":\"1005163\"},{\"value\":552552000,\"key\":\"1005151\"},{\"value\":3558555000,\"key\":\"1005162\"}],\"frozenV2\":[{},{\"type\":\"ENERGY\"},{\"type\":\"TRON_POWER\"}],\"balance\":138693803,\"trc20\":[{\"TXD3W95wSFpEwyVYpzBmtKzdgJnB2c1bCq\":\"50998658367642960\"}],\"latest_consume_free_time\":1780513794000,\"net_window_size\":28800000,\"net_window_optimized\":true}],\"success\":true,\"meta\":{\"at\":1790140675666,\"page_size\":1}}"
+  },
+  "recordedAt": "2026-09-23T05:17:56.025Z"
+}
