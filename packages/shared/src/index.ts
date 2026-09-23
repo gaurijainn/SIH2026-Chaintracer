@@ -8,3 +8,5 @@ export * from './addressRules';
 export * from './chainTypes';
 export * from './traceEvents';
 export * from './monitorEvents';
+export * from './canonical';
+export * from './ist';

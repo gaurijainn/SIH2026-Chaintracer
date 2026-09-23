@@ -1,6 +1,13 @@
 # Shared image for api, workers and web. The command is chosen in docker-compose.yml.
 FROM node:22-alpine
 RUN apk add --no-cache openssl
+# B9: apps/api's ReportService renders evidence PDFs via Puppeteer. Alpine has no Chromium build
+# puppeteer can download for musl, so we install the distro's own Chromium and point Puppeteer at it
+# instead of letting `puppeteer` try to fetch/run its bundled (glibc) binary -- the standard
+# Alpine-safe Puppeteer pattern.
+RUN apk add --no-cache chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 RUN corepack enable && corepack prepare pnpm@12.5.1 --activate || npm i -g pnpm
 WORKDIR /app
 COPY package.json pnpm-workspace.yaml ./

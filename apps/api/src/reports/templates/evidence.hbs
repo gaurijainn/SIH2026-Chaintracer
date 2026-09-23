@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Evidence Report — {{case.id}}</title>
+<style>{{{printCss}}}</style>
+</head>
+<body>
+  <h1>Evidence Report</h1>
+  <div class="subtitle">Case {{case.id}} — {{case.title}} — generated {{generatedAt}}</div>
+
+  <h2>Case</h2>
+  <div class="meta-grid">
+    <div>Status</div><div>{{case.status}}</div>
+    <div>FIR number</div><div>{{#if case.firNumber}}{{case.firNumber}}{{else}}—{{/if}}</div>
+    <div>NCRP ack no.</div><div>{{#if case.ackNo}}{{case.ackNo}}{{else}}—{{/if}}</div>
+  </div>
+
+  {{#if victimTransaction}}
+  <h2>Victim Transaction</h2>
+  <div class="meta-grid">
+    <div>Chain</div><div>{{victimTransaction.chain}}</div>
+    <div>Address</div><div>{{victimTransaction.address}}</div>
+    <div>Amount (INR)</div><div>{{victimTransaction.amountInr}}</div>
+    <div>Reported at</div><div>{{victimTransaction.reportedAt}}</div>
+  </div>
+  {{/if}}
+
+  <h2>Hop Table ({{hops.length}})</h2>
+  <table>
+    <thead><tr><th>#</th><th>Chain</th><th>From</th><th>To</th><th>Tx</th><th>Amount</th><th>USD</th><th>UTC</th><th>IST</th></tr></thead>
+    <tbody>
+    {{#each hops}}
+      <tr>
+        <td>{{hopNo}}</td><td>{{chain}}</td><td>{{from}}</td><td>{{to}}</td>
+        <td>{{#if explorerUrl}}<a href="{{explorerUrl}}">{{txHash}}</a>{{else}}{{txHash}}{{/if}}</td>
+        <td>{{amount}} {{token}}</td><td>{{#if usd}}{{usd}}{{else}}—{{/if}}</td>
+        <td>{{tsUtc}}</td><td>{{tsIst.display}}</td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+
+  <h2>Attribution</h2>
+  <table>
+    <thead><tr><th>Chain</th><th>Address</th><th>VASP</th><th>Confidence</th></tr></thead>
+    <tbody>
+    {{#each attribution}}
+      <tr><td>{{chain}}</td><td>{{addr}}</td><td>{{vaspName}}</td><td>{{confidence}}</td></tr>
+    {{/each}}
+    </tbody>
+  </table>
+
+  <h2>Risk Scores</h2>
+  <table>
+    <thead><tr><th>Chain</th><th>Address</th><th>Score</th><th>Band</th><th>Typology</th><th>Model</th></tr></thead>
+    <tbody>
+    {{#each risk}}
+      <tr><td>{{chain}}</td><td>{{addr}}</td><td>{{score}}</td><td>{{band}}</td><td>{{#if typology}}{{typology}}{{else}}—{{/if}}</td><td>{{modelVersion}}</td></tr>
+    {{/each}}
+    </tbody>
+  </table>
+
+  <h2>Sources</h2>
+  <ul class="sources">
+  {{#each sources}}
+    <li>{{provider}} — retrieved {{retrievedAt}}</li>
+  {{/each}}
+  </ul>
+
+  <h2>Methodology</h2>
+  <p>{{methodology.description}}</p>
+
+  <h2>Limitations</h2>
+  <ul class="limitations">
+  {{#each limitations}}
+    <li>{{this}}</li>
+  {{/each}}
+  </ul>
+
+  {{{certificateSection}}}
+
+  <div class="footer">
+    <div class="hash">SHA-256: {{integrity.sha256}}</div>
+    {{#if integrity.qrDataUri}}<img src="{{integrity.qrDataUri}}" alt="verification QR" />{{/if}}
+  </div>
+</body>
+</html>

@@ -55,6 +55,8 @@ services:
       FIXTURES_DIR: /app/fixtures
       NCRP_BASE_URL: http://mock-ncrp:4010
       NCRP_POLL_INTERVAL_S: ${NCRP_POLL_INTERVAL_S:-60}
+      # B9: outbound freeze-notice submission (SahyogAdapter) points at the mock-sahyog service below.
+      SAHYOG_BASE_URL: http://mock-sahyog:4011
     ports: ["4000:4000"]
     volumes: ["./fixtures:/app/fixtures"]
     depends_on:
@@ -74,6 +76,15 @@ services:
     build: { context: ., dockerfile: Dockerfile.node }
     command: pnpm --filter @ps26183/mock-server start
     ports: ["4010:4010"]
+
+  # B9: mock SAHYOG freeze-notice submission endpoint (contract: mocks/openapi/sahyog.yaml). There is
+  # no real SAHYOG sandbox to call, so this is the only backend SahyogAdapter ever talks to.
+  mock-sahyog:
+    build: { context: ., dockerfile: Dockerfile.node }
+    command: pnpm --filter @ps26183/mock-server start
+    environment:
+      MOCK_SAHYOG_PORT: 4011
+    ports: ["4011:4011"]
 
   workers:
     build: { context: ., dockerfile: Dockerfile.node }

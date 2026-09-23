@@ -3,11 +3,16 @@ import express from 'express';
 import helmet from 'helmet';
 import { createAlertRouter, alertErrorHandler } from './alerts/routes';
 import type { AlertService } from './alerts/service';
+import { createFreezeNoticeRouter, freezeNoticeErrorHandler } from './freeze-notices/routes';
+import type { FreezeNoticeService } from './freeze-notices/service';
 import { runHealth, type HealthDeps } from './health';
+import { createIntegrationsRouter, integrationsErrorHandler, type IntegrationServices } from './integrations/routes';
 import { createIntakeRouter, intakeErrorHandler } from './intake/routes';
 import type { IntakeService } from './intake/service';
 import { createMuleRouter, muleErrorHandler } from './mule/routes';
 import type { MuleService } from './mule/service';
+import { createReportRouter, reportErrorHandler } from './reports/routes';
+import type { ReportService } from './reports/service';
 import { createRiskRouter, riskErrorHandler } from './risk/routes';
 import type { RiskService } from './risk/service';
 import { createWatchlistRouter, watchlistErrorHandler } from './watchlist/routes';
@@ -19,6 +24,9 @@ export interface AppServices {
   risk?: RiskService;
   watchlist?: WatchlistService;
   alerts?: AlertService;
+  reports?: ReportService;
+  freezeNotices?: FreezeNoticeService;
+  integrations?: IntegrationServices;
 }
 
 export function createApp(deps: HealthDeps, services: AppServices = {}) {
@@ -38,13 +46,19 @@ export function createApp(deps: HealthDeps, services: AppServices = {}) {
   if (services.risk) app.use('/api/v1', createRiskRouter(services.risk));
   if (services.watchlist) app.use('/api/v1', createWatchlistRouter(services.watchlist));
   if (services.alerts) app.use('/api/v1', createAlertRouter(services.alerts));
-  // watchlistErrorHandler/alertErrorHandler recognise their own error types and call next(err) for
-  // anything else, so they must run BEFORE riskErrorHandler: riskErrorHandler (like intake/mule below
-  // it) handles *any* unmatched error unconditionally (never calls next() for one it doesn't
-  // recognize), so registered first it would swallow a B8-specific error as a generic 500 before
-  // watchlistErrorHandler/alertErrorHandler ever saw it.
+  if (services.reports) app.use('/api/v1', createReportRouter(services.reports));
+  if (services.freezeNotices) app.use('/api/v1', createFreezeNoticeRouter(services.freezeNotices));
+  if (services.integrations) app.use('/api/v1', createIntegrationsRouter(services.integrations));
+  // watchlistErrorHandler/alertErrorHandler/reportErrorHandler/freezeNoticeErrorHandler/
+  // integrationsErrorHandler recognise their own error types and call next(err) for anything else, so
+  // they must run BEFORE riskErrorHandler: riskErrorHandler (like intake/mule below it) handles *any*
+  // unmatched error unconditionally (never calls next() for one it doesn't recognize), so registered
+  // first it would swallow a B8/B9-specific error as a generic 500 before those handlers ever saw it.
   app.use(watchlistErrorHandler);
   app.use(alertErrorHandler);
+  app.use(reportErrorHandler);
+  app.use(freezeNoticeErrorHandler);
+  app.use(integrationsErrorHandler);
   app.use(riskErrorHandler);
   app.use(intakeErrorHandler);
   app.use(muleErrorHandler);

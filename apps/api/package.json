@@ -18,19 +18,22 @@
   "dependencies": {
     "@prisma/client": "^6.19.3",
     "@ps26183/shared": "workspace:*",
+    "@ps26183/workers": "workspace:*",
     "axios": "^1.7.0",
     "bullmq": "^6.3.8",
     "cors": "^2.8.5",
     "csv-parse": "^7.0.2",
     "express": "^4.21.0",
+    "handlebars": "^4.7.9",
     "helmet": "^8.0.0",
     "ioredis": "^5.4.0",
     "multer": "^2.4.0",
     "neo4j-driver": "^5.26.0",
     "pg": "^8.13.0",
+    "puppeteer": "^25.11.0",
+    "qrcode": "^1.5.4",
     "socket.io": "^4.8.0",
-    "zod": "^3.25.76",
-    "@ps26183/workers": "workspace:*"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -38,6 +41,8 @@
     "@types/multer": "^2.2.0",
     "@types/node": "^22.0.0",
     "@types/pg": "^8.11.0",
+    "@types/qrcode": "^1.5.6",
+    "@ps26183/mock-server": "workspace:*",
     "prisma": "^6.19.3",
     "socket.io-client": "^4.8.0",
     "tsx": "^4.19.0"

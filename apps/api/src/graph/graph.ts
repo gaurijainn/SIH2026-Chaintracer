@@ -186,6 +186,91 @@ export async function pathBetween(driver: Driver, chain: string, from: string, t
   }
 }
 
+export interface CaseSubgraphNode {
+  chain: string;
+  addr: string;
+  entity: { name: string; type: string } | null;
+}
+
+export interface CaseSubgraphEdge {
+  chain: string;
+  from: string;
+  to: string;
+  tx: string;
+  idx: number;
+  token: string;
+  amount: string;
+  usd: string | null;
+  ts: string;
+}
+
+export interface CaseSubgraphOptions {
+  /** Caps the number of TRANSFER edges returned, so a case with many hops never tries to embed the whole graph. */
+  maxEdges?: number;
+}
+
+/**
+ * B9 evidence-report graph snapshot: the TRANSFER edges (and their endpoints' entity attributions,
+ * if any) belonging to one case's trace hops. `getCaseSubgraph` reuses `getTransfersByTx`'s
+ * MATCH...WHERE t.tx IN $txs shape (Neo4j has no case-level property on :TRANSFER, so the caller --
+ * apps/api/src/reports/collector.ts -- resolves the case's Hop.txHash list from PostgreSQL first,
+ * the same join Postgres would do via Hop.traceId -> TraceJob.caseId) and additionally attaches each
+ * endpoint's BELONGS_TO entity (see linkToEntity), bounded by `opts.maxEdges` so a case with a very
+ * long trace never tries to embed the whole graph into one evidence report. Read-only; writes
+ * nothing.
+ */
+export async function getCaseSubgraph(driver: Driver, caseId: string, txHashes: string[], opts: CaseSubgraphOptions = {}): Promise<{ nodes: CaseSubgraphNode[]; edges: CaseSubgraphEdge[] }> {
+  void caseId; // not a graph property (see comment above) -- kept for call-site clarity/logging only
+  const maxEdges = opts.maxEdges ?? 500;
+  if (txHashes.length === 0) return { nodes: [], edges: [] };
+
+  const session = driver.session();
+  try {
+    const res = await session.run(
+      `MATCH (a:Address)-[t:TRANSFER]->(b:Address)
+       WHERE t.tx IN $txs
+       RETURN a.chain AS chain, a.addr AS from, b.addr AS to, t.tx AS tx, t.idx AS idx,
+              t.token AS token, t.amount AS amount, t.usd AS usd, toString(t.ts) AS ts
+       ORDER BY t.ts, t.tx
+       LIMIT $maxEdges`,
+      { txs: txHashes, maxEdges: neo4j.int(maxEdges) },
+    );
+    const edges: CaseSubgraphEdge[] = res.records.map((r) => ({
+      chain: r.get('chain'),
+      from: r.get('from'),
+      to: r.get('to'),
+      tx: r.get('tx'),
+      idx: neo4j.integer.toNumber(r.get('idx')),
+      token: r.get('token'),
+      amount: r.get('amount'),
+      usd: r.get('usd') ?? null,
+      ts: r.get('ts'),
+    }));
+
+    const addrKeys = new Set<string>();
+    const addrs: { chain: string; addr: string }[] = [];
+    for (const e of edges) {
+      for (const [chain, addr] of [[e.chain, e.from], [e.chain, e.to]] as const) {
+        const k = `${chain}\u0000${addr}`;
+        if (!addrKeys.has(k)) {
+          addrKeys.add(k);
+          addrs.push({ chain, addr });
+        }
+      }
+    }
+
+    const nodes: CaseSubgraphNode[] = [];
+    for (const a of addrs) {
+      const entities = await getEntityOf(driver, a.chain, a.addr);
+      nodes.push({ chain: a.chain, addr: a.addr, entity: entities[0] ? { name: entities[0].name, type: entities[0].type } : null });
+    }
+
+    return { nodes, edges };
+  } finally {
+    await session.close();
+  }
+}
+
 export async function getEntityOf(driver: Driver, chain: string, addr: string) {
   const session = driver.session();
   try {

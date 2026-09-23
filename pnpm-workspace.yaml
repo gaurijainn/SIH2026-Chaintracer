@@ -9,3 +9,8 @@ allowBuilds:
   prisma: true
   "@prisma/client": true
   "@prisma/engines": true
+  # Deliberately false: puppeteer's postinstall would try to download Chromium (large, network-heavy,
+  # and unnecessary here). Local dev installs Chromium manually with `npx puppeteer browsers install
+  # chrome` when testing PDF rendering; the Docker image installs Alpine's own chromium package
+  # instead (see Dockerfile.node) and points PUPPETEER_EXECUTABLE_PATH at it.
+  puppeteer: false

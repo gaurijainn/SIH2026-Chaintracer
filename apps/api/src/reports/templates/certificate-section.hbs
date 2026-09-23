@@ -1,0 +1,20 @@
+<section class="certificate">
+  <div class="label">Template — requires validation by qualified legal counsel</div>
+  <h2 style="border:none;margin-top:0;">Certificate under Section 63, Bharatiya Sakshya Adhiniyam, 2023</h2>
+  <p>
+    This certificate accompanies the electronic evidence produced in Case {{case.id}}{{#if case.firNumber}} (FIR {{case.firNumber}}){{/if}},
+    generated on {{generatedAt}}.
+  </p>
+  <p>
+    The evidence report identified by SHA-256 hash <span style="font-family:monospace">{{integrity.sha256}}</span>
+    was produced by the computer system described below from data held in the case's own records
+    (case management, blockchain trace, VASP attribution and risk-scoring stores) without further human
+    alteration of the underlying figures.
+  </p>
+  <p><em>
+    The statutory recitals required by Section 63 (device identification, lawful possession/control,
+    operating condition, and regular use for the activities concerned) must be completed and signed
+    by the person occupying a responsible official position in relation to the device, per legal
+    counsel review. No such recitals are pre-filled here.
+  </em></p>
+</section>

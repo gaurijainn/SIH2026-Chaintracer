@@ -28,6 +28,10 @@ const schema = z.object({
   PROVIDER_LIMITS: z.string().default(''), // optional JSON overriding per-provider rate limits
   NCRP_BASE_URL: z.string().default('http://localhost:4010'),
   NCRP_POLL_INTERVAL_S: z.coerce.number().int().min(0).default(0), // 0 = poller off
+  // B9: outbound freeze-notice submission (SahyogAdapter) and outbound NCRP notice/sync (NcrpNoticeAdapter).
+  // Both are sandbox-only -- there is no real SAHYOG endpoint to call regardless of SAHYOG_MODE.
+  SAHYOG_BASE_URL: z.string().default('http://localhost:4011'),
+  SAHYOG_MODE: z.enum(['sandbox', 'real']).default('sandbox'),
   API_PORT: z.coerce.number().int().default(4000),
   FIXTURES_DIR: z.string().default('fixtures'),
   // B8: live ETH (chainid=1) USDT monitoring stays disabled until someone manually confirms the USDT

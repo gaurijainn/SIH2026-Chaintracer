@@ -1,0 +1,39 @@
+openapi: 3.0.3
+info:
+  title: NCRP outbound notice/sync (mock contract)
+  version: 1.0.0
+  description: >
+    Separate concern from mocks/openapi/ncrp.yaml (inbound complaint feed): this is the outbound
+    sync an investigating officer triggers to push a case/freeze-notice update back to NCRP. Served
+    by the same mock server as ncrp.yaml, on the same base URL, since NCRP itself has no public API
+    either way -- both are our own contracts pending a real integration.
+servers:
+  - url: http://localhost:4010
+paths:
+  /ncrp/v1/notices/sync:
+    post:
+      summary: Push a notice/case update to NCRP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [notice]
+              properties:
+                notice:
+                  type: object
+      responses:
+        '201':
+          description: Sync accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [syncId]
+                properties:
+                  syncId:
+                    type: string
+                    description: Deterministic hash of the submitted notice (idempotent resubmission).
+        '400':
+          description: Malformed request (missing `notice`)

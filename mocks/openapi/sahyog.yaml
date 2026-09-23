@@ -1,0 +1,44 @@
+openapi: 3.0.3
+info:
+  title: SAHYOG freeze-notice submission (mock contract)
+  version: 1.0.0
+  description: >
+    SAHYOG has no public sandbox API, so this spec is our own contract for the freeze-notice
+    submission endpoint, implemented by the mock server (mocks/mock-server). Integration-ready, not
+    integrated: pointing SAHYOG_BASE_URL at a real endpoint later is a configuration change only.
+servers:
+  - url: http://localhost:4011
+paths:
+  /sahyog/v1/submissions:
+    post:
+      summary: Submit a freeze notice for a VASP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [notice]
+              properties:
+                notice:
+                  type: object
+                  description: The FreezeNotice.body JSON (VASP contact, deposit addresses, tx hashes, amounts, requests).
+      responses:
+        '201':
+          description: Submission accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [submissionId]
+                properties:
+                  submissionId:
+                    type: string
+                    description: Deterministic hash of the submitted notice, so re-submitting the same notice returns the same id (idempotent).
+        '400':
+          description: Malformed request (missing `notice`)
+  /health:
+    get:
+      summary: Liveness
+      responses:
+        '200': { description: ok }
