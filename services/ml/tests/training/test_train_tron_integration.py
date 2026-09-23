@@ -26,8 +26,17 @@ pytestmark = pytest.mark.skipif(not DATASET_PATH.exists(), reason="real tron-boo
 
 
 @pytest.fixture(scope="module")
-def result():
-    return main()
+def artifacts_dir(tmp_path_factory):
+    """A throwaway directory for this test module's real training run, so exercising the real
+    pipeline never rewrites the committed tron/ artifacts (trained_at/git_commit metadata would
+    otherwise be rewritten on every test run even though the model/calibrator bytes stay
+    identical, dirtying the working tree for no reason)."""
+    return tmp_path_factory.mktemp("tron-artifacts")
+
+
+@pytest.fixture(scope="module")
+def result(artifacts_dir):
+    return main(artifacts_dir=artifacts_dir)
 
 
 def test_dataset_row_counts_match_the_real_live_collection(result):
@@ -87,15 +96,15 @@ def test_core_scoring_latency_p95_is_reported_and_excludes_shap(result):
     assert math.isclose(approx_core, latency["core_scoring_ms"]["p50"], rel_tol=0.5, abs_tol=5.0)
 
 
-def test_all_named_artifact_files_are_written_to_disk(result):
+def test_all_named_artifact_files_are_written_to_disk(result, artifacts_dir):
     for path in [
-        tron_model_path("v1"),
-        tron_calibrator_path("v1"),
-        tron_feature_metadata_path("v1"),
-        tron_metrics_path("v1"),
-        tron_model_card_path("v1"),
-        tron_model_card_md_path("v1"),
-        tron_training_metadata_path("v1"),
+        tron_model_path("v1", artifacts_dir),
+        tron_calibrator_path("v1", artifacts_dir),
+        tron_feature_metadata_path("v1", artifacts_dir),
+        tron_metrics_path("v1", artifacts_dir),
+        tron_model_card_path("v1", artifacts_dir),
+        tron_model_card_md_path("v1", artifacts_dir),
+        tron_training_metadata_path("v1", artifacts_dir),
     ]:
         assert path.exists(), f"expected artifact missing: {path}"
         assert path.stat().st_size > 0

@@ -1,4 +1,7 @@
 """B7.1: the FeatureVector schema itself — required vs nullable fields, defaults, types."""
+import pytest
+from pydantic import ValidationError
+
 from app.features import FEATURE_NAMES, FeatureVector, feature_dict
 
 
@@ -85,3 +88,34 @@ def test_feature_vector_is_immutable():
         assert False, "FeatureVector should be frozen"
     except Exception:
         pass
+
+
+# --- cross_case_count lower bound (B7.5 cleanup regression) -----------------------------------
+# The real tron-bootstrap-v1 dataset has cross_case_count=0 for every one of its 500 rows (B5's
+# cross-case linkage was never wired into the bootstrap collector -- see the model card's known
+# limitations), so ge=1 was wrong: it made POST /score 422 on the single most common real-world
+# value. cross_case_count means "how many complaints/cases this wallet appears in so far", and 0
+# ("appears in zero cases so far") is a legitimate answer, not a missing/invalid one. The field is
+# a plain non-nullable `int` (never `int | None`), so there is no separate "missing vs zero"
+# distinction to preserve here, unlike the genuinely-nullable graph features (hops_from_victim,
+# hops_to_vasp, sanction_exposure) covered above.
+
+
+def test_cross_case_count_accepts_zero():
+    v = FeatureVector(**{**minimal_kwargs(), "cross_case_count": 0})
+    assert v.cross_case_count == 0
+
+
+def test_cross_case_count_accepts_one():
+    v = FeatureVector(**{**minimal_kwargs(), "cross_case_count": 1})
+    assert v.cross_case_count == 1
+
+
+def test_cross_case_count_accepts_values_greater_than_one():
+    v = FeatureVector(**{**minimal_kwargs(), "cross_case_count": 7})
+    assert v.cross_case_count == 7
+
+
+def test_cross_case_count_rejects_negative_values():
+    with pytest.raises(ValidationError):
+        FeatureVector(**{**minimal_kwargs(), "cross_case_count": -1})

@@ -28,8 +28,12 @@ pytestmark = pytest.mark.skipif(not DATASET_PATH.exists(), reason="real tron-boo
 
 
 @pytest.fixture(scope="module")
-def two_runs():
-    return main(), main()
+def two_runs(tmp_path_factory):
+    # Each run gets its own throwaway artifacts_dir so this real-pipeline run never rewrites the
+    # committed tron/ artifacts (and so the two runs' writes can never collide with each other).
+    run_a = main(artifacts_dir=tmp_path_factory.mktemp("tron-artifacts-a"))
+    run_b = main(artifacts_dir=tmp_path_factory.mktemp("tron-artifacts-b"))
+    return run_a, run_b
 
 
 def test_feature_matrices_are_byte_identical_across_runs(two_runs):

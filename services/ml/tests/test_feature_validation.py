@@ -19,15 +19,18 @@ def test_rejects_a_missing_required_field():
         FeatureVector(**incomplete)
 
 
-@pytest.mark.parametrize("field", ["fan_out_1h", "fan_in_unique", "burst_tx_per_hour", "shared_mule_cps"])
+@pytest.mark.parametrize("field", ["fan_out_1h", "fan_in_unique", "burst_tx_per_hour", "shared_mule_cps", "cross_case_count"])
 def test_rejects_a_negative_count_field(field: str):
     with pytest.raises(ValidationError):
         FeatureVector(**{**VALID, field: -1})
 
 
-def test_rejects_cross_case_count_below_one():
-    with pytest.raises(ValidationError):
-        FeatureVector(**{**VALID, "cross_case_count": 0})
+def test_accepts_cross_case_count_of_zero():
+    # B7.5 cleanup: the real tron-bootstrap-v1 dataset has cross_case_count=0 for every row (B5's
+    # cross-case linkage isn't wired into the bootstrap collector yet), so 0 must be a valid value,
+    # not rejected -- it means "appears in zero cases so far", not "missing".
+    v = FeatureVector(**{**VALID, "cross_case_count": 0})
+    assert v.cross_case_count == 0
 
 
 def test_rejects_a_round_amount_ratio_outside_zero_to_one():

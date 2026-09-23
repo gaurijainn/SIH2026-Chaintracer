@@ -35,7 +35,7 @@ class FeatureVector(BaseModel):
     sanction_exposure: int | None = Field(default=None, ge=0, description="Hop-distance exposure to an OFAC-listed address")
     external_flags: list[str] = Field(default_factory=list, description="Tronscan fraud flag / USDT blacklist / Chainabuse report categories")
     shared_mule_cps: int = Field(ge=0, description="Counterparties shared with known mule rings")
-    cross_case_count: int = Field(ge=1, description="Complaints/cases this wallet appears in")
+    cross_case_count: int = Field(ge=0, description="Complaints/cases this wallet appears in")
 
 
 #: Canonical feature order, derived from FeatureVector itself so it can never drift from the schema.

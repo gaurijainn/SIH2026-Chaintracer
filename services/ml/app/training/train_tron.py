@@ -48,6 +48,7 @@ from ..models import (
     tron_model_path,
     tron_training_metadata_path,
 )
+from ..models.paths import TRON_ARTIFACTS_DIR
 from ..models.metadata import trained_metadata
 from .calibration import IsotonicCalibrator
 from .feature_matrix import (
@@ -206,10 +207,16 @@ def _feature_metadata() -> dict[str, Any]:
     }
 
 
-def main() -> dict[str, Any]:
+def main(*, artifacts_dir: Path = TRON_ARTIFACTS_DIR) -> dict[str, Any]:
     """Runs the full B7.4 training pipeline once and returns a dict of everything worth reporting
     (metrics, split boundaries, latency, artifact paths) -- used both for the real training run and
-    by the reproducibility test, which calls this twice and diffs the results."""
+    by the reproducibility test, which calls this twice and diffs the results.
+
+    `artifacts_dir` defaults to the real committed `TRON_ARTIFACTS_DIR` for a real/manual training
+    run (`python -m app.training.train_tron`). Tests that exercise this real pipeline end-to-end
+    (test_train_tron_integration.py, test_reproducibility.py) pass a pytest `tmp_path` instead, so
+    running the full test suite never rewrites the committed artifact files' timestamps/git_commit
+    metadata and never dirties the working tree."""
     t_start = time.time()
     _log(f"loading dataset from {DATASET_PATH}")
     dataset = TronBootstrapLoader().load(DATASET_PATH)
@@ -332,17 +339,17 @@ def main() -> dict[str, Any]:
         _log(f"SHAP example {i} ({test_fm.identifiers[i]}): base={base_value:.4f} raw_output={raw_model_output[i]:.4f} reconstruction_error={example['reconstruction_error']:.2e} top_feature={contributions[0]['feature']}({contributions[0]['shap_contribution']:.4f})")
 
     # Step 14: save artifacts.
-    tron_model_path(MODEL_VERSION).parent.mkdir(parents=True, exist_ok=True)
-    model.save_model(str(tron_model_path(MODEL_VERSION)))
-    calibrator.save(tron_calibrator_path(MODEL_VERSION))
-    _log(f"saved model to {tron_model_path(MODEL_VERSION)}")
-    _log(f"saved calibrator to {tron_calibrator_path(MODEL_VERSION)}")
+    tron_model_path(MODEL_VERSION, artifacts_dir).parent.mkdir(parents=True, exist_ok=True)
+    model.save_model(str(tron_model_path(MODEL_VERSION, artifacts_dir)))
+    calibrator.save(tron_calibrator_path(MODEL_VERSION, artifacts_dir))
+    _log(f"saved model to {tron_model_path(MODEL_VERSION, artifacts_dir)}")
+    _log(f"saved calibrator to {tron_calibrator_path(MODEL_VERSION, artifacts_dir)}")
 
     feature_metadata = _feature_metadata()
     feature_metadata["dataset_version"] = dataset.manifest.version
     feature_metadata["dataset_local_path"] = dataset.manifest.local_path
-    tron_feature_metadata_path(MODEL_VERSION).write_text(json.dumps(feature_metadata, indent=2), encoding="utf-8")
-    _log(f"saved feature metadata to {tron_feature_metadata_path(MODEL_VERSION)}")
+    tron_feature_metadata_path(MODEL_VERSION, artifacts_dir).write_text(json.dumps(feature_metadata, indent=2), encoding="utf-8")
+    _log(f"saved feature metadata to {tron_feature_metadata_path(MODEL_VERSION, artifacts_dir)}")
 
     trained_at = datetime.now(timezone.utc)
     git_commit = _git_commit_hash()
@@ -374,8 +381,8 @@ def main() -> dict[str, Any]:
         "git_commit": git_commit,
         "classification_threshold": CLASSIFICATION_THRESHOLD,
     }
-    tron_training_metadata_path(MODEL_VERSION).write_text(json.dumps(training_metadata, indent=2), encoding="utf-8")
-    _log(f"saved training metadata to {tron_training_metadata_path(MODEL_VERSION)}")
+    tron_training_metadata_path(MODEL_VERSION, artifacts_dir).write_text(json.dumps(training_metadata, indent=2), encoding="utf-8")
+    _log(f"saved training metadata to {tron_training_metadata_path(MODEL_VERSION, artifacts_dir)}")
 
     metrics_payload = {
         "model_version": MODEL_VERSION,
@@ -385,8 +392,8 @@ def main() -> dict[str, Any]:
         "feature_missingness": {"train": train_fm.missingness, "calibration": cal_fm.missingness, "test": test_fm.missingness},
         "shap_verification": {"n_examples": n_shap_examples, "examples": shap_examples},
     }
-    tron_metrics_path(MODEL_VERSION).write_text(json.dumps(metrics_payload, indent=2), encoding="utf-8")
-    _log(f"saved metrics to {tron_metrics_path(MODEL_VERSION)}")
+    tron_metrics_path(MODEL_VERSION, artifacts_dir).write_text(json.dumps(metrics_payload, indent=2), encoding="utf-8")
+    _log(f"saved metrics to {tron_metrics_path(MODEL_VERSION, artifacts_dir)}")
 
     compact_card = trained_metadata(
         "tron",
@@ -415,18 +422,18 @@ def main() -> dict[str, Any]:
         ],
         feature_names=FEATURE_NAMES,
     )
-    tron_model_card_path(MODEL_VERSION).write_text(compact_card.model_dump_json(indent=2), encoding="utf-8")
-    _log(f"saved compact model card to {tron_model_card_path(MODEL_VERSION)}")
+    tron_model_card_path(MODEL_VERSION, artifacts_dir).write_text(compact_card.model_dump_json(indent=2), encoding="utf-8")
+    _log(f"saved compact model card to {tron_model_card_path(MODEL_VERSION, artifacts_dir)}")
 
     model_card_md = _render_model_card_md(dataset, metrics, training_metadata, trained_at)
-    tron_model_card_md_path(MODEL_VERSION).write_text(model_card_md, encoding="utf-8")
-    _log(f"saved narrative model card to {tron_model_card_md_path(MODEL_VERSION)}")
+    tron_model_card_md_path(MODEL_VERSION, artifacts_dir).write_text(model_card_md, encoding="utf-8")
+    _log(f"saved narrative model card to {tron_model_card_md_path(MODEL_VERSION, artifacts_dir)}")
 
     # Step 15: latency benchmark, from artifacts reloaded fresh off disk.
     _log("reloading model+calibrator from disk for the latency benchmark (proving round-trip works)")
     reloaded_model = xgb.XGBClassifier()
-    reloaded_model.load_model(str(tron_model_path(MODEL_VERSION)))
-    reloaded_calibrator = IsotonicCalibrator.load(tron_calibrator_path(MODEL_VERSION))
+    reloaded_model.load_model(str(tron_model_path(MODEL_VERSION, artifacts_dir)))
+    reloaded_calibrator = IsotonicCalibrator.load(tron_calibrator_path(MODEL_VERSION, artifacts_dir))
     reloaded_explainer = shap.TreeExplainer(reloaded_model)
 
     latency = _benchmark_latency(reloaded_model, reloaded_calibrator, reloaded_explainer, split.test, n_iterations=200)

@@ -15,32 +15,32 @@ TRON_ARTIFACTS_DIR = ARTIFACTS_DIR / "tron"
 ETHEREUM_ARTIFACTS_DIR = ARTIFACTS_DIR / "ethereum"
 
 
-def tron_model_path(version: str) -> Path:
-    return TRON_ARTIFACTS_DIR / f"tron-xgb-{version}.json"
+def tron_model_path(version: str, base_dir: Path = TRON_ARTIFACTS_DIR) -> Path:
+    return base_dir / f"tron-xgb-{version}.json"
 
 
-def tron_calibrator_path(version: str) -> Path:
-    return TRON_ARTIFACTS_DIR / f"tron-xgb-{version}-calibrator.joblib"
+def tron_calibrator_path(version: str, base_dir: Path = TRON_ARTIFACTS_DIR) -> Path:
+    return base_dir / f"tron-xgb-{version}-calibrator.joblib"
 
 
-def tron_feature_metadata_path(version: str) -> Path:
-    return TRON_ARTIFACTS_DIR / f"tron-xgb-{version}-features.json"
+def tron_feature_metadata_path(version: str, base_dir: Path = TRON_ARTIFACTS_DIR) -> Path:
+    return base_dir / f"tron-xgb-{version}-features.json"
 
 
-def tron_metrics_path(version: str) -> Path:
-    return TRON_ARTIFACTS_DIR / f"tron-xgb-{version}-metrics.json"
+def tron_metrics_path(version: str, base_dir: Path = TRON_ARTIFACTS_DIR) -> Path:
+    return base_dir / f"tron-xgb-{version}-metrics.json"
 
 
-def tron_model_card_path(version: str) -> Path:
-    return TRON_ARTIFACTS_DIR / f"tron-xgb-{version}-model-card.json"
+def tron_model_card_path(version: str, base_dir: Path = TRON_ARTIFACTS_DIR) -> Path:
+    return base_dir / f"tron-xgb-{version}-model-card.json"
 
 
-def tron_training_metadata_path(version: str) -> Path:
-    return TRON_ARTIFACTS_DIR / f"tron-xgb-{version}-training-metadata.json"
+def tron_training_metadata_path(version: str, base_dir: Path = TRON_ARTIFACTS_DIR) -> Path:
+    return base_dir / f"tron-xgb-{version}-training-metadata.json"
 
 
-def tron_model_card_md_path(version: str) -> Path:
-    return TRON_ARTIFACTS_DIR / f"tron-xgb-{version}-model-card.md"
+def tron_model_card_md_path(version: str, base_dir: Path = TRON_ARTIFACTS_DIR) -> Path:
+    return base_dir / f"tron-xgb-{version}-model-card.md"
 
 
 def ethereum_model_path(version: str) -> Path:
