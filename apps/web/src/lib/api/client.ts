@@ -20,6 +20,9 @@ export interface ApiClientOptions {
 export interface RequestOptions {
   method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   body?: unknown;
+  /** Pre-serialised body (e.g. a CSV for POST /complaints/import); sent as-is with `contentType`. Mutually exclusive with `body`. */
+  rawBody?: string;
+  contentType?: string;
   query?: Record<string, string | number | boolean | undefined | null>;
   signal?: AbortSignal;
   /** false for public endpoints (login/refresh/verify): no Authorization header and no 401 refresh dance. */
@@ -49,12 +52,13 @@ export function createApiClient(opts: ApiClientOptions) {
 
   async function send(path: string, o: RequestOptions, token?: string): Promise<Response> {
     const headers: Record<string, string> = { Accept: 'application/json' };
-    if (o.body !== undefined) headers['Content-Type'] = 'application/json';
+    if (o.rawBody !== undefined) headers['Content-Type'] = o.contentType ?? 'text/plain';
+    else if (o.body !== undefined) headers['Content-Type'] = 'application/json';
     if (token) headers.Authorization = `Bearer ${token}`;
     const timeout = AbortSignal.timeout?.(opts.timeoutMs ?? 30_000);
     const signal = o.signal && timeout && AbortSignal.any ? AbortSignal.any([o.signal, timeout]) : (o.signal ?? timeout);
     try {
-      return await doFetch(url(path, o.query), { method: o.method ?? 'GET', headers, body: o.body === undefined ? undefined : JSON.stringify(o.body), signal });
+      return await doFetch(url(path, o.query), { method: o.method ?? 'GET', headers, body: o.rawBody ?? (o.body === undefined ? undefined : JSON.stringify(o.body)), signal });
     } catch (e) {
       if (o.signal?.aborted) throw e; // caller cancelled (TanStack Query unmount): not an error to report
       const timedOut = e instanceof DOMException && e.name === 'TimeoutError';
@@ -99,7 +103,7 @@ export function createApiClient(opts: ApiClientOptions) {
     }
     if (res.ok) return body as T;
     const b = (body ?? {}) as { error?: unknown; message?: unknown; issues?: { path: string; message: string }[] };
-    throw new ApiError(res.status, typeof b.error === 'string' ? b.error : 'HTTP_ERROR', humanMessage(res.status, b), Array.isArray(b.issues) ? b.issues : []);
+    throw new ApiError(res.status, typeof b.error === 'string' ? b.error : 'HTTP_ERROR', humanMessage(res.status, b), Array.isArray(b.issues) ? b.issues : [], body);
   }
 
   async function request<T>(path: string, o: RequestOptions = {}): Promise<T> {

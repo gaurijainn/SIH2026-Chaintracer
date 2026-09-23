@@ -4,13 +4,16 @@ export class ApiError extends Error {
   /** Machine code from the API body (`{ error: 'INVALID_BODY' }`), or NETWORK / TIMEOUT / UNKNOWN. */
   readonly code: string;
   readonly issues: { path: string; message: string }[];
+  /** Parsed JSON body of the failed response, for callers that read structured validation results (e.g. a 422 complaint). Never rendered as-is. */
+  readonly body?: unknown;
 
-  constructor(status: number, code: string, message: string, issues: { path: string; message: string }[] = []) {
+  constructor(status: number, code: string, message: string, issues: { path: string; message: string }[] = [], body?: unknown) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.code = code;
     this.issues = issues;
+    this.body = body;
   }
 
   get isUnauthorized() {
@@ -31,6 +34,8 @@ const FALLBACK: Record<number, string> = {
   404: 'The requested record could not be found.',
   409: 'This record was changed by someone else. Reload and try again.',
   413: 'The submitted data is too large.',
+  415: 'The submitted file type is not supported.',
+  422: 'The complaint was not accepted. Review the highlighted problems and try again.',
   429: 'Too many requests. Wait a moment and try again.',
 };
 
@@ -42,6 +47,12 @@ const BY_CODE: Record<string, string> = {
   TOKEN_INVALID: FALLBACK[401]!,
   REFRESH_REVOKED: FALLBACK[401]!,
   FORBIDDEN: FALLBACK[403]!,
+  INVALID_BODY: FALLBACK[400]!,
+  INVALID_CSV: 'The CSV file could not be read. Check the header row and required columns.',
+  EMPTY_CSV: 'The CSV file has no data rows.',
+  NO_FILE: 'No file was attached to the import.',
+  UNSUPPORTED_MEDIA_TYPE: FALLBACK[415]!,
+  LIMIT_FILE_SIZE: 'The CSV file is larger than the 25 MB import limit.',
 };
 
 /** Maps a status + body to a message an investigator can act on. Server text is never shown verbatim. */

@@ -59,10 +59,13 @@ describe('route gating', () => {
     const denied = screen.queryByText('Not available for your role');
     if (allowed) {
       expect(denied).not.toBeInTheDocument();
-      expect(screen.getByText(/^Planned ·/)).toBeInTheDocument();
+      // /intake is a real screen since F2; every other allowed route is still a placeholder
+      if (path === '/intake') expect(screen.getByRole('heading', { name: 'Complaint intake' })).toBeInTheDocument();
+      else expect(screen.getByText(/^Planned ·/)).toBeInTheDocument();
     } else {
       expect(denied).toBeInTheDocument();
       expect(screen.queryByText(/^Planned ·/)).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: 'Complaint intake' })).not.toBeInTheDocument();
     }
   });
 });

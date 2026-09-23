@@ -5,9 +5,10 @@ import { ProtectedRoute } from '@/features/auth/ProtectedRoute';
 import { AppShell } from '@/layouts/AppShell';
 import { INTAKE_ACCESS, REPORT_ACCESS, type RouteHandle } from '@/layouts/nav';
 import type { Permission } from '@/lib/permissions';
+import { IntakePage } from '@/features/intake/IntakePage';
 import { LoginPage } from '@/pages/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
-import { AlertsPage, CaseDetailPage, CasesPage, DashboardPage, IntakePage, ReportsPage, VaspsPage, WatchlistPage } from '@/pages/placeholders';
+import { AlertsPage, CaseDetailPage, CasesPage, DashboardPage, ReportsPage, VaspsPage, WatchlistPage } from '@/pages/placeholders';
 import { SettingsPage } from '@/pages/SettingsPage';
 
 const gate = (permission: Permission, el: ReactElement) => <RequirePermission permission={permission}>{el}</RequirePermission>;
