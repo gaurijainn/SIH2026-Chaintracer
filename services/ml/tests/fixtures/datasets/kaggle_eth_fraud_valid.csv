@@ -1,0 +1,5 @@
+Address,FLAG, Avg min between sent tnx,ERC20 most sent token
+0xaaa1,0,12.5,USDT
+0xaaa2,1,0.4,DAI
+0xaaa3,0,300.0,USDT
+0xaaa4,1,2.1,WETH

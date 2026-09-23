@@ -1,0 +1,4 @@
+subgraph_id,label,num_nodes,num_edges
+sg-1,illicit,42,80
+sg-2,licit,15,20
+sg-3,unknown,7,6

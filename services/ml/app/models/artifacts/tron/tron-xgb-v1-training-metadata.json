@@ -1,0 +1,68 @@
+{
+  "model_version": "v1",
+  "trained_at": "2026-09-23T06:26:08.614421+00:00",
+  "dataset_version": "tron-bootstrap-v1-live",
+  "dataset_local_path": "C:\\Users\\Gauri Jain\\SIH_project\\data\\labels\\tron-bootstrap\\v1\\tron_bootstrap_dataset.csv",
+  "row_counts": {
+    "total": 500,
+    "excluded_unresolvable_label": 0,
+    "train": 300,
+    "calibration": 100,
+    "test": 100
+  },
+  "class_counts": {
+    "train": {
+      "high_risk": 158,
+      "licit": 142
+    },
+    "calibration": {
+      "high_risk": 54,
+      "licit": 46
+    },
+    "test": {
+      "high_risk": 38,
+      "licit": 62
+    }
+  },
+  "temporal_boundaries": {
+    "train": {
+      "earliest": "2021-12-04T19:40:24+00:00",
+      "latest": "2026-04-10T18:42:24+00:00"
+    },
+    "calibration": {
+      "earliest": "2026-04-12T00:52:45+00:00",
+      "latest": "2026-07-14T13:30:36+00:00"
+    },
+    "test": {
+      "earliest": "2026-07-14T14:50:39+00:00",
+      "latest": "2026-09-23T05:12:15+00:00"
+    }
+  },
+  "temporal_split_fractions": {
+    "train_frac": 0.6,
+    "calibration_frac": 0.2,
+    "adjusted_from_default": false,
+    "note": "60/20/20 produced non-degenerate, both-class-present partitions on the real derived timestamps -- no adjustment needed"
+  },
+  "random_seed": 42,
+  "xgboost_params": {
+    "max_depth": 3,
+    "n_estimators": 150,
+    "learning_rate": 0.1,
+    "eval_metric": "aucpr",
+    "missing": "np.nan",
+    "random_state": 42,
+    "n_jobs": 1,
+    "scale_pos_weight": 0.8987341772151899
+  },
+  "scale_pos_weight": 0.8987341772151899,
+  "preprocessing_version": "tron-feature-matrix-v1",
+  "calibration_method": "isotonic",
+  "calibration_fit_split": "calibration",
+  "activator_label_encoder": {
+    "name": "fnv1a_mod32_v1",
+    "buckets": 32
+  },
+  "git_commit": "4e3608233667b8a8e37f4f2c4705820bd5b611f3",
+  "classification_threshold": 0.5
+}

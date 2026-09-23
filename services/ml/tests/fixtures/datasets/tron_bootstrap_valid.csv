@@ -1,0 +1,5 @@
+address,chain,label,source,fetched_at,evidence,confidence,account_age_days
+TAAA1,TRON,high_risk,usdt_blacklist,2026-08-01T00:00:00Z,"{""event"":""AddedBlackList"",""tx"":""0xabc""}",0.95,5
+TAAA2,TRON,high_risk,ofac,2026-08-02T00:00:00Z,"{""list"":""SDN""}",0.99,900
+TAAA3,TRON,licit,manual_negative,2026-08-03T00:00:00Z,"active USDT holder, no flags",0.6,400
+TAAA4,TRON,licit,manual_negative,2026-08-03T00:00:00Z,"active USDT holder, no flags",0.6,120

@@ -1,0 +1,46 @@
+{
+  "model_family": "tron",
+  "model_version": "v1",
+  "status": "trained",
+  "trained_at": "2026-09-23T06:26:08.614421Z",
+  "data_sources": [
+    "self-built: TronGrid AddedBlackList events + OFAC TRX/USDT + Chainabuse TRON reports + Tronscan enrichment (plan Section 4)"
+  ],
+  "metrics": {
+    "test_roc_auc": 0.9630730050933787,
+    "test_pr_auc": 0.896108731130151,
+    "test_accuracy": 0.88,
+    "test_precision": 0.76,
+    "test_recall": 1.0,
+    "test_f1": 0.8636363636363636,
+    "test_brier_score": 0.09111732711408779
+  },
+  "limitations": [
+    "trained on a 500-row bootstrap dataset (250 high_risk / 250 licit) -- a prototype, not a validated production fraud detector",
+    "per-row event timestamps for the temporal split were derived from embedded evidence (blockTimestampMs / observedAt), not the dataset's own fetched_at column, which is identical across all 500 rows -- see app/training/timestamps.py",
+    "hops_from_victim, hops_to_vasp and sanction_exposure are 100% missing (no case-graph context in this bootstrap collector) and contributed nothing to this model",
+    "one row (OFAC-only source) has no genuine event timestamp and falls back to fetched_at",
+    "no oversampling; class imbalance handled only via scale_pos_weight",
+    "high_risk is a heuristic/blacklist/sanctions-overlap label, not a criminal or investigative determination",
+    "trx_dust_usdt, shared_mule_cps and cross_case_count are zero-variance in this dataset (every one of the 500 rows is false/0) because apps/api/src/mule/bootstrap/tracedAddressProvider.ts's ChainLayerTracedAddressProvider hardcodes these three fields (trxDustUsdt: false, sharedMuleCps: 0, crossCaseCount: 0) rather than deriving them -- B5's full attribution heuristics and cross-case linkage were never wired into this bootstrap collector; this is a collector-completeness gap for a future phase, not evidence that real TRX balances/mule rings/case links were checked and happened to be negative",
+    "activator_label is encoded as a 32-bucket FNV-1a hash cast to a plain float; XGBoost can still split on it (each split carves out a subset of buckets), but adjacent bucket numbers carry no real semantic similarity, so this is a weaker encoding than target/one-hot/leave-one-out encoding would be for this nominal categorical -- a concrete future improvement, not implemented here to avoid a test-set-influenced or newly-introduced encoding change mid-audit",
+    "overfitting gap: PR-AUC drops 0.1032 (0.9993 train -> 0.8961 test), ROC-AUC drops 0.0365, precision drops 0.24 -- consistent with a shallow-tree/no-hyperparameter-search setup on a ~300-row training split, but a real generalization gap to watch, not a fixed issue"
+  ],
+  "feature_names": [
+    "dwell_median_min",
+    "fan_out_1h",
+    "fan_in_unique",
+    "passthrough_ratio",
+    "age_at_taint_days",
+    "activator_label",
+    "trx_dust_usdt",
+    "round_amount_ratio",
+    "burst_tx_per_hour",
+    "hops_from_victim",
+    "hops_to_vasp",
+    "sanction_exposure",
+    "external_flags",
+    "shared_mule_cps",
+    "cross_case_count"
+  ]
+}

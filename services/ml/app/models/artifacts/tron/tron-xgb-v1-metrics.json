@@ -1,0 +1,227 @@
+{
+  "model_version": "v1",
+  "trained_at": "2026-09-23T06:26:08.614421+00:00",
+  "classification_threshold": 0.5,
+  "splits": {
+    "train": {
+      "n": 300,
+      "n_positive": 158,
+      "n_negative": 142,
+      "roc_auc": 0.9995988589766447,
+      "pr_auc": 0.9993178200560904,
+      "accuracy": 0.9633333333333334,
+      "precision": 1.0,
+      "recall": 0.930379746835443,
+      "f1": 0.9639344262295082,
+      "brier_score": 0.02380650764004582,
+      "confusion_matrix": {
+        "tn": 142,
+        "fp": 0,
+        "fn": 11,
+        "tp": 147
+      },
+      "threshold": 0.5,
+      "recall_at_90pct_precision": 1.0,
+      "recall_at_90pct_precision_note": "computed over n=300 rows (158 positive) -- noisy at this size, directional only"
+    },
+    "calibration": {
+      "n": 100,
+      "n_positive": 54,
+      "n_negative": 46,
+      "roc_auc": 0.9945652173913043,
+      "pr_auc": 0.9933775082359988,
+      "accuracy": 0.97,
+      "precision": 0.9811320754716981,
+      "recall": 0.9629629629629629,
+      "f1": 0.9719626168224299,
+      "brier_score": 0.023952380952380958,
+      "confusion_matrix": {
+        "tn": 45,
+        "fp": 1,
+        "fn": 2,
+        "tp": 52
+      },
+      "threshold": 0.5,
+      "recall_at_90pct_precision": 0.9814814814814815,
+      "recall_at_90pct_precision_note": "computed over n=100 rows (54 positive) -- noisy at this size, directional only"
+    },
+    "test": {
+      "n": 100,
+      "n_positive": 38,
+      "n_negative": 62,
+      "roc_auc": 0.9630730050933787,
+      "pr_auc": 0.896108731130151,
+      "accuracy": 0.88,
+      "precision": 0.76,
+      "recall": 1.0,
+      "f1": 0.8636363636363636,
+      "brier_score": 0.09111732711408779,
+      "confusion_matrix": {
+        "tn": 50,
+        "fp": 12,
+        "fn": 0,
+        "tp": 38
+      },
+      "threshold": 0.5,
+      "recall_at_90pct_precision": 0.9473684210526315,
+      "recall_at_90pct_precision_note": "computed over n=100 rows (38 positive) -- noisy at this size, directional only"
+    }
+  },
+  "feature_missingness": {
+    "train": {
+      "dwell_median_min": 48,
+      "fan_out_1h": 0,
+      "fan_in_unique": 0,
+      "passthrough_ratio": 28,
+      "age_at_taint_days": 122,
+      "activator_label": 78,
+      "trx_dust_usdt": 0,
+      "round_amount_ratio": 0,
+      "burst_tx_per_hour": 0,
+      "hops_from_victim": 300,
+      "hops_to_vasp": 300,
+      "sanction_exposure": 300,
+      "external_flags": 0,
+      "shared_mule_cps": 0,
+      "cross_case_count": 0
+    },
+    "calibration": {
+      "dwell_median_min": 9,
+      "fan_out_1h": 0,
+      "fan_in_unique": 0,
+      "passthrough_ratio": 0,
+      "age_at_taint_days": 64,
+      "activator_label": 15,
+      "trx_dust_usdt": 0,
+      "round_amount_ratio": 0,
+      "burst_tx_per_hour": 0,
+      "hops_from_victim": 100,
+      "hops_to_vasp": 100,
+      "sanction_exposure": 100,
+      "external_flags": 0,
+      "shared_mule_cps": 0,
+      "cross_case_count": 0
+    },
+    "test": {
+      "dwell_median_min": 11,
+      "fan_out_1h": 0,
+      "fan_in_unique": 0,
+      "passthrough_ratio": 1,
+      "age_at_taint_days": 42,
+      "activator_label": 6,
+      "trx_dust_usdt": 0,
+      "round_amount_ratio": 0,
+      "burst_tx_per_hour": 0,
+      "hops_from_victim": 100,
+      "hops_to_vasp": 100,
+      "sanction_exposure": 100,
+      "external_flags": 0,
+      "shared_mule_cps": 0,
+      "cross_case_count": 0
+    }
+  },
+  "shap_verification": {
+    "n_examples": 3,
+    "examples": [
+      {
+        "identifier": "TE3PT99fFzp4gQ4etJQTDP54r2438qMbrJ",
+        "base_value": 0.053282856941223145,
+        "raw_model_output": 0.050771426409482956,
+        "reconstruction_error": 2.868473529815674e-07,
+        "top_contributions": [
+          {
+            "feature": "external_flags",
+            "feature_value": 0.0,
+            "shap_contribution": -1.7381082773208618
+          },
+          {
+            "feature": "passthrough_ratio",
+            "feature_value": 0.478,
+            "shap_contribution": 1.1790697574615479
+          },
+          {
+            "feature": "dwell_median_min",
+            "feature_value": 20114.125,
+            "shap_contribution": 0.8249466419219971
+          },
+          {
+            "feature": "age_at_taint_days",
+            "feature_value": 259.099,
+            "shap_contribution": 0.302218496799469
+          },
+          {
+            "feature": "burst_tx_per_hour",
+            "feature_value": 17.0,
+            "shap_contribution": -0.30051520466804504
+          }
+        ]
+      },
+      {
+        "identifier": "TAhwhFv3JpK39Nc2m8W5LPCcoTisutiRfp",
+        "base_value": 0.053282856941223145,
+        "raw_model_output": 5.43773889541626,
+        "reconstruction_error": 2.384185791015625e-06,
+        "top_contributions": [
+          {
+            "feature": "external_flags",
+            "feature_value": 1.0,
+            "shap_contribution": 3.5622448921203613
+          },
+          {
+            "feature": "passthrough_ratio",
+            "feature_value": 0.977,
+            "shap_contribution": 1.0125962495803833
+          },
+          {
+            "feature": "dwell_median_min",
+            "feature_value": 161297.075,
+            "shap_contribution": 0.9386264085769653
+          },
+          {
+            "feature": "round_amount_ratio",
+            "feature_value": 0.26,
+            "shap_contribution": -0.3579486608505249
+          },
+          {
+            "feature": "burst_tx_per_hour",
+            "feature_value": 7.0,
+            "shap_contribution": 0.31747475266456604
+          }
+        ]
+      },
+      {
+        "identifier": "TACoQZTypD99VdwBCMb9wdp9pr54BFBbb1",
+        "base_value": 0.053282856941223145,
+        "raw_model_output": 6.486000061035156,
+        "reconstruction_error": 0.0,
+        "top_contributions": [
+          {
+            "feature": "external_flags",
+            "feature_value": 1.0,
+            "shap_contribution": 3.5880789756774902
+          },
+          {
+            "feature": "dwell_median_min",
+            "feature_value": null,
+            "shap_contribution": 2.1963510513305664
+          },
+          {
+            "feature": "passthrough_ratio",
+            "feature_value": null,
+            "shap_contribution": 1.4233065843582153
+          },
+          {
+            "feature": "round_amount_ratio",
+            "feature_value": 0.0,
+            "shap_contribution": -0.5085902810096741
+          },
+          {
+            "feature": "activator_label",
+            "feature_value": 8.0,
+            "shap_contribution": -0.1735164374113083
+          }
+        ]
+      }
+    ]
+  }
+}

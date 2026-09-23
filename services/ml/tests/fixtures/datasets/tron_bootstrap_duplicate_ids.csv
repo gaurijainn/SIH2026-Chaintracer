@@ -1,0 +1,4 @@
+address,chain,label,source,fetched_at,evidence,confidence
+TAAA1,TRON,high_risk,usdt_blacklist,2026-08-01T00:00:00Z,"{""tx"":""a""}",0.9
+TAAA1,TRON,high_risk,ofac,2026-08-02T00:00:00Z,"{""list"":""SDN""}",0.9
+TAAA2,TRON,licit,manual_negative,2026-08-03T00:00:00Z,"no flags",0.6

@@ -1,0 +1,4 @@
+address,chain,status,source,timestamp,activity_evidence,usdt_holder_evidence,exclusion_reason
+TNEG1,TRON,included,tron_negative_sampler,2026-08-05T00:00:00Z,"{""txCount"":42}","{""balance"":120.5}",
+TEXCH1,TRON,excluded,tron_negative_sampler,2026-08-05T00:00:00Z,"{""txCount"":999}","{""balance"":50000}",tagged as an exchange hot wallet
+TUNK1,TRON,undetermined,tron_negative_sampler,2026-08-05T00:00:00Z,,,

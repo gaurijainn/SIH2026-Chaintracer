@@ -1,0 +1,109 @@
+{
+  "model_version": "v1",
+  "feature_order": [
+    "dwell_median_min",
+    "fan_out_1h",
+    "fan_in_unique",
+    "passthrough_ratio",
+    "age_at_taint_days",
+    "activator_label",
+    "trx_dust_usdt",
+    "round_amount_ratio",
+    "burst_tx_per_hour",
+    "hops_from_victim",
+    "hops_to_vasp",
+    "sanction_exposure",
+    "external_flags",
+    "shared_mule_cps",
+    "cross_case_count"
+  ],
+  "features": {
+    "dwell_median_min": {
+      "type": "float",
+      "status": "used",
+      "missing_value_policy": "native XGBoost NaN handling (np.nan when absent from the source row); never imputed"
+    },
+    "fan_out_1h": {
+      "type": "float",
+      "status": "used",
+      "missing_value_policy": "native XGBoost NaN handling (np.nan when absent from the source row); never imputed"
+    },
+    "fan_in_unique": {
+      "type": "float",
+      "status": "used",
+      "missing_value_policy": "native XGBoost NaN handling (np.nan when absent from the source row); never imputed"
+    },
+    "passthrough_ratio": {
+      "type": "float",
+      "status": "used",
+      "missing_value_policy": "native XGBoost NaN handling (np.nan when absent from the source row); never imputed"
+    },
+    "age_at_taint_days": {
+      "type": "float",
+      "status": "used",
+      "missing_value_policy": "native XGBoost NaN handling (np.nan when absent from the source row); never imputed"
+    },
+    "activator_label": {
+      "type": "categorical (free-text TRON address), hash-bucket encoded to float",
+      "status": "used",
+      "encoding": {
+        "name": "fnv1a_mod32_v1",
+        "buckets": 32,
+        "description": "32-bit FNV-1a over the raw label string, mod bucket count; fit-free/stateless, no train/inference skew"
+      },
+      "missing_value_policy": "np.nan when activator_label is absent from the row (never bucket 0 -- missing is never confused with 'hashed to bucket 0')"
+    },
+    "trx_dust_usdt": {
+      "type": "bool in schema; encoded as float 1.0/0.0 for the model matrix",
+      "status": "used, but zero-variance in this bootstrap dataset (every one of the 500 rows is false)",
+      "source_note": "pandas infers this all-lowercase true/false CSV column as boolean dtype, so it is already a 0.0/1.0 float in DatasetRow.features (not a string in extra, as an all-string-dtype read would produce)",
+      "missing_value_policy": "np.nan if genuinely absent"
+    },
+    "round_amount_ratio": {
+      "type": "float",
+      "status": "used",
+      "missing_value_policy": "native XGBoost NaN handling (np.nan when absent from the source row); never imputed"
+    },
+    "burst_tx_per_hour": {
+      "type": "float",
+      "status": "used",
+      "missing_value_policy": "native XGBoost NaN handling (np.nan when absent from the source row); never imputed"
+    },
+    "hops_from_victim": {
+      "type": "float (native NaN for missing)",
+      "status": "present in schema, unavailable in this bootstrap training run (100% missing -- no case-graph context)",
+      "missing_value_policy": "native XGBoost NaN handling; never fabricated as 0"
+    },
+    "hops_to_vasp": {
+      "type": "float (native NaN for missing)",
+      "status": "present in schema, unavailable in this bootstrap training run (100% missing -- no case-graph context)",
+      "missing_value_policy": "native XGBoost NaN handling; never fabricated as 0"
+    },
+    "sanction_exposure": {
+      "type": "float (native NaN for missing)",
+      "status": "present in schema, unavailable in this bootstrap training run (100% missing -- no case-graph context)",
+      "missing_value_policy": "native XGBoost NaN handling; never fabricated as 0"
+    },
+    "external_flags": {
+      "type": "list[str] in schema; encoded as float count of flags for the model matrix",
+      "status": "used (as count)",
+      "encoding": {
+        "description": "len(json.loads(external_flags)); the raw list/hash is audit metadata only, never a model input on its own"
+      },
+      "missing_value_policy": "defaults to 0 (empty list) when the column is entirely absent; every real row in tron-bootstrap-v1 has at least '[]'"
+    },
+    "shared_mule_cps": {
+      "type": "float",
+      "status": "used",
+      "missing_value_policy": "native XGBoost NaN handling (np.nan when absent from the source row); never imputed"
+    },
+    "cross_case_count": {
+      "type": "float",
+      "status": "used",
+      "missing_value_policy": "native XGBoost NaN handling (np.nan when absent from the source row); never imputed"
+    }
+  },
+  "preprocessing_version": "tron-feature-matrix-v1",
+  "dataset_version": "tron-bootstrap-v1-live",
+  "dataset_local_path": "C:\\Users\\Gauri Jain\\SIH_project\\data\\labels\\tron-bootstrap\\v1\\tron_bootstrap_dataset.csv"
+}

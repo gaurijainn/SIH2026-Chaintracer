@@ -1,0 +1,3 @@
+address,chain,label,source,fetched_at,evidence,confidence
+TAAA1,TRON,definitely_criminal,usdt_blacklist,2026-08-01T00:00:00Z,"{""tx"":""a""}",0.9
+TAAA2,TRON,licit,manual_negative,2026-08-03T00:00:00Z,"no flags",0.6
