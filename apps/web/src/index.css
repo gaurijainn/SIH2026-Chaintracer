@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens (HSL triplets). Light values live in :root, dark in .dark.
+ * Risk bands, chain identity and status tones are defined ONLY here; components use the Tailwind names.
+ */
+@layer base {
+  :root {
+    --background: 210 25% 97%;
+    --foreground: 222 30% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 30% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 30% 12%;
+    --muted: 214 22% 93%;
+    --muted-foreground: 215 16% 36%;
+    --border: 214 20% 85%;
+    --input: 214 20% 80%;
+    --ring: 196 90% 30%;
+    --primary: 196 90% 28%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 214 22% 91%;
+    --secondary-foreground: 222 30% 14%;
+    --accent: 214 30% 90%;
+    --accent-foreground: 222 30% 12%;
+    --sidebar: 214 25% 94%;
+    --sidebar-foreground: 222 25% 22%;
+    --sidebar-border: 214 20% 85%;
+
+    --risk-low: 152 65% 24%;      --risk-low-soft: 152 45% 91%;
+    --risk-medium: 38 95% 25%;    --risk-medium-soft: 45 90% 89%;
+    --risk-high: 20 90% 33%;      --risk-high-soft: 24 95% 91%;
+    --risk-critical: 350 75% 38%; --risk-critical-soft: 350 80% 94%;
+
+    --chain-tron: 4 75% 42%;
+    --chain-eth: 232 55% 46%;
+    --chain-bsc: 42 95% 30%;
+    --chain-polygon: 268 55% 44%;
+    --chain-btc: 28 90% 36%;
+
+    --info: 196 90% 28%;
+    --info-soft: 196 60% 91%;
+  }
+
+  .dark {
+    --background: 222 26% 8%;
+    --foreground: 210 24% 92%;
+    --card: 222 24% 11%;
+    --card-foreground: 210 24% 92%;
+    --popover: 222 26% 12%;
+    --popover-foreground: 210 24% 92%;
+    --muted: 220 20% 15%;
+    --muted-foreground: 215 14% 66%;
+    --border: 218 18% 21%;
+    --input: 218 18% 26%;
+    --ring: 187 80% 55%;
+    --primary: 187 80% 52%;
+    --primary-foreground: 222 30% 8%;
+    --secondary: 220 20% 17%;
+    --secondary-foreground: 210 24% 92%;
+    --accent: 220 22% 19%;
+    --accent-foreground: 210 24% 96%;
+    --sidebar: 222 28% 6%;
+    --sidebar-foreground: 214 18% 78%;
+    --sidebar-border: 218 20% 15%;
+
+    --risk-low: 152 55% 55%;      --risk-low-soft: 152 40% 14%;
+    --risk-medium: 45 92% 60%;    --risk-medium-soft: 45 55% 14%;
+    --risk-high: 24 95% 62%;      --risk-high-soft: 24 60% 15%;
+    --risk-critical: 350 90% 68%; --risk-critical-soft: 350 60% 17%;
+
+    --chain-tron: 4 85% 66%;
+    --chain-eth: 232 80% 74%;
+    --chain-bsc: 45 95% 55%;
+    --chain-polygon: 268 80% 72%;
+    --chain-btc: 30 95% 58%;
+
+    --info: 187 80% 52%;
+    --info-soft: 187 50% 14%;
+  }
+
+  * { @apply border-border; }
+  html { color-scheme: light; }
+  html.dark { color-scheme: dark; }
+  body { @apply bg-background text-foreground font-sans antialiased; overflow-x: hidden; }
+  :focus-visible { @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background; }
+  ::selection { background: hsl(var(--primary) / 0.3); }
+}
+
+@layer components {
+  /* Addresses, hashes and IDs: monospace, breakable so they never force page overflow. */
+  .mono-id { @apply font-mono text-[0.8125rem] break-all; }
+  .table-scroll { @apply w-full overflow-x-auto rounded-lg border; }
+  .page-enter { @apply animate-page-in motion-reduce:animate-none; }
+}
+
+/*
+ * Print: always render on white with the LIGHT tokens and drop the console chrome (via print: utilities),
+ * so report pages print cleanly even when the operator is in dark mode. Mirrors the :root block above.
+ */
+@media print {
+  .dark {
+    --background: 0 0% 100%; --foreground: 0 0% 8%;
+    --card: 0 0% 100%; --card-foreground: 0 0% 8%;
+    --popover: 0 0% 100%; --popover-foreground: 0 0% 8%;
+    --muted: 214 22% 93%; --muted-foreground: 215 16% 30%;
+    --border: 214 15% 70%; --input: 214 15% 70%;
+    --primary: 196 90% 28%; --primary-foreground: 0 0% 100%;
+    --secondary: 214 22% 91%; --secondary-foreground: 222 30% 14%;
+    --accent: 214 30% 90%; --accent-foreground: 222 30% 12%;
+    --risk-low: 152 65% 24%;      --risk-low-soft: 152 45% 91%;
+    --risk-medium: 38 95% 25%;    --risk-medium-soft: 45 90% 89%;
+    --risk-high: 20 90% 33%;      --risk-high-soft: 24 95% 91%;
+    --risk-critical: 350 75% 38%; --risk-critical-soft: 350 80% 94%;
+    --chain-tron: 4 75% 42%; --chain-eth: 232 55% 46%; --chain-bsc: 42 95% 30%;
+    --chain-polygon: 268 55% 44%; --chain-btc: 28 90% 36%;
+    --info: 196 90% 28%; --info-soft: 196 60% 91%;
+  }
+  html, body { background: #fff !important; color-scheme: light; }
+  * { box-shadow: none !important; }
+  .page-enter { animation: none !important; }
+}
