@@ -4,6 +4,7 @@ import { Readable } from 'node:stream';
 import { z } from 'zod';
 import { CsvHeaderError, readComplaintCsv } from './csv';
 import type { IntakeService } from './service';
+import { requirePermission } from '../auth/middleware';
 
 const scalar = z.union([z.string(), z.number()]).nullable().optional();
 const list = z.union([z.string(), z.array(z.string())]).nullable().optional();
@@ -38,13 +39,14 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX
 type Handler = (req: Request, res: Response) => Promise<void>;
 const wrap = (fn: Handler) => (req: Request, res: Response, next: NextFunction) => void fn(req, res).catch(next);
 
-/** Intake routes, mounted under /api/v1. (JWT + RBAC arrive with B10; these are not authenticated yet.) */
+/** Intake routes, mounted under /api/v1. (behind authenticate + RBAC, B10.) */
 export function createIntakeRouter(service: IntakeService): Router {
   const r = Router();
 
   // POST /complaints: one complaint as JSON
   r.post(
     '/complaints',
+    requirePermission('complaint:create'),
     wrap(async (req, res) => {
       const parsed = complaintBody.safeParse(req.body);
       if (!parsed.success) {
@@ -60,6 +62,7 @@ export function createIntakeRouter(service: IntakeService): Router {
   // POST /complaints/import: CSV as multipart (field "file") or a raw text/csv body, streamed through csv-parse
   r.post(
     '/complaints/import',
+    requirePermission('complaint:create'),
     (req, res, next) => (req.is('multipart/form-data') ? upload.single('file')(req, res, next) : next()),
     wrap(async (req, res) => {
       let stream: Readable;
@@ -98,6 +101,7 @@ export function createIntakeRouter(service: IntakeService): Router {
   // GET /complaints: list and filter
   r.get(
     '/complaints',
+    requirePermission('complaint:read'),
     wrap(async (req, res) => {
       const q = listQuery.safeParse(req.query);
       if (!q.success) {

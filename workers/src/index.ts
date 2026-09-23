@@ -9,6 +9,7 @@ import {
   WORKER_HEARTBEAT_KEY,
   WORKER_HEARTBEAT_TTL_S,
   loadEnv,
+  signServiceToken,
 } from '@ps26183/shared';
 import { RedisCache, createChainLayer } from '../adapters/index';
 import { redisEventPublisher } from '../trace/events';
@@ -122,7 +123,11 @@ const stateCtx = buildStateRuleContext(monitorPrisma);
 // process. Never blocks or fails the A5 alert (already persisted before this runs).
 function onA5Fired(chain: Chain, addr: string): void {
   const apiUrl = process.env.API_INTERNAL_URL ?? `http://api:${env.API_PORT}`;
-  fetch(`${apiUrl}/api/v1/addresses/${chain}/${addr}/risk`).catch((e) => console.error('A5 risk recompute failed (non-blocking)', e));
+  // B10 compatibility fix: /api/v1 now requires a JWT, so this in-cluster call presents a short-lived least-privilege (VIEWER) service token.
+  const headers = { authorization: `Bearer ${signServiceToken(env.JWT_SECRET)}` };
+  fetch(`${apiUrl}/api/v1/addresses/${chain}/${addr}/risk`, { headers }).then((r) => {
+    if (!r.ok) console.error(`A5 risk recompute failed (non-blocking): HTTP ${r.status}`);
+  }).catch((e) => console.error('A5 risk recompute failed (non-blocking)', e));
 }
 
 async function processMonitorJob() {

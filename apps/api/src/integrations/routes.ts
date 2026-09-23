@@ -3,13 +3,14 @@ import { z } from 'zod';
 import type { IntegrationAdapter } from './types';
 import type { SahyogSubmitResult } from './sahyogAdapter';
 import type { NcrpSyncResult } from './ncrpNoticeAdapter';
+import { requirePermission } from '../auth/middleware';
 
 type Handler = (req: Request, res: Response) => Promise<void>;
 const wrap = (fn: Handler) => (req: Request, res: Response, next: NextFunction) => void fn(req, res).catch(next);
 
 const submitBody = z.object({
   notice: z.record(z.unknown()),
-});
+}).strict();
 
 export interface IntegrationServices {
   sahyog: IntegrationAdapter<Record<string, unknown>, SahyogSubmitResult>;
@@ -27,6 +28,7 @@ export function createIntegrationsRouter(services: IntegrationServices): Router 
 
   r.post(
     '/integrations/sahyog/submit',
+    requirePermission('notice:send'),
     wrap(async (req, res) => {
       const body = submitBody.safeParse(req.body);
       if (!body.success) {
@@ -40,6 +42,7 @@ export function createIntegrationsRouter(services: IntegrationServices): Router 
 
   r.post(
     '/integrations/ncrp/sync',
+    requirePermission('notice:send'),
     wrap(async (req, res) => {
       const body = submitBody.safeParse(req.body);
       if (!body.success) {

@@ -1,20 +1,27 @@
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import { z } from 'zod';
 import type { MuleService } from './service';
+import { requirePermission } from '../auth/middleware';
 
 type Handler = (req: Request, res: Response) => Promise<void>;
 const wrap = (fn: Handler) => (req: Request, res: Response, next: NextFunction) => void fn(req, res).catch(next);
 
+const emptyBody = z.object({}).strict();
 const chainParam = z.enum(['TRON', 'ETH', 'BSC', 'POLYGON', 'BTC']);
 
-/** B6 routes, mounted under /api/v1 (JWT + RBAC arrive with B10, same as intake). */
+/** B6 routes, mounted under /api/v1 (behind authenticate + RBAC, B10). */
 export function createMuleRouter(service: MuleService): Router {
   const r = Router();
 
   // POST /cases/:id/mule/analyze — runs B6 detection + GDS + cross-case linkage for one case (idempotent rerun).
   r.post(
     '/cases/:id/mule/analyze',
+    requirePermission('mule:analyze'),
     wrap(async (req, res) => {
+      if (!emptyBody.safeParse(req.body ?? {}).success) {
+        res.status(400).json({ error: 'INVALID_BODY', message: 'this endpoint takes no request body' });
+        return;
+      }
       const result = await service.analyzeCase(req.params.id);
       res.json({
         caseId: req.params.id,
@@ -30,6 +37,7 @@ export function createMuleRouter(service: MuleService): Router {
   // GET /cases/:id/mule/flags — every fired rule (with evidence) for addresses touched by this case.
   r.get(
     '/cases/:id/mule/flags',
+    requirePermission('mule:read'),
     wrap(async (req, res) => {
       res.json({ caseId: req.params.id, flags: await service.listFlagsForCase(req.params.id) });
     }),
@@ -38,6 +46,7 @@ export function createMuleRouter(service: MuleService): Router {
   // GET /cases/:id/mule/communities — WCC/Louvain membership and collector-wallet metrics for this case.
   r.get(
     '/cases/:id/mule/communities',
+    requirePermission('mule:read'),
     wrap(async (req, res) => {
       res.json({ caseId: req.params.id, communities: await service.listCommunitiesForCase(req.params.id) });
     }),
@@ -46,6 +55,7 @@ export function createMuleRouter(service: MuleService): Router {
   // GET /addresses/:chain/:addr/shared-mule — cross-case (shared-mule candidate) linkage for one wallet.
   r.get(
     '/addresses/:chain/:addr/shared-mule',
+    requirePermission('mule:read'),
     wrap(async (req, res) => {
       const chain = chainParam.safeParse(req.params.chain);
       if (!chain.success) {

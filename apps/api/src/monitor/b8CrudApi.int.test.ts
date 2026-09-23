@@ -6,6 +6,7 @@ import { AlertService } from '../alerts/service';
 import { createApp } from '../app';
 import { createPrisma } from '../db/prisma';
 import { WatchlistService } from '../watchlist/service';
+import { testSecurity, authFetch } from '../auth/testkit';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function json(res: Response): Promise<any> {
@@ -28,7 +29,7 @@ beforeAll(async () => {
   userId = u.id;
   const ok = async () => undefined;
   const deps = { mode: 'replay' as const, core: { postgres: ok, neo4j: ok, redis: ok, ml: ok, workers: ok }, probeProvider: ok, hasKey: () => false };
-  server = createApp(deps, { watchlist: new WatchlistService({ prisma }), alerts: new AlertService({ prisma }) }).listen(0);
+  server = createApp(deps, { watchlist: new WatchlistService({ prisma }), alerts: new AlertService({ prisma }) }, testSecurity()).listen(0);
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/v1`;
 });
 
@@ -45,23 +46,23 @@ describe('POST/GET/DELETE /watchlist against real Postgres', () => {
   it('adds, lists, dedups, and removes a watchlist item end to end', async () => {
     const addr = 'TSrXKizpGQmFnfUTZvH8EK2C73jPzkNMPS';
 
-    const createRes = await fetch(`${base}/watchlist`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ caseId, chain: 'TRON', addr }) });
+    const createRes = await authFetch('SUPERVISOR', userId)(`${base}/watchlist`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ caseId, chain: 'TRON', addr }) });
     expect(createRes.status).toBe(201);
     const created = (await json(createRes)).item;
     expect(created.reason).toBe('manual');
 
     // Dedup: same (case, chain, addr) again -> 201 (idempotent create), still only one row in Postgres.
-    const dupRes = await fetch(`${base}/watchlist`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ caseId, chain: 'TRON', addr }) });
+    const dupRes = await authFetch('SUPERVISOR', userId)(`${base}/watchlist`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ caseId, chain: 'TRON', addr }) });
     expect(dupRes.status).toBe(201);
 
-    const listRes = await fetch(`${base}/watchlist?caseId=${caseId}`);
+    const listRes = await authFetch('SUPERVISOR', userId)(`${base}/watchlist?caseId=${caseId}`);
     const items = (await json(listRes)).items as { id: string; addr: string }[];
     expect(items.filter((i) => i.addr === addr)).toHaveLength(1);
 
-    const delRes = await fetch(`${base}/watchlist/${created.id}`, { method: 'DELETE' });
+    const delRes = await authFetch('SUPERVISOR', userId)(`${base}/watchlist/${created.id}`, { method: 'DELETE' });
     expect(delRes.status).toBe(204);
 
-    const listAfterDelete = await fetch(`${base}/watchlist?caseId=${caseId}`);
+    const listAfterDelete = await authFetch('SUPERVISOR', userId)(`${base}/watchlist?caseId=${caseId}`);
     const itemsAfterDelete = (await json(listAfterDelete)).items as { id: string }[];
     expect(itemsAfterDelete.find((i) => i.id === created.id)).toBeUndefined();
   });
@@ -73,12 +74,12 @@ describe('GET/PATCH /alerts against real Postgres', () => {
       data: { caseId, rule: 'A1_MOVEMENT', severity: 'MEDIUM', chain: 'TRON', address: 'TWcpBhHqFVtpAY1pT16QneLnLNXzTHTpbV', amount: '5000', message: 'int test alert' },
     });
 
-    const listRes = await fetch(`${base}/alerts?caseId=${caseId}&severity=MEDIUM`);
+    const listRes = await authFetch('SUPERVISOR', userId)(`${base}/alerts?caseId=${caseId}&severity=MEDIUM`);
     expect(listRes.status).toBe(200);
     const alerts = (await json(listRes)).alerts as { id: string; status: string }[];
     expect(alerts.map((a) => a.id)).toContain(alertRow.id);
 
-    const patchRes = await fetch(`${base}/alerts/${alertRow.id}`, {
+    const patchRes = await authFetch('SUPERVISOR', userId)(`${base}/alerts/${alertRow.id}`, {
       method: 'PATCH',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ action: 'assign', assigneeId: userId }),

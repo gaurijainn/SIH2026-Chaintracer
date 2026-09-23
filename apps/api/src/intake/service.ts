@@ -6,6 +6,7 @@ import { createProbeRunner, type ChainProbe } from './probe';
 import type { TraceJobPayload, TraceQueue } from './queue';
 import { resolveEntries } from './resolve';
 import { seedChainsOf, type Issue, type NormalizedComplaint, type RawComplaint, type ResolvedEntry } from './types';
+import { FIR_PII_CONTEXT, type PiiCipher } from '../auth/pii';
 
 export interface TraceDefaults {
   maxHops: number;
@@ -20,6 +21,8 @@ export interface IntakeDeps {
   probe: ChainProbe | null;
   defaults: TraceDefaults;
   now?: () => Date;
+  /** B10: when set, person-linked fields (Case.firNumber) are AES-256-GCM encrypted before they reach the database. */
+  pii?: PiiCipher;
 }
 
 /** One input row: a raw complaint, or a parse error from the CSV reader. `row` is the 1-based line/record number. */
@@ -165,7 +168,7 @@ export function createIntakeService(deps: IntakeDeps) {
         cases.push({
           id: caseId,
           title: `NCRP ${it.c.ackNo}: ${it.c.category}`.slice(0, 200),
-          firNumber: it.c.firNumber ?? null,
+          firNumber: deps.pii ? deps.pii.encryptNullable(it.c.firNumber, FIR_PII_CONTEXT) : (it.c.firNumber ?? null),
           createdAt: new Date(rank),
         });
         r.caseCreated = true;

@@ -8,6 +8,7 @@ async function json(res: Response): Promise<any> {
 import { createApp } from '../app';
 import { CaseNotFoundError, FreezeNoticeNotFoundError, InvalidNoticeTransitionError, VaspNotFoundError } from './errors';
 import type { FreezeNoticeService } from './service';
+import { testSecurity, authFetch } from '../auth/testkit';
 
 let server: Server;
 let base: string;
@@ -52,56 +53,56 @@ const fakeService = {
 beforeAll(() => {
   const ok = async () => undefined;
   const deps = { mode: 'replay' as const, core: { postgres: ok, neo4j: ok, redis: ok, ml: ok, workers: ok }, probeProvider: ok, hasKey: () => false };
-  server = createApp(deps, { freezeNotices: fakeService }).listen(0);
+  server = createApp(deps, { freezeNotices: fakeService }, testSecurity()).listen(0);
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/v1`;
 });
 afterAll(() => server.close());
 
 describe('POST /cases/:id/freeze-notices', () => {
   it('drafts a freeze notice', async () => {
-    const res = await fetch(`${base}/cases/case1/freeze-notices`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ vaspId: 'v1' }) });
+    const res = await authFetch()(`${base}/cases/case1/freeze-notices`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ vaspId: 'v1' }) });
     expect(res.status).toBe(201);
     expect((await json(res)).freezeNotice.status).toBe('DRAFT');
   });
 
   it('404s for an unknown case', async () => {
-    const res = await fetch(`${base}/cases/missing/freeze-notices`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ vaspId: 'v1' }) });
+    const res = await authFetch()(`${base}/cases/missing/freeze-notices`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ vaspId: 'v1' }) });
     expect(res.status).toBe(404);
   });
 
   it('400s when vaspId is missing', async () => {
-    const res = await fetch(`${base}/cases/case1/freeze-notices`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetch()(`${base}/cases/case1/freeze-notices`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(res.status).toBe(400);
   });
 });
 
 describe('freeze-notice state-machine routes', () => {
   it('PATCH edits a DRAFT notice', async () => {
-    const res = await fetch(`${base}/freeze-notices/fn1`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ legalProvision: 'Sec X' }) });
+    const res = await authFetch()(`${base}/freeze-notices/fn1`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ legalProvision: 'Sec X' }) });
     expect(res.status).toBe(200);
     expect((await json(res)).freezeNotice.legalProvision).toBe('Sec X');
   });
 
   it('POST /approve rejects a DRAFT notice (not yet submitted for approval)', async () => {
-    const res = await fetch(`${base}/freeze-notices/fn1/approve`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetch()(`${base}/freeze-notices/fn1/approve`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(res.status).toBe(400);
     expect((await json(res)).error).toBe('INVALID_TRANSITION');
   });
 
   it('POST /approve approves a PENDING_APPROVAL notice', async () => {
-    const res = await fetch(`${base}/freeze-notices/fn2/approve`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetch()(`${base}/freeze-notices/fn2/approve`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(res.status).toBe(200);
     expect((await json(res)).freezeNotice.status).toBe('APPROVED');
   });
 
   it('POST /send rejects a DRAFT notice (unapproved notice cannot be submitted -- negative case)', async () => {
-    const res = await fetch(`${base}/freeze-notices/fn1/send`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetch()(`${base}/freeze-notices/fn1/send`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(res.status).toBe(400);
     expect((await json(res)).error).toBe('INVALID_TRANSITION');
   });
 
   it('POST /send succeeds for an APPROVED notice', async () => {
-    const res = await fetch(`${base}/freeze-notices/fn3/send`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetch()(`${base}/freeze-notices/fn3/send`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(res.status).toBe(200);
     const body = await json(res);
     expect(body.freezeNotice.status).toBe('SENT');
@@ -109,7 +110,7 @@ describe('freeze-notice state-machine routes', () => {
   });
 
   it('404s for an unknown notice id', async () => {
-    const res = await fetch(`${base}/freeze-notices/nope/send`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetch()(`${base}/freeze-notices/nope/send`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(res.status).toBe(404);
   });
 });

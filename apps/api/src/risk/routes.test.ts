@@ -4,6 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '../app';
 import { MlHttpError, MlResponseError, MlTimeoutError, MlUnavailableError, RiskPersistError, TraceNotFoundError, UnsupportedChainError } from './errors';
 import type { RiskService } from './service';
+import { testSecurity, authFetch } from '../auth/testkit';
 
 let server: Server;
 let base: string;
@@ -42,14 +43,14 @@ const fakeService = {
 beforeAll(() => {
   const ok = async () => undefined;
   const deps = { mode: 'replay' as const, core: { postgres: ok, neo4j: ok, redis: ok, ml: ok, workers: ok }, probeProvider: ok, hasKey: () => false };
-  server = createApp(deps, { risk: fakeService }).listen(0);
+  server = createApp(deps, { risk: fakeService }, testSecurity()).listen(0);
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/v1`;
 });
 afterAll(() => server.close());
 
 describe('GET /addresses/:chain/:addr/risk', () => {
   it('returns score, band, factors, overrides and typology for a valid request (no traceId, unauthenticated)', async () => {
-    const res = await fetch(`${base}/addresses/TRON/W1/risk`);
+    const res = await authFetch()(`${base}/addresses/TRON/W1/risk`);
     expect(res.status).toBe(200);
     const body = (await res.json()) as any;
     expect(body).toMatchObject({
@@ -67,7 +68,7 @@ describe('GET /addresses/:chain/:addr/risk', () => {
   });
 
   it('passes an optional traceId query param through to the service', async () => {
-    const res = await fetch(`${base}/addresses/TRON/WITH_TRACE/risk?traceId=trace-1`);
+    const res = await authFetch()(`${base}/addresses/TRON/WITH_TRACE/risk?traceId=trace-1`);
     expect(res.status).toBe(200);
     const body = (await res.json()) as any;
     expect(body.traceId).toBe('trace-1');
@@ -75,31 +76,31 @@ describe('GET /addresses/:chain/:addr/risk', () => {
   });
 
   it('rejects an invalid chain with 400 INVALID_CHAIN', async () => {
-    const res = await fetch(`${base}/addresses/NOTACHAIN/W1/risk`);
+    const res = await authFetch()(`${base}/addresses/NOTACHAIN/W1/risk`);
     expect(res.status).toBe(400);
     expect(((await res.json()) as any).error).toBe('INVALID_CHAIN');
   });
 
   it('rejects an empty addr with 400 INVALID_ADDR', async () => {
-    const res = await fetch(`${base}/addresses/TRON/%20/risk`); // whitespace-only after trim
+    const res = await authFetch()(`${base}/addresses/TRON/%20/risk`); // whitespace-only after trim
     expect(res.status).toBe(400);
     expect(((await res.json()) as any).error).toBe('INVALID_ADDR');
   });
 
   it('maps UnsupportedChainError to 400 UNSUPPORTED_CHAIN', async () => {
-    const res = await fetch(`${base}/addresses/ETH/UNSUPPORTED_CHAIN/risk`);
+    const res = await authFetch()(`${base}/addresses/ETH/UNSUPPORTED_CHAIN/risk`);
     expect(res.status).toBe(400);
     expect(((await res.json()) as any).error).toBe('UNSUPPORTED_CHAIN');
   });
 
   it('maps TraceNotFoundError to 404 TRACE_NOT_FOUND', async () => {
-    const res = await fetch(`${base}/addresses/TRON/NO_TRACE/risk?traceId=missing`);
+    const res = await authFetch()(`${base}/addresses/TRON/NO_TRACE/risk?traceId=missing`);
     expect(res.status).toBe(404);
     expect(((await res.json()) as any).error).toBe('TRACE_NOT_FOUND');
   });
 
   it('maps MlTimeoutError to 504 ML_TIMEOUT (never a fabricated 200 score)', async () => {
-    const res = await fetch(`${base}/addresses/TRON/ML_TIMEOUT/risk`);
+    const res = await authFetch()(`${base}/addresses/TRON/ML_TIMEOUT/risk`);
     expect(res.status).toBe(504);
     const body = (await res.json()) as any;
     expect(body.error).toBe('ML_TIMEOUT');
@@ -107,25 +108,25 @@ describe('GET /addresses/:chain/:addr/risk', () => {
   });
 
   it('maps MlUnavailableError to 503 ML_UNAVAILABLE', async () => {
-    const res = await fetch(`${base}/addresses/TRON/ML_DOWN/risk`);
+    const res = await authFetch()(`${base}/addresses/TRON/ML_DOWN/risk`);
     expect(res.status).toBe(503);
     expect(((await res.json()) as any).error).toBe('ML_UNAVAILABLE');
   });
 
   it('maps MlHttpError to 502 ML_BAD_RESPONSE', async () => {
-    const res = await fetch(`${base}/addresses/TRON/ML_HTTP_ERR/risk`);
+    const res = await authFetch()(`${base}/addresses/TRON/ML_HTTP_ERR/risk`);
     expect(res.status).toBe(502);
     expect(((await res.json()) as any).error).toBe('ML_BAD_RESPONSE');
   });
 
   it('maps MlResponseError (malformed ML body) to 502 ML_BAD_RESPONSE', async () => {
-    const res = await fetch(`${base}/addresses/TRON/ML_MALFORMED/risk`);
+    const res = await authFetch()(`${base}/addresses/TRON/ML_MALFORMED/risk`);
     expect(res.status).toBe(502);
     expect(((await res.json()) as any).error).toBe('ML_BAD_RESPONSE');
   });
 
   it('maps RiskPersistError to 500 PERSIST_FAILED with a generic message (no internals leaked)', async () => {
-    const res = await fetch(`${base}/addresses/TRON/DB_DOWN/risk`);
+    const res = await authFetch()(`${base}/addresses/TRON/DB_DOWN/risk`);
     expect(res.status).toBe(500);
     const body = (await res.json()) as any;
     expect(body.error).toBe('PERSIST_FAILED');
@@ -133,7 +134,7 @@ describe('GET /addresses/:chain/:addr/risk', () => {
   });
 
   it('works with no auth header at all (matches existing no-auth convention)', async () => {
-    const res = await fetch(`${base}/addresses/TRON/W1/risk`);
+    const res = await authFetch()(`${base}/addresses/TRON/W1/risk`);
     expect(res.status).toBe(200);
   });
 });

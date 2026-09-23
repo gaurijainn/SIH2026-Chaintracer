@@ -8,6 +8,7 @@ async function json(res: Response): Promise<any> {
 import { createApp } from '../app';
 import { AlertNotFoundError, InvalidAlertTransitionError } from './errors';
 import type { AlertService } from './service';
+import { testSecurity, authFetch } from '../auth/testkit';
 
 let server: Server;
 let base: string;
@@ -30,43 +31,43 @@ const fakeService = {
 beforeAll(() => {
   const ok = async () => undefined;
   const deps = { mode: 'replay' as const, core: { postgres: ok, neo4j: ok, redis: ok, ml: ok, workers: ok }, probeProvider: ok, hasKey: () => false };
-  server = createApp(deps, { alerts: fakeService }).listen(0);
+  server = createApp(deps, { alerts: fakeService }, testSecurity()).listen(0);
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/v1`;
 });
 afterAll(() => server.close());
 
 describe('GET /alerts', () => {
   it('lists every alert with no filter', async () => {
-    const res = await fetch(`${base}/alerts`);
+    const res = await authFetch()(`${base}/alerts`);
     expect((await json(res)).alerts).toHaveLength(2);
   });
 
   it('filters by severity', async () => {
-    const res = await fetch(`${base}/alerts?severity=CRITICAL`);
+    const res = await authFetch()(`${base}/alerts?severity=CRITICAL`);
     expect((await json(res)).alerts).toHaveLength(1);
   });
 
   it('rejects an invalid severity with 400', async () => {
-    const res = await fetch(`${base}/alerts?severity=NOPE`);
+    const res = await authFetch()(`${base}/alerts?severity=NOPE`);
     expect(res.status).toBe(400);
   });
 });
 
 describe('PATCH /alerts/:id', () => {
   it('acknowledges an alert', async () => {
-    const res = await fetch(`${base}/alerts/a1`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'acknowledge' }) });
+    const res = await authFetch()(`${base}/alerts/a1`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'acknowledge' }) });
     expect(res.status).toBe(200);
     expect((await json(res)).alert.status).toBe('ACKNOWLEDGED');
   });
 
   it('400s an assign with no assigneeId', async () => {
-    const res = await fetch(`${base}/alerts/a1`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'assign' }) });
+    const res = await authFetch()(`${base}/alerts/a1`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'assign' }) });
     expect(res.status).toBe(400);
     expect((await json(res)).error).toBe('INVALID_TRANSITION');
   });
 
   it('404s for an unknown alert id', async () => {
-    const res = await fetch(`${base}/alerts/missing`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'acknowledge' }) });
+    const res = await authFetch()(`${base}/alerts/missing`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'acknowledge' }) });
     expect(res.status).toBe(404);
   });
 });

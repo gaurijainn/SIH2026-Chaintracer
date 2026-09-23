@@ -35,6 +35,9 @@
     "./monitor/alerts": "./monitor/alerts.ts",
     "./monitor/events": "./monitor/events.ts",
     "./monitor/tronPoller": "./monitor/tronPoller.ts",
-    "./monitor/ruleContextPrisma": "./monitor/ruleContextPrisma.ts"
+    "./monitor/ruleContextPrisma": "./monitor/ruleContextPrisma.ts",
+    "./adapters/demoCaseTransport": "./adapters/demoCaseTransport.ts",
+    "./trace/engine": "./trace/engine.ts",
+    "./trace/graphWrite": "./trace/graphWrite.ts"
   }
 }

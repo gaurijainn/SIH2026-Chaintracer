@@ -17,8 +17,17 @@ const schema = z.object({
   NEO4J_PASSWORD: z.string().default('ps26183-neo4j'),
   REDIS_URL: z.string().default('redis://localhost:6379'),
   ML_URL: z.string().default('http://localhost:8000'),
+  // B10: JWT_SECRET must be >= 32 chars and PII_ENC_KEY a 32-byte key (64 hex chars or base64); the API refuses to
+  // start with the 'change-me' placeholder (see apps/api/src/auth/config.ts).
   JWT_SECRET: z.string().default('change-me'),
   PII_ENC_KEY: z.string().default('change-me'),
+  JWT_ACCESS_TTL_S: z.coerce.number().int().min(30).default(900),
+  JWT_REFRESH_TTL_S: z.coerce.number().int().min(60).default(604800),
+  // Comma-separated browser origins allowed by CORS (the Vite dev server by default).
+  CORS_ORIGINS: z.string().default('http://localhost:5173,http://127.0.0.1:5173'),
+  RATE_LIMIT_WINDOW_S: z.coerce.number().int().min(1).default(60),
+  RATE_LIMIT_MAX: z.coerce.number().int().min(1).default(300),
+  RATE_LIMIT_AUTH_MAX: z.coerce.number().int().min(1).default(10),
   TRACE_MAX_HOPS: z.coerce.number().int().default(6),
   TRACE_MIN_USD: z.coerce.number().default(10),
   TRACE_WINDOW_DAYS: z.coerce.number().int().default(30),

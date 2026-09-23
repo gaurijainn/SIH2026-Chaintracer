@@ -7,6 +7,7 @@ import { createApp } from '../app';
 import { createPrisma } from '../db/prisma';
 import { createIntakeService, type IntakeService, type RowResult } from './service';
 import { btcAddress, complaint, evmAddress, fakeProbe, RecordingQueue, tronAddress, txHash } from './testutil';
+import { testSecurity, authFetch } from '../auth/testkit';
 
 const run = `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
 const ack = (n: string | number) => `${run}-${n}`;
@@ -29,18 +30,18 @@ function build(active: Parameters<typeof fakeProbe>[0] = {}, opts: Parameters<ty
   server?.close();
   const ok = async () => undefined;
   const deps = { mode: 'replay' as const, core: { postgres: ok, neo4j: ok, redis: ok, ml: ok, workers: ok }, probeProvider: ok, hasKey: () => false };
-  server = createApp(deps, { intake }).listen(0);
+  server = createApp(deps, { intake }, testSecurity()).listen(0);
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/v1`;
 }
 
 const post = async (path: string, body: unknown) => {
-  const res = await fetch(base + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  const res = await authFetch()(base + path, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
   return { status: res.status, body: (await res.json()) as any };
 };
 const upload = async (csv: string, query = '') => {
   const fd = new FormData();
   fd.append('file', new Blob([csv], { type: 'text/csv' }), 'complaints.csv');
-  const res = await fetch(`${base}/complaints/import${query}`, { method: 'POST', body: fd });
+  const res = await authFetch()(`${base}/complaints/import${query}`, { method: 'POST', body: fd });
   return { status: res.status, body: (await res.json()) as any };
 };
 const csvRow = (n: string | number, addresses: string, over: { network?: string; amount?: string; date?: string; tx?: string; token?: string } = {}) =>
@@ -127,7 +128,7 @@ describe('JSON intake: POST /api/v1/complaints', () => {
     build();
     expect((await post('/complaints', { ...complaint(ack('x')), victimName: 'no' })).status).toBe(400);
     expect((await post('/complaints', { ...complaint(ack('x')), addresses: [42] })).body.error).toBe('INVALID_BODY');
-    const res = await fetch(`${base}/complaints`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{oops' });
+    const res = await authFetch()(`${base}/complaints`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{oops' });
     expect(res.status).toBe(400);
     expect(((await res.json()) as { error: string }).error).toBe('INVALID_JSON');
   });
@@ -185,7 +186,7 @@ describe('CSV intake: POST /api/v1/complaints/import', () => {
 
   it('accepts a raw text/csv body as well as multipart', async () => {
     build();
-    const res = await fetch(`${base}/complaints/import`, { method: 'POST', headers: { 'content-type': 'text/csv' }, body: [HEADER, csvRow('raw1', addr('raw1'))].join('\n') });
+    const res = await authFetch()(`${base}/complaints/import`, { method: 'POST', headers: { 'content-type': 'text/csv' }, body: [HEADER, csvRow('raw1', addr('raw1'))].join('\n') });
     expect(res.status).toBe(200);
     expect(((await res.json()) as { summary: { created: number } }).summary.created).toBe(1);
   });
@@ -223,9 +224,9 @@ describe('CSV intake: POST /api/v1/complaints/import', () => {
     build();
     expect(await upload('ack_no,category\nA,B\n')).toMatchObject({ status: 400, body: { error: 'INVALID_CSV' } });
     expect(await upload(`${HEADER}\n`)).toMatchObject({ status: 400, body: { error: 'EMPTY_CSV' } });
-    const wrong = await fetch(`${base}/complaints/import`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const wrong = await authFetch()(`${base}/complaints/import`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(wrong.status).toBe(415);
-    const empty = await fetch(`${base}/complaints/import`, { method: 'POST', body: new FormData() });
+    const empty = await authFetch()(`${base}/complaints/import`, { method: 'POST', body: new FormData() });
     expect(empty.status).toBe(400);
     expect(((await empty.json()) as { error: string }).error).toBe('NO_FILE');
   });
@@ -420,7 +421,7 @@ describe('GET /api/v1/complaints', () => {
   it('lists and filters complaints', async () => {
     build();
     await upload([HEADER, csvRow('ls1', addr('ls1')), csvRow('ls2', evmAddress(`${run}-ls2`), { network: 'ERC20' }), csvRow('ls3', addr('ls3'))].join('\n'));
-    const get = async (q: string) => (await (await fetch(`${base}/complaints?${q}`)).json()) as any;
+    const get = async (q: string) => (await (await authFetch()(`${base}/complaints?${q}`)).json()) as any;
 
     const one = await get(`ackNo=${ack('ls2')}`);
     expect(one.total).toBe(1);
@@ -441,7 +442,7 @@ describe('GET /api/v1/complaints', () => {
 
   it('rejects an invalid query', async () => {
     build();
-    const res = await fetch(`${base}/complaints?chain=SOLANA&page=0`);
+    const res = await authFetch()(`${base}/complaints?chain=SOLANA&page=0`);
     expect(res.status).toBe(400);
     expect(((await res.json()) as { error: string }).error).toBe('INVALID_QUERY');
   });

@@ -2,6 +2,7 @@ import { Router, type NextFunction, type Request, type Response } from 'express'
 import { z } from 'zod';
 import { MlHttpError, MlResponseError, MlTimeoutError, MlUnavailableError, RiskPersistError, TraceNotFoundError, UnsupportedChainError } from './errors';
 import type { RiskService } from './service';
+import { requirePermission } from '../auth/middleware';
 
 type Handler = (req: Request, res: Response) => Promise<void>;
 const wrap = (fn: Handler) => (req: Request, res: Response, next: NextFunction) => void fn(req, res).catch(next);
@@ -10,7 +11,7 @@ const chainParam = z.enum(['TRON', 'ETH', 'BSC', 'POLYGON', 'BTC']);
 const addrParam = z.string().trim().min(1);
 const riskQuery = z.object({ traceId: z.string().trim().min(1).optional() });
 
-/** B7.6 route, mounted under /api/v1 (JWT + RBAC land in B10, same as intake/mule -- no auth yet). */
+/** B7.6 route, mounted under /api/v1 (behind authenticate + RBAC, B10). */
 export function createRiskRouter(service: RiskService): Router {
   const r = Router();
 
@@ -18,6 +19,7 @@ export function createRiskRouter(service: RiskService): Router {
   // service for score/band/SHAP factors + typology, persists an append-only RiskScore row.
   r.get(
     '/addresses/:chain/:addr/risk',
+    requirePermission('risk:read'),
     wrap(async (req, res) => {
       const chain = chainParam.safeParse(req.params.chain);
       if (!chain.success) {

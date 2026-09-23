@@ -8,6 +8,7 @@ async function json(res: Response): Promise<any> {
 import { createApp } from '../app';
 import { CaseNotFoundError, EvidenceNotFoundError } from './errors';
 import type { ReportService } from './service';
+import { testSecurity, authFetch } from '../auth/testkit';
 
 let server: Server;
 let base: string;
@@ -43,14 +44,14 @@ const fakeService = {
 beforeAll(() => {
   const ok = async () => undefined;
   const deps = { mode: 'replay' as const, core: { postgres: ok, neo4j: ok, redis: ok, ml: ok, workers: ok }, probeProvider: ok, hasKey: () => false };
-  server = createApp(deps, { reports: fakeService }).listen(0);
+  server = createApp(deps, { reports: fakeService }, testSecurity()).listen(0);
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/v1`;
 });
 afterAll(() => server.close());
 
 describe('POST /cases/:id/reports', () => {
   it('generates a JSON evidence report by default', async () => {
-    const res = await fetch(`${base}/cases/case1/reports`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetch()(`${base}/cases/case1/reports`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(res.status).toBe(201);
     const body = await json(res);
     expect(body.report.sha256).toBe('abc123');
@@ -58,7 +59,7 @@ describe('POST /cases/:id/reports', () => {
   });
 
   it('generates a PDF when format=pdf', async () => {
-    const res = await fetch(`${base}/cases/case1/reports?format=pdf`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetch()(`${base}/cases/case1/reports?format=pdf`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(res.status).toBe(201);
     expect(res.headers.get('content-type')).toContain('application/pdf');
     expect(res.headers.get('x-report-sha256')).toBe('abc123');
@@ -67,32 +68,32 @@ describe('POST /cases/:id/reports', () => {
   });
 
   it('404s for an unknown case', async () => {
-    const res = await fetch(`${base}/cases/missing/reports`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetch()(`${base}/cases/missing/reports`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(res.status).toBe(404);
     expect((await json(res)).error).toBe('CASE_NOT_FOUND');
   });
 
   it('400s for an invalid format', async () => {
-    const res = await fetch(`${base}/cases/case1/reports?format=xml`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetch()(`${base}/cases/case1/reports?format=xml`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(res.status).toBe(400);
   });
 });
 
 describe('GET /verify/:hash', () => {
   it('reports a match for a known hash', async () => {
-    const res = await fetch(`${base}/verify/abc123`);
+    const res = await authFetch()(`${base}/verify/abc123`);
     expect(res.status).toBe(200);
     expect((await json(res)).match).toBe(true);
   });
 
   it('reports no match when the requested hash does not equal the stored one', async () => {
-    const res = await fetch(`${base}/verify/abc123differenthash`);
+    const res = await authFetch()(`${base}/verify/abc123differenthash`);
     expect(res.status).toBe(200);
     expect((await json(res)).match).toBe(false);
   });
 
   it('404s for an unknown hash', async () => {
-    const res = await fetch(`${base}/verify/unknown`);
+    const res = await authFetch()(`${base}/verify/unknown`);
     expect(res.status).toBe(404);
     expect((await json(res)).error).toBe('EVIDENCE_NOT_FOUND');
   });

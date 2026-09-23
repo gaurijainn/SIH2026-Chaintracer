@@ -9,6 +9,7 @@ import { createApp } from '../app';
 import { createPrisma } from '../db/prisma';
 import { createDriver, writeHops } from '../graph/graph';
 import { ReportService } from './service';
+import { testSecurity, authFetch, ensureTestUsers } from '../auth/testkit';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function json(res: Response): Promise<any> {
@@ -27,11 +28,13 @@ let server: Server;
 let base: string;
 let caseId: string;
 let traceId: string;
+let authFetchAs: ReturnType<typeof authFetch>;
 
 beforeAll(async () => {
   const env = loadEnv();
   prisma = createPrisma(process.env.DATABASE_URL);
   driver = createDriver(env);
+  authFetchAs = authFetch('INVESTIGATOR', (await ensureTestUsers(prisma)).INVESTIGATOR);
 
   const c = await prisma.case.create({ data: { id: `${run}-case1`, title: 'B9 reports int test', firNumber: 'FIR/9/2026' } });
   caseId = c.id;
@@ -64,13 +67,12 @@ beforeAll(async () => {
 
   const ok = async () => undefined;
   const deps = { mode: 'replay' as const, core: { postgres: ok, neo4j: ok, redis: ok, ml: ok, workers: ok }, probeProvider: ok, hasKey: () => false };
-  server = createApp(deps, { reports }).listen(0);
+  server = createApp(deps, { reports }, testSecurity()).listen(0);
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/api/v1`;
 }, 30000);
 
 afterAll(async () => {
   await prisma.report.deleteMany({ where: { caseId } });
-  await prisma.auditLog.deleteMany({ where: { entity: 'Report' } });
   await prisma.hop.deleteMany({ where: { traceId } });
   await prisma.traceJob.deleteMany({ where: { caseId } });
   await prisma.complaint.deleteMany({ where: { caseId } });
@@ -82,7 +84,7 @@ afterAll(async () => {
 
 describe('B9 evidence report golden path (real Postgres + Neo4j)', () => {
   it('generates a JSON evidence report with a real hop table and graph snapshot', async () => {
-    const res = await fetch(`${base}/cases/${caseId}/reports`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetchAs(`${base}/cases/${caseId}/reports`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     expect(res.status).toBe(201);
     const body = await json(res);
     expect(body.evidence.schemaVersion).toBe('evidence.v1');
@@ -93,12 +95,12 @@ describe('B9 evidence report golden path (real Postgres + Neo4j)', () => {
   });
 
   it('verifies the report by hash, then detects tampering', async () => {
-    const genRes = await fetch(`${base}/cases/${caseId}/reports`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const genRes = await authFetchAs(`${base}/cases/${caseId}/reports`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     const generated = await json(genRes);
     const sha256 = generated.report.sha256 as string;
     const reportId = generated.report.id as string;
 
-    const verifyRes = await fetch(`${base}/verify/${sha256}`);
+    const verifyRes = await authFetchAs(`${base}/verify/${sha256}`);
     expect(verifyRes.status).toBe(200);
     expect((await json(verifyRes)).match).toBe(true);
 
@@ -107,18 +109,18 @@ describe('B9 evidence report golden path (real Postgres + Neo4j)', () => {
     const tamperedPayload = { ...(row.payload as object), case: { ...(row.payload as { case: object }).case, title: 'TAMPERED TITLE' } };
     await prisma.report.update({ where: { id: reportId }, data: { payload: tamperedPayload } });
 
-    const tamperedVerifyRes = await fetch(`${base}/verify/${sha256}`);
+    const tamperedVerifyRes = await authFetchAs(`${base}/verify/${sha256}`);
     expect(tamperedVerifyRes.status).toBe(200);
     expect((await json(tamperedVerifyRes)).match).toBe(false);
   });
 
   it('404s /verify for an unknown hash', async () => {
-    const res = await fetch(`${base}/verify/${'0'.repeat(64)}`);
+    const res = await authFetchAs(`${base}/verify/${'0'.repeat(64)}`);
     expect(res.status).toBe(404);
   });
 
   it('generates a PDF with the SHA-256 footer and a valid PDF header (requires a Chromium binary -- see Dockerfile.node)', async () => {
-    const res = await fetch(`${base}/cases/${caseId}/reports?format=pdf`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+    const res = await authFetchAs(`${base}/cases/${caseId}/reports?format=pdf`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
     if (res.status === 500) {
       const body = await json(res);
       if (/Chromium|puppeteer/i.test(body.message ?? '')) {

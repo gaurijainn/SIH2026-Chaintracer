@@ -4,10 +4,13 @@ import { toIst } from '@ps26183/shared';
 import { getCaseSubgraph } from '../graph/graph';
 import { CaseNotFoundError } from './errors';
 import type { EvidenceV1 } from './schema';
+import { FIR_PII_CONTEXT, type PiiCipher } from '../auth/pii';
 
 export interface CollectorDeps {
   prisma: PrismaClient;
   driver: Driver;
+  /** B10: decrypts Case.firNumber for the evidence document (legacy plaintext rows pass through). */
+  pii?: PiiCipher;
 }
 
 /** Per-chain block-explorer URL templates. TRON/BTC differ in path shape from the EVM chains. */
@@ -172,7 +175,7 @@ export async function collectEvidence(deps: CollectorDeps, caseId: string): Prom
       id: kase.id,
       title: kase.title,
       status: kase.status,
-      firNumber: kase.firNumber ?? null,
+      firNumber: (deps.pii ? deps.pii.decryptNullable(kase.firNumber, FIR_PII_CONTEXT) : kase.firNumber) ?? null,
       ackNo: firstComplaint?.ackNo ?? null,
     },
     victimTransaction,

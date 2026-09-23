@@ -1,0 +1,30 @@
+{
+  "provider": "trongrid",
+  "request": {
+    "method": "GET",
+    "url": "https://api.trongrid.io/v1/accounts/TWPhFFMhMjgb8eXZtY97stLn8Ai5WRai5E/transactions/trc20?limit=200&contract_address=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&only_confirmed=true&only_from=true&min_timestamp=1788249600000"
+  },
+  "response": {
+    "status": 200,
+    "data": {
+      "data": [
+        {
+          "transaction_id": "20f53d8e344c2858c1df9a31cbd847a112c0a57fcf9895d55f50587cd6f8651d",
+          "token_info": {
+            "address": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+            "decimals": 6
+          },
+          "block_timestamp": 1788252000000,
+          "from": "TWPhFFMhMjgb8eXZtY97stLn8Ai5WRai5E",
+          "to": "TCkNivtWsa2mCGzUonBDAGpeEezwhEaa71",
+          "type": "Transfer",
+          "value": "2480000000"
+        }
+      ],
+      "success": true,
+      "meta": {}
+    }
+  },
+  "recordedAt": "2026-09-23T14:48:47.284Z",
+  "synthetic": true
+}

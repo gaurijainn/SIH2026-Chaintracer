@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { PROVIDERS, buildSecrets, createHttp, loadEnv } from '@ps26183/shared';
 import { createApp } from './app';
 import type { HealthDeps, HealthReport } from './health';
+import { testSecurity } from './auth/testkit';
 
 const ok = async () => undefined;
 const fixturesDir = fileURLToPath(new URL('../../../fixtures', import.meta.url));
@@ -22,7 +23,7 @@ function makeDeps(over: Partial<HealthDeps['core']> = {}, mode: HealthDeps['mode
 }
 
 async function get(deps: HealthDeps) {
-  const server = createApp(deps).listen(0);
+  const server = createApp(deps, {}, testSecurity()).listen(0);
   try {
     const { port } = server.address() as AddressInfo;
     const res = await fetch(`http://127.0.0.1:${port}/health`);

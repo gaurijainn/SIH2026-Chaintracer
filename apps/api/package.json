@@ -13,7 +13,8 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:validate": "prisma validate",
     "db:seed": "tsx src/db/seedCli.ts",
-    "test:int": "vitest run --config vitest.int.config.ts"
+    "test:int": "vitest run --config vitest.int.config.ts",
+    "demo:seed": "tsx src/demo/seedDemoCli.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
@@ -24,9 +25,11 @@
     "cors": "^2.8.5",
     "csv-parse": "^7.0.2",
     "express": "^4.21.0",
+    "express-rate-limit": "^8.7.0",
     "handlebars": "^4.7.9",
     "helmet": "^8.0.0",
     "ioredis": "^5.4.0",
+    "jsonwebtoken": "^9.0.3",
     "multer": "^2.4.0",
     "neo4j-driver": "^5.26.0",
     "pg": "^8.13.0",
@@ -36,13 +39,14 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@ps26183/mock-server": "workspace:*",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.2.0",
     "@types/node": "^22.0.0",
     "@types/pg": "^8.11.0",
     "@types/qrcode": "^1.5.6",
-    "@ps26183/mock-server": "workspace:*",
     "prisma": "^6.19.3",
     "socket.io-client": "^4.8.0",
     "tsx": "^4.19.0"

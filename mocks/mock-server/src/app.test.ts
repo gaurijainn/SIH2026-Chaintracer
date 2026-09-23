@@ -40,7 +40,7 @@ async function post(app: ReturnType<typeof createMockNcrp> | ReturnType<typeof c
     });
     let parsed: Record<string, unknown> = {};
     try {
-      parsed = await res.json();
+      parsed = (await res.json()) as Record<string, unknown>;
     } catch {
       /* empty body (e.g. simulated timeout never responds -- caller should race a timeout) */
     }
@@ -94,7 +94,7 @@ describe('mock SAHYOG submissions', () => {
     const server = createMockSahyog().listen(0);
     try {
       const res = await fetch(`http://127.0.0.1:${(server.address() as AddressInfo).port}/health`);
-      expect((await res.json()).status).toBe('ok');
+      expect(((await res.json()) as { status: string }).status).toBe('ok');
     } finally {
       server.close();
     }

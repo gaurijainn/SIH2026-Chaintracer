@@ -8,6 +8,7 @@ import { collectEvidence } from './collector';
 import { EvidenceNotFoundError, ReportGenerationError } from './errors';
 import { renderPdf } from './pdf';
 import { evidenceV1Schema, type EvidenceV1 } from './schema';
+import { REPORT_FIR_PII_CONTEXT, type PiiCipher } from '../auth/pii';
 
 export interface GenerateReportInput {
   format: 'json' | 'pdf';
@@ -17,6 +18,8 @@ export interface GenerateReportInput {
 export interface GenerateReportResult {
   report: { id: string; caseId: string; version: string; sha256: string; pdfPath: string | null; createdAt: Date };
   json: EvidenceV1;
+  /** the value substituted for case.firNumber when the hash was computed (ciphertext when PII encryption is on) */
+  integrity: { firNumberAsHashed: string | null };
   pdfBuffer?: Buffer;
 }
 
@@ -29,6 +32,7 @@ export interface ReportServiceDeps {
   prisma: PrismaClient;
   driver: Driver;
   audit: AuditService;
+  pii?: PiiCipher;
   /** Directory PDF exports are written to. Defaults to <cwd>/reports-output. */
   outputDir?: string;
 }
@@ -43,14 +47,21 @@ export class ReportService {
   constructor(private readonly deps: ReportServiceDeps) {}
 
   async generate(caseId: string, input: GenerateReportInput): Promise<GenerateReportResult> {
-    const rawEvidence = await collectEvidence({ prisma: this.deps.prisma, driver: this.deps.driver }, caseId);
+    const rawEvidence = await collectEvidence({ prisma: this.deps.prisma, driver: this.deps.driver, pii: this.deps.pii }, caseId);
     const parsed = evidenceV1Schema.safeParse(rawEvidence);
     if (!parsed.success) {
       throw new ReportGenerationError(`collected evidence failed schema validation: ${parsed.error.issues.map((i) => i.message).join('; ')}`);
     }
     const evidence = parsed.data;
 
-    const canonical = canonicalize(evidence);
+    // B10: the persisted (and hashed) document carries the FIR reference only as AES-256-GCM ciphertext, so plaintext
+    // never lands in Report.payload. The hash is the usual SHA-256 of the canonical JSON of that persisted form, so
+    // /verify recomputes it unchanged. The caller still receives the readable evidence plus the exact value that was
+    // hashed in place of the FIR, which lets a recipient recompute the hash from the exported JSON.
+    const hashedFir = this.deps.pii && evidence.case.firNumber ? this.deps.pii.encrypt(evidence.case.firNumber, REPORT_FIR_PII_CONTEXT) : evidence.case.firNumber;
+    const persisted: EvidenceV1 = { ...evidence, case: { ...evidence.case, firNumber: hashedFir } };
+
+    const canonical = canonicalize(persisted);
     const sha256 = sha256Hex(canonical);
 
     const created = await this.deps.prisma.report.create({
@@ -58,7 +69,7 @@ export class ReportService {
         caseId,
         version: 'evidence.v1',
         sha256,
-        payload: evidence as unknown as object,
+        payload: persisted as unknown as object,
         createdById: input.actorId ?? null,
       },
     });
@@ -76,11 +87,12 @@ export class ReportService {
       await this.deps.prisma.report.update({ where: { id: created.id }, data: { pdfPath } });
     }
 
-    await this.deps.audit.record({ actorId: input.actorId, action: 'evidence exported', entity: 'Report', entityId: created.id, meta: { caseId, format: input.format } });
+    await this.deps.audit.record({ actorId: input.actorId, action: 'evidence exported', entity: 'Report', entityId: created.id, meta: { caseId, format: input.format, sha256 } });
 
     return {
       report: { id: created.id, caseId, version: 'evidence.v1', sha256, pdfPath, createdAt: created.createdAt },
       json: evidence,
+      integrity: { firNumberAsHashed: hashedFir },
       pdfBuffer,
     };
   }

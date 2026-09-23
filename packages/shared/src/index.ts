@@ -10,3 +10,5 @@ export * from './traceEvents';
 export * from './monitorEvents';
 export * from './canonical';
 export * from './ist';
+export * from './serviceToken';
+export * from './demoCases';

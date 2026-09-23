@@ -57,6 +57,8 @@ services:
       NCRP_POLL_INTERVAL_S: ${NCRP_POLL_INTERVAL_S:-60}
       # B9: outbound freeze-notice submission (SahyogAdapter) points at the mock-sahyog service below.
       SAHYOG_BASE_URL: http://mock-sahyog:4011
+      # B10: per-IP API rate limit (requests per RATE_LIMIT_WINDOW_S). Raise it only for k6 load runs: RATE_LIMIT_MAX=1000000 docker compose up -d api
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-300}
     ports: ["4000:4000"]
     volumes: ["./fixtures:/app/fixtures"]
     depends_on:

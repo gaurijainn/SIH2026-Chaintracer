@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { Prisma } from '@prisma/client';
 import { canonicalize, sha256Hex } from '@ps26183/shared';
 import { collectEvidence } from './collector';

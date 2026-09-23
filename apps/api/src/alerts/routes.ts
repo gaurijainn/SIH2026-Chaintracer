@@ -2,6 +2,7 @@ import { Router, type NextFunction, type Request, type Response } from 'express'
 import { z } from 'zod';
 import { AlertNotFoundError, InvalidAlertTransitionError } from './errors';
 import type { AlertService } from './service';
+import { requirePermission } from '../auth/middleware';
 
 type Handler = (req: Request, res: Response) => Promise<void>;
 const wrap = (fn: Handler) => (req: Request, res: Response, next: NextFunction) => void fn(req, res).catch(next);
@@ -15,15 +16,16 @@ const patchBody = z.object({
   action: z.enum(['acknowledge', 'assign', 'snooze']),
   assigneeId: z.string().trim().min(1).optional(),
   snoozedUntil: z.string().trim().min(1).optional(),
-});
+}).strict();
 
-/** B8/F7 routes, mounted under /api/v1 (JWT + RBAC land in B10 -- no auth yet, same as the other B8 routes). */
+/** B8/F7 routes, mounted under /api/v1 behind authenticate + per-route RBAC (B10). */
 export function createAlertRouter(service: AlertService): Router {
   const r = Router();
 
   // GET /alerts?caseId=&severity=&status= -- list, filterable.
   r.get(
     '/alerts',
+    requirePermission('alert:read'),
     wrap(async (req, res) => {
       const query = listQuery.safeParse(req.query);
       if (!query.success) {
@@ -37,6 +39,7 @@ export function createAlertRouter(service: AlertService): Router {
   // PATCH /alerts/:id -- acknowledge, assign, or snooze.
   r.patch(
     '/alerts/:id',
+    requirePermission('alert:update'),
     wrap(async (req, res) => {
       const body = patchBody.safeParse(req.body);
       if (!body.success) {

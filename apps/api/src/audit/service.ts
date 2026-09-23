@@ -1,6 +1,9 @@
 import type { Prisma, PrismaClient } from '@prisma/client';
 import { canonicalize, sha256Hex } from '@ps26183/shared';
 
+/** Arbitrary constant key for the Postgres advisory lock that serialises audit-chain appends. */
+const AUDIT_CHAIN_LOCK = 26183001;
+
 export interface RecordAuditInput {
   actorId?: string | null;
   action: string;
@@ -33,13 +36,22 @@ export class AuditService {
   constructor(private readonly deps: AuditServiceDeps) {}
 
   async record(input: RecordAuditInput) {
-    const prev = await this.deps.prisma.auditLog.findFirst({ orderBy: { seq: 'desc' } });
+    const { prisma } = this.deps;
+    // B10 compatibility fix: with more audit sources (case views, exports, notices, labels) two requests can
+    // record at once, and both would read the same "previous" row and fork the chain (verifyChain then reports
+    // tampering). A transaction-scoped advisory lock serialises appends. Test fakes without $transaction skip it.
+    if (typeof prisma.$transaction !== 'function') return this.append(prisma, input);
+    return prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(${AUDIT_CHAIN_LOCK})`;
+      return this.append(tx as unknown as PrismaClient, input);
+    });
+  }
+
+  private async append(db: PrismaClient, input: RecordAuditInput) {
+    const prev = await db.auditLog.findFirst({ orderBy: { seq: 'desc' } });
     const prevHash = prev?.hash ?? null;
-    // seq is DB-assigned (autoincrement); we don't know it yet, so hash over a synthetic "next seq"
-    // placeholder derived from the previous row instead of the real seq. This keeps the hash
-    // computable before insert while still binding each entry to its position in the chain via
-    // prevHash (the actual chain-integrity mechanism). We persist prevHash/hash and let the DB
-    // assign seq for ordering only.
+    // seq is DB-assigned (autoincrement); we don't know it yet, so the hash covers prevHash (the actual
+    // chain-integrity mechanism) rather than seq. We persist prevHash/hash and let the DB assign seq for ordering.
     const createdAt = new Date();
     const material = {
       actorId: input.actorId ?? null,
@@ -52,7 +64,7 @@ export class AuditService {
     };
     const hash = sha256Hex(canonicalize(material));
 
-    return this.deps.prisma.auditLog.create({
+    return db.auditLog.create({
       data: {
         actorId: input.actorId ?? null,
         action: input.action,
@@ -76,8 +88,15 @@ export class AuditService {
       orderBy: { seq: 'asc' },
     });
 
+    // B10 compatibility fix: a scoped walk (one entity) starts mid-chain, so each row's prevHash must be checked against
+    // the globally preceding row rather than assuming the scope's first row is the start of the chain.
+    const scoped = entity !== undefined || entityId !== undefined;
     let expectedPrevHash: string | null = null;
     for (const row of rows) {
+      if (scoped) {
+        const before = await this.deps.prisma.auditLog.findFirst({ where: { seq: { lt: row.seq } }, orderBy: { seq: 'desc' } });
+        expectedPrevHash = before?.hash ?? null;
+      }
       const material = {
         actorId: row.actorId ?? null,
         action: row.action,

@@ -2,6 +2,7 @@ import { Router, type NextFunction, type Request, type Response } from 'express'
 import { z } from 'zod';
 import { InvalidAddressError, WatchlistNotFoundError } from './errors';
 import type { WatchlistService } from './service';
+import { actor, requirePermission } from '../auth/middleware';
 
 type Handler = (req: Request, res: Response) => Promise<void>;
 const wrap = (fn: Handler) => (req: Request, res: Response, next: NextFunction) => void fn(req, res).catch(next);
@@ -13,17 +14,17 @@ const createBody = z.object({
   addr: z.string().trim().min(1),
   reason: z.string().trim().min(1).optional(),
   tier: z.enum(['HOT', 'WARM', 'COLD']).optional(),
-  addedById: z.string().trim().min(1).optional(),
-});
+}).strict();
 const listQuery = z.object({ caseId: z.string().trim().min(1).optional() });
 
-/** B8/F4 routes, mounted under /api/v1 (JWT + RBAC land in B10, same as intake/mule/risk -- no auth yet). */
+/** B8/F4 routes, mounted under /api/v1 (behind authenticate + per-route RBAC, B10; the actor is the authenticated user). */
 export function createWatchlistRouter(service: WatchlistService): Router {
   const r = Router();
 
   // GET /watchlist?caseId=<optional> -- every monitored address, optionally scoped to one case.
   r.get(
     '/watchlist',
+    requirePermission('watchlist:read'),
     wrap(async (req, res) => {
       const query = listQuery.safeParse(req.query);
       if (!query.success) {
@@ -38,13 +39,14 @@ export function createWatchlistRouter(service: WatchlistService): Router {
   // the automatic B4 'frontier' / B6 'mule' population).
   r.post(
     '/watchlist',
+    requirePermission('watchlist:write'),
     wrap(async (req, res) => {
       const body = createBody.safeParse(req.body);
       if (!body.success) {
         res.status(400).json({ error: 'INVALID_BODY', message: body.error.issues.map((i) => i.message).join('; ') });
         return;
       }
-      const item = await service.create(body.data);
+      const item = await service.create({ ...body.data, addedById: actor(req).userId });
       res.status(201).json({ item });
     }),
   );
@@ -52,6 +54,7 @@ export function createWatchlistRouter(service: WatchlistService): Router {
   // DELETE /watchlist/:id -- stop monitoring one address for one case.
   r.delete(
     '/watchlist/:id',
+    requirePermission('watchlist:write'),
     wrap(async (req, res) => {
       await service.remove(req.params.id);
       res.status(204).end();
