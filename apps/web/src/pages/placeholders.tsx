@@ -1,4 +1,4 @@
-import { Bell, Briefcase, Eye, FileText, LayoutDashboard, Landmark, type LucideIcon } from 'lucide-react';
+import { Bell, Briefcase, Eye, FileText, Landmark, type LucideIcon } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { StatusBadge } from '@/components/common/badges';
 import { Can, ReadOnlyNotice } from '@/features/auth/access';
@@ -48,10 +48,6 @@ function Placeholder({ title, description, icon, phase, emptyTitle, emptyText, n
     </>
   );
 }
-
-export const DashboardPage = () => (
-  <Placeholder title="Dashboard" description="Live overview of open cases, alerts and freeze windows." icon={LayoutDashboard} phase="F3" emptyTitle="Operations overview will appear here" emptyText="Key figures, the live alert feed and case activity are added in a later step." next={{ to: '/intake', label: 'Go to intake', anyOf: INTAKE_ACCESS }} />
-);
 
 export const CasesPage = () => (
   <Placeholder writePermission="notice:draft" title="Cases" description="All investigations you can access." icon={Briefcase} phase="F2" emptyTitle="The case workspace will appear here" emptyText="Cases created from complaints are listed here with their risk and status." next={{ to: '/intake', label: 'Start from intake', anyOf: INTAKE_ACCESS }} />

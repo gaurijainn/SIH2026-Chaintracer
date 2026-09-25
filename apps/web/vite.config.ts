@@ -8,6 +8,6 @@ const api = process.env.API_PROXY ?? 'http://localhost:4000';
 export default defineConfig({
   plugins: [react()],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
-  server: { port: 5173, proxy: { '/health': api, '/api': api } },
+  server: { port: 5173, proxy: { '/health': api, '/api': api, '/socket.io': { target: api, ws: true } } },
   test: { environment: 'jsdom', globals: true, setupFiles: ['./src/test/setup.ts'], css: false },
 });
