@@ -106,7 +106,8 @@ export function createApiClient(opts: ApiClientOptions) {
     throw new ApiError(res.status, typeof b.error === 'string' ? b.error : 'HTTP_ERROR', humanMessage(res.status, b), Array.isArray(b.issues) ? b.issues : [], body);
   }
 
-  async function request<T>(path: string, o: RequestOptions = {}): Promise<T> {
+  /** Sends the request (with the 401 refresh-and-retry) and returns the untouched Response, for binary or byte-exact bodies. */
+  async function execute(path: string, o: RequestOptions): Promise<Response> {
     const authed = o.auth !== false;
     let res = await send(path, o, authed ? opts.getTokens()?.accessToken : undefined);
     if (res.status === 401 && authed) {
@@ -120,11 +121,23 @@ export function createApiClient(opts: ApiClientOptions) {
         throw new ApiError(0, 'NETWORK', humanMessage(0));
       }
     }
-    return parse<T>(res);
+    return res;
+  }
+
+  async function request<T>(path: string, o: RequestOptions = {}): Promise<T> {
+    return parse<T>(await execute(path, o));
+  }
+
+  /** Like `request`, but a 2xx Response is handed back unparsed (PDF bytes, exact JSON text); failures still throw ApiError. */
+  async function requestRaw(path: string, o: RequestOptions = {}): Promise<Response> {
+    const res = await execute(path, o);
+    if (!res.ok) await parse<never>(res);
+    return res;
   }
 
   return {
     request,
+    requestRaw,
     get: <T>(path: string, o?: Omit<RequestOptions, 'method' | 'body'>) => request<T>(path, { ...o, method: 'GET' }),
     post: <T>(path: string, body?: unknown, o?: Omit<RequestOptions, 'method' | 'body'>) => request<T>(path, { ...o, method: 'POST', body }),
     patch: <T>(path: string, body?: unknown, o?: Omit<RequestOptions, 'method' | 'body'>) => request<T>(path, { ...o, method: 'PATCH', body }),

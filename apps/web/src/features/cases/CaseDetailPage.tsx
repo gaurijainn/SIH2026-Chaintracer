@@ -71,7 +71,7 @@ export function CaseDetailPage() {
           )}
           <RequirePermission permission="graph:read">
             <GraphExplorer key={trace.id} caseId={c.id} trace={trace} focus={focus} />
-            <AttributionView key={`attribution-${trace.id}`} trace={trace} />
+            <AttributionView key={`attribution-${trace.id}`} caseId={c.id} trace={trace} />
           </RequirePermission>
         </div>
       )}

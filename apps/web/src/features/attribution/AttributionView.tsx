@@ -1,5 +1,6 @@
 import { ArrowRight, ExternalLink, Landmark } from 'lucide-react';
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { ChainBadge, StatusBadge } from '@/components/common/badges';
 import { SectionCard } from '@/components/common/cards';
 import { EmptyState, ErrorState, LoadingState } from '@/components/common/states';
@@ -74,7 +75,8 @@ function DepositBlock({ d }: { d: Deposit }) {
   );
 }
 
-function VaspCard({ d }: { d: Destination }) {
+function VaspCard({ d, caseId }: { d: Destination; caseId: string }) {
+  const can = useCan();
   const v = d.vasp;
   return (
     <SectionCard className="print:break-inside-avoid" bodyClassName="space-y-4">
@@ -113,8 +115,16 @@ function VaspCard({ d }: { d: Destination }) {
         ))}
       </div>
       <div className="flex flex-wrap items-center gap-2 border-t pt-3">
-        <Button disabled>Draft freeze notice</Button>
-        <span className="text-xs text-muted-foreground">Freeze notice builder will be available in F8.</span>
+        {can('notice:draft') ? (
+          <Button asChild>
+            <Link to={`/reports?caseId=${encodeURIComponent(caseId)}&vaspId=${encodeURIComponent(v.id)}`}>Draft freeze notice</Link>
+          </Button>
+        ) : (
+          <>
+            <Button disabled>Draft freeze notice</Button>
+            <span className="text-xs text-muted-foreground">Your role cannot draft freeze notices.</span>
+          </>
+        )}
       </div>
     </SectionCard>
   );
@@ -125,7 +135,7 @@ function VaspCard({ d }: { d: Destination }) {
  * GET /vasps (registry). A destination is a registry hot wallet the trace reaches, joined on chain + address. Heuristic
  * evidence and attribution confidence are not exposed by any endpoint today, so neither is shown or computed here.
  */
-export function AttributionView({ trace }: { trace: { id: string; seedChain: string; seedAddr: string } }) {
+export function AttributionView({ caseId, trace }: { caseId: string; trace: { id: string; seedChain: string; seedAddr: string } }) {
   const can = useCan();
   const graphQ = useTraceGraph(trace.id, NO_FILTERS);
   const registryQ = useVaspRegistry();
@@ -155,7 +165,7 @@ export function AttributionView({ trace }: { trace: { id: string; seedChain: str
       ) : (
         <div className="grid gap-3">
           {dests.map((d) => (
-            <VaspCard key={d.vasp.id} d={d} />
+            <VaspCard key={d.vasp.id} d={d} caseId={caseId} />
           ))}
         </div>
       )}

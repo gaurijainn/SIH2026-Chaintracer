@@ -1,4 +1,4 @@
-import { Briefcase, Eye, FileText, Landmark, type LucideIcon } from 'lucide-react';
+import { Briefcase, Eye, Landmark, type LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { StatusBadge } from '@/components/common/badges';
 import { Can, ReadOnlyNotice } from '@/features/auth/access';
@@ -61,6 +61,3 @@ export const VaspsPage = () => (
   <Placeholder writePermission="vasp:write" title="VASP registry" description="Exchanges and service providers, with attribution confidence." icon={Landmark} phase="F6" emptyTitle="The VASP registry will appear here" emptyText="Look up an exchange, its jurisdiction and the freeze contact for a notice." />
 );
 
-export const ReportsPage = () => (
-  <Placeholder title="Reports" description="Evidence reports and freeze notices." icon={FileText} phase="F8" emptyTitle="Generated reports will appear here" emptyText="Evidence PDFs and freeze notices for each case are listed with their verification hash." next={{ to: '/cases', label: 'View cases' }} />
-);

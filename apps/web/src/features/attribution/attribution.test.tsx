@@ -84,12 +84,11 @@ describe('F6 destination VASP view', () => {
     expect(within(region).getByRole('link', { name: /block explorer/ })).toHaveAttribute('href', 'https://tronscan.org/#/address/TVASP');
   });
 
-  it('does not implement F8: the freeze-notice action is disabled and nothing is created', async () => {
+  it('links the notice action to the F8 builder for this case and VASP, and creates nothing itself', async () => {
     const { fetchMock } = open();
     const region = await screen.findByRole('region', { name: 'Where to send the notice' }, { timeout: 8000 });
-    const btn = await within(region).findByRole('button', { name: 'Draft freeze notice' });
-    expect(btn).toBeDisabled();
-    expect(within(region).getByText('Freeze notice builder will be available in F8.')).toBeInTheDocument();
+    const link = await within(region).findByRole('link', { name: 'Draft freeze notice' });
+    expect(link).toHaveAttribute('href', '/reports?caseId=case-1&vaspId=v1');
     expect(fetchMock.mock.calls.filter(([u, i]) => /freeze/.test(String(u)) || (i as RequestInit | undefined)?.method === 'POST')).toHaveLength(0);
   });
 
