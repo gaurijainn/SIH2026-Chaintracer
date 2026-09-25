@@ -24,6 +24,7 @@ import { createAdapterProbe } from './intake/probe';
 import { BullTraceQueue } from './intake/queue';
 import { createIntakeService } from './intake/service';
 import { MuleService } from './mule/service';
+import { DashboardService } from './dashboard/service';
 import { attachTraceSocket } from './realtime/socket';
 import { ReportService } from './reports/service';
 import { HttpMlClient } from './risk/mlClient';
@@ -71,8 +72,9 @@ const cases = new CaseService({ prisma, audit, pii });
 const traceGraph = new TraceGraphService({ prisma });
 const labels = new LabelAdminService({ prisma, audit });
 const vasps = new VaspService({ prisma, audit });
+const dashboard = new DashboardService({ prisma });
 
-const server = createApp(deps, { intake, mule, risk, watchlist, alerts, reports, freezeNotices, integrations, cases, traceGraph, labels, vasps }, security).listen(env.API_PORT, () => {
+const server = createApp(deps, { intake, mule, risk, watchlist, alerts, reports, freezeNotices, integrations, cases, traceGraph, labels, vasps, dashboard }, security).listen(env.API_PORT, () => {
   console.log(`api listening on :${env.API_PORT} (DATA_MODE=${env.DATA_MODE})`);
   poller.start();
 });

@@ -4,6 +4,8 @@ import { createAlertRouter, alertErrorHandler } from './alerts/routes';
 import { apiRateLimiter, authRateLimiter, corsAllowlist, httpErrorHandler, notFound, type AppSecurity } from './auth/http';
 import { authenticate } from './auth/middleware';
 import { createAuthRouter } from './auth/routes';
+import { createDashboardRouter } from './dashboard/routes';
+import type { DashboardService } from './dashboard/service';
 import { caseErrorHandler, createCaseRouter } from './cases/routes';
 import type { CaseService } from './cases/service';
 import { createGraphRouter, graphErrorHandler } from './graph/routes';
@@ -41,6 +43,7 @@ export interface AppServices {
   traceGraph?: TraceGraphService;
   labels?: LabelAdminService;
   vasps?: VaspService;
+  dashboard?: DashboardService;
 }
 
 /**
@@ -78,6 +81,7 @@ export function createApp(deps: HealthDeps, services: AppServices, security: App
   if (services.integrations) app.use('/api/v1', createIntegrationsRouter(services.integrations));
   if (services.labels) app.use('/api/v1', createLabelRouter(services.labels));
   if (services.vasps) app.use('/api/v1', createVaspRouter(services.vasps));
+  if (services.dashboard) app.use('/api/v1', createDashboardRouter(services.dashboard));
   app.use('/api/v1', notFound);
   // httpErrorHandler (auth + body-parser errors) is first so 401/403/413 never fall through to a module's generic 500.
   app.use(httpErrorHandler);
