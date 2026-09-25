@@ -1,5 +1,5 @@
 import { Bell, Briefcase, Eye, FileText, Landmark, type LucideIcon } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { StatusBadge } from '@/components/common/badges';
 import { Can, ReadOnlyNotice } from '@/features/auth/access';
 import { INTAKE_ACCESS } from '@/layouts/nav';
@@ -52,13 +52,6 @@ function Placeholder({ title, description, icon, phase, emptyTitle, emptyText, n
 export const CasesPage = () => (
   <Placeholder writePermission="notice:draft" title="Cases" description="All investigations you can access." icon={Briefcase} phase="F2" emptyTitle="The case workspace will appear here" emptyText="Cases created from complaints are listed here with their risk and status." next={{ to: '/intake', label: 'Start from intake', anyOf: INTAKE_ACCESS }} />
 );
-
-export function CaseDetailPage() {
-  const { id } = useParams();
-  return (
-    <Placeholder writePermission="notice:draft" title="Case" description={`Case ${id ?? ''}`.trim()} icon={Briefcase} phase="F4–F6" emptyTitle="Case details will appear here" emptyText="The fund-flow graph, wallet risk explanations and VASP attribution for this case are added in later steps." next={{ to: '/cases', label: 'Back to cases' }} />
-  );
-}
 
 export const AlertsPage = () => (
   <Placeholder writePermission="alert:update" title="Alerts" description="Real-time movements on watched wallets, including freeze-window openings." icon={Bell} phase="F7" emptyTitle="No alert feed yet" emptyText="When a watched wallet moves funds, the alert is shown here immediately." next={{ to: '/watchlist', label: 'View watchlist' }} />
