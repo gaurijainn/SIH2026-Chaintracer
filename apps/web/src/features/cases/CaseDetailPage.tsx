@@ -5,6 +5,7 @@ import { StatusBadge } from '@/components/common/badges';
 import { PageHeader } from '@/components/common/PageHeader';
 import { EmptyState, ErrorState, LoadingState } from '@/components/common/states';
 import { Button } from '@/components/ui/button';
+import { AttributionView } from '@/features/attribution/AttributionView';
 import { RequirePermission } from '@/features/auth/access';
 import { GraphExplorer } from '@/features/graph/GraphExplorer';
 import { useCaseView } from '@/features/graph/api';
@@ -65,6 +66,7 @@ export function CaseDetailPage() {
           )}
           <RequirePermission permission="graph:read">
             <GraphExplorer key={trace.id} caseId={c.id} trace={trace} />
+            <AttributionView key={`attribution-${trace.id}`} trace={trace} />
           </RequirePermission>
         </div>
       )}
