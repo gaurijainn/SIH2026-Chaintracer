@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { AlertOctagon, AlertTriangle, Bell, BellOff, BellRing, CircleAlert, GitBranch, Info, Radio, RefreshCw, RotateCcw, UserCheck, Check, type LucideIcon } from 'lucide-react';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ChainBadge, StatusBadge } from '@/components/common/badges';
 import { PageHeader } from '@/components/common/PageHeader';
@@ -58,6 +59,7 @@ const LIVE_TEXT: Record<AlertLiveStatus, string> = {
 };
 
 export function AlertsPage() {
+  const { t } = useTranslation();
   const can = useCan();
   const qc = useQueryClient();
   const me = useAuthStore((s) => s.user);
@@ -201,7 +203,7 @@ export function AlertsPage() {
               <tr>
                 {['Severity', 'Alert', 'Case', 'Address', 'Status', 'Created (IST)', 'Actions'].map((h) => (
                   <th key={h} scope="col" className="px-3 py-2 font-medium">
-                    {h}
+                    {t(h)}
                   </th>
                 ))}
               </tr>

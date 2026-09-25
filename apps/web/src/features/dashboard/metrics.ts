@@ -1,3 +1,4 @@
+import { formatDayMonth, formatIstDate, formatIstTime } from '@/lib/datetime';
 import type { Chain } from '@/lib/tokens';
 import type { AlertRow, AlertRule, AlertSeverity, CaseStatus, ComplaintItem } from './api';
 
@@ -11,15 +12,9 @@ export const formatInr = (n: number) => inr.format(n);
 export const formatUsd = (n: number) => usd.format(n);
 export const formatCount = (n: number) => count.format(n);
 /** Calendar day from the API ("2026-09-23", already IST) as "23 Sep"; no timezone conversion. */
-export const formatDay = (day: string) => {
-  const [y, m, d] = day.split('-').map(Number);
-  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', timeZone: 'UTC' });
-};
-export const formatDate = (iso: string) => {
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? '—' : d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
-};
-export const formatTime = (ms: number) => new Date(ms).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' });
+export const formatDay = (day: string) => formatDayMonth(day);
+export const formatDate = (iso: string) => formatIstDate(iso);
+export const formatTime = (ms: number) => formatIstTime(ms).replace(/ IST$/, '');
 
 /** One case as the dashboard can know it: rolled up from its complaints in the loaded window. */
 export interface CaseRow {

@@ -1,4 +1,6 @@
 import { Check, Minus, Monitor, Moon, Sun, type LucideIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitch } from '@/components/common/LanguageSwitch';
 import { ChainBadge, RiskBadge } from '@/components/common/badges';
 import { PageHeader } from '@/components/common/PageHeader';
 import { SectionCard } from '@/components/common/cards';
@@ -15,6 +17,7 @@ const THEMES: { value: ThemePreference; label: string; icon: LucideIcon }[] = [
 ];
 
 export function SettingsPage() {
+  const { t } = useTranslation();
   const theme = useUiStore((s) => s.theme);
   const setTheme = useUiStore((s) => s.setTheme);
   const user = useAuthStore((s) => s.user);
@@ -33,7 +36,7 @@ export function SettingsPage() {
               return (
                 <li key={permission} className={cn('flex items-center gap-2 text-sm', !allowed && 'text-muted-foreground')}>
                   {allowed ? <Check className="size-4 text-risk-low" aria-hidden="true" /> : <Minus className="size-4" aria-hidden="true" />}
-                  <span>{label}</span>
+                  <span>{t(label)}</span>
                   <span className="sr-only">{allowed ? '(allowed)' : '(not allowed)'}</span>
                 </li>
               );
@@ -43,7 +46,7 @@ export function SettingsPage() {
       )}
       <div className="grid gap-4 lg:grid-cols-2">
         <SectionCard title="Appearance" description="Dark is the default. Light is used for printing.">
-          <div role="radiogroup" aria-label="Theme" className="inline-flex rounded-md border p-0.5">
+          <div role="radiogroup" aria-label={t('Theme')} className="inline-flex rounded-md border p-0.5">
             {THEMES.map(({ value, label, icon: Icon }) => (
               <button
                 key={value}
@@ -54,10 +57,13 @@ export function SettingsPage() {
                 className={cn('inline-flex h-8 items-center gap-1.5 rounded px-3 text-sm font-medium text-muted-foreground hover:text-foreground', theme === value && 'bg-accent text-foreground')}
               >
                 <Icon className="size-4" aria-hidden="true" />
-                {label}
+                {t(label)}
               </button>
             ))}
           </div>
+        </SectionCard>
+        <SectionCard title="Interface language" description="Changes the labels of the console. Addresses, hashes, VASP names and text supplied by the server are never translated.">
+          <LanguageSwitch />
         </SectionCard>
         <SectionCard title="Risk and chain key" description="How risk bands and chains are shown across the console.">
           <div className="space-y-3">

@@ -1,6 +1,7 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 
 export const Dialog = DialogPrimitive.Root;
@@ -16,6 +17,7 @@ interface ContentProps {
 }
 
 export function DialogContent({ title, description, variant = 'center', className, children }: ContentProps) {
+  const { t } = useTranslation();
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/60 print:hidden" />
@@ -36,7 +38,7 @@ export function DialogContent({ title, description, variant = 'center', classNam
         )}
         {children}
         {variant === 'center' && (
-          <DialogPrimitive.Close aria-label="Close" className="absolute right-3 top-3 rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground">
+          <DialogPrimitive.Close aria-label={t('Close')} className="absolute right-3 top-3 rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground">
             <X className="size-4" />
           </DialogPrimitive.Close>
         )}

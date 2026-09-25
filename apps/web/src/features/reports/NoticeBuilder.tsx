@@ -1,5 +1,6 @@
 import { Check, FileWarning, Send } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StatusBadge } from '@/components/common/badges';
 import { SectionCard } from '@/components/common/cards';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
@@ -10,22 +11,24 @@ import { useAlertRows } from '@/features/dashboard/api';
 import { useVaspRegistry } from '@/features/attribution/api';
 import { useCan } from '@/features/auth/access';
 import { cn } from '@/lib/cn';
+import { formatIst } from '@/lib/datetime';
 import { NOTICE_STATUSES, noticeErrorMessage, useApproveNotice, useDraftNotice, useEditNotice, useSendNotice, useSessionNotices, useSubmitNotice, type FreezeNotice, type NoticeStatus } from './api';
 
 const label = 'text-xs uppercase tracking-wide text-muted-foreground';
 const field = 'h-9 rounded-md border border-input bg-background px-2 text-sm';
 const STEP_LABEL: Record<NoticeStatus, string> = { DRAFT: 'Draft', PENDING_APPROVAL: 'Pending approval', APPROVED: 'Approved', SENT: 'Sent' };
 const TONE: Record<NoticeStatus, 'neutral' | 'warning' | 'info' | 'success'> = { DRAFT: 'neutral', PENDING_APPROVAL: 'warning', APPROVED: 'info', SENT: 'success' };
-const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : '—');
+const when = formatIst;
 
 function Steps({ status }: { status: NoticeStatus }) {
+  const { t } = useTranslation();
   const at = NOTICE_STATUSES.indexOf(status);
   return (
     <ol aria-label="Freeze notice workflow" className="flex flex-wrap items-center gap-2 text-xs">
       {NOTICE_STATUSES.map((s, i) => (
         <li key={s} aria-current={i === at ? 'step' : undefined} className={cn('flex items-center gap-1 rounded-full border px-2 py-1', i === at ? 'border-primary bg-primary/10 font-semibold text-foreground' : i < at ? 'text-foreground' : 'text-muted-foreground')}>
           {i < at && <Check className="size-3" aria-hidden="true" />}
-          {STEP_LABEL[s]}
+          {t(STEP_LABEL[s])}
         </li>
       ))}
     </ol>
@@ -33,6 +36,7 @@ function Steps({ status }: { status: NoticeStatus }) {
 }
 
 function NoticeCard({ notice, caseId }: { notice: FreezeNotice; caseId: string }) {
+  const { t } = useTranslation();
   const can = useCan();
   const edit = useEditNotice(caseId);
   const submit = useSubmitNotice(caseId);
@@ -73,17 +77,21 @@ function NoticeCard({ notice, caseId }: { notice: FreezeNotice; caseId: string }
           <dt className={label}>VASP contact on file</dt>
           <dd className="break-all text-sm">{b.vasp?.contactEmail || b.vasp?.contactPortal || 'None on file'}</dd>
         </div>
+        <div>
+          <dt className={label}>{t('Requested')}</dt>
+          <dd className="text-sm">{formatIst(b.requestedAt?.utc)}</dd>
+        </div>
         <div className="sm:col-span-2">
-          <dt className={label}>Deposit addresses</dt>
+          <dt className={label}>{t('Deposit addresses')}</dt>
           <dd className="break-all font-mono text-xs">{b.depositAddresses?.length ? b.depositAddresses.join(', ') : 'None found'}</dd>
         </div>
         <div className="sm:col-span-2">
-          <dt className={label}>Transaction hashes</dt>
+          <dt className={label}>{t('Transaction hashes')}</dt>
           <dd className="space-y-0.5 break-all font-mono text-xs">{b.txHashes?.length ? b.txHashes.map((h) => <div key={h}>{h}</div>) : 'None found in this case’s traces for these addresses'}</dd>
         </div>
         {b.amounts && b.amounts.length > 0 && (
           <div className="sm:col-span-2">
-            <dt className={label}>Amounts</dt>
+            <dt className={label}>{t('Amounts')}</dt>
             <dd className="text-xs">
               {b.amounts.map((a, i) => (
                 <div key={i}>
@@ -110,7 +118,7 @@ function NoticeCard({ notice, caseId }: { notice: FreezeNotice; caseId: string }
 
       <div className="space-y-1.5">
         <label htmlFor={`legal-${notice.id}`} className="text-sm font-medium">
-          Legal provision
+          {t('Legal provision')}
         </label>
         <textarea
           id={`legal-${notice.id}`}
@@ -124,7 +132,7 @@ function NoticeCard({ notice, caseId }: { notice: FreezeNotice; caseId: string }
         <div className="flex flex-wrap items-center gap-2">
           {mayEdit && (
             <Button type="button" variant="outline" size="sm" disabled={busy || legal === (notice.legalProvision ?? '')} onClick={() => run(edit, { id: notice.id, legalProvision: legal })}>
-              {edit.isPending && <Spinner label="Saving" />} Save legal provision
+              {edit.isPending && <Spinner label="Saving" />} {t('Save legal provision')}
             </Button>
           )}
           <span className="text-xs text-muted-foreground">
@@ -141,15 +149,15 @@ function NoticeCard({ notice, caseId }: { notice: FreezeNotice; caseId: string }
 
       <div className="flex flex-wrap items-center gap-2 border-t pt-3">
         <Button type="button" variant="outline" disabled={busy || notice.status !== 'DRAFT' || !can('notice:draft')} onClick={() => run(submit, notice.id)}>
-          {submit.isPending && <Spinner label="Submitting" />} Submit for approval
+          {submit.isPending && <Spinner label="Submitting" />} {t('Submit for approval')}
         </Button>
         <Button type="button" variant="outline" disabled={busy || notice.status !== 'PENDING_APPROVAL' || !can('notice:approve')} onClick={() => setConfirm('approve')}>
-          Approve
+          {t('Approve')}
         </Button>
         <Button type="button" disabled={busy || notice.status !== 'APPROVED' || !can('notice:send')} onClick={() => setConfirm('send')}>
-          <Send className="size-4" aria-hidden="true" /> Submit to SAHYOG (sandbox)
+          <Send className="size-4" aria-hidden="true" /> {t('Submit to SAHYOG (sandbox)')}
         </Button>
-        {!can('notice:approve') && <span className="text-xs text-muted-foreground">Approving and sending require the Supervisor role.</span>}
+        {!can('notice:approve') && <span className="text-xs text-muted-foreground">{t('Approving and sending require the Supervisor role.')}</span>}
       </div>
 
       {notice.approvedAt && (
@@ -191,6 +199,7 @@ function NoticeCard({ notice, caseId }: { notice: FreezeNotice; caseId: string }
 
 /** Freeze-notice workflow for one case. Drafting reads real VASPs and alerts; the notice body is built by the backend. */
 export function NoticeBuilder({ caseId, presetVaspId }: { caseId: string; presetVaspId?: string | null }) {
+  const { t } = useTranslation();
   const can = useCan();
   const notices = useSessionNotices(caseId);
   const vasps = useVaspRegistry();
@@ -226,7 +235,7 @@ export function NoticeBuilder({ caseId, presetVaspId }: { caseId: string; preset
               </select>
             </label>
             <label className="grid gap-1 text-xs text-muted-foreground">
-              Alert (optional)
+              {t('Alert (optional)')}
               <select className={cn(field, 'min-w-56 text-foreground')} value={alertId} onChange={(e) => setAlertId(e.target.value)}>
                 <option value="">No alert: use the VASP&apos;s known addresses</option>
                 {caseAlerts.map((a) => (
@@ -237,11 +246,11 @@ export function NoticeBuilder({ caseId, presetVaspId }: { caseId: string; preset
               </select>
             </label>
             <Button type="submit" disabled={!vaspId || draft.isPending}>
-              {draft.isPending && <Spinner label="Drafting" />} Draft freeze notice
+              {draft.isPending && <Spinner label="Drafting" />} {t('Draft freeze notice')}
             </Button>
           </form>
         ) : (
-          <p className="text-sm text-muted-foreground">Your role cannot draft or change freeze notices.</p>
+          <p className="text-sm text-muted-foreground">{t('Your role cannot draft or change freeze notices.')}</p>
         )}
         {vasps.isError && <p role="alert" className="text-sm text-risk-critical">{`Could not load the VASP registry: ${noticeErrorMessage(vasps.error)}`}</p>}
         {error && (

@@ -4,7 +4,7 @@ import { App } from '@/App';
 import { createQueryClient } from '@/lib/queryClient';
 import { createTestRouter } from '@/router';
 import { useAuthStore, type Role } from '@/stores/auth';
-import { useUiStore } from '@/stores/ui';
+import { applyLanguage, useUiStore } from '@/stores/ui';
 
 export const json = (status: number, body?: unknown) => new Response(body === undefined ? null : JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -32,8 +32,9 @@ export function stubFetch(handler: FetchHandler = () => undefined) {
 
 export function resetAppState() {
   useAuthStore.getState().clearSession();
-  useUiStore.setState({ theme: 'dark', sidebarCollapsed: false, mobileNavOpen: false });
+  useUiStore.setState({ theme: 'dark', language: 'en', sidebarCollapsed: false, mobileNavOpen: false });
   document.documentElement.classList.add('dark');
+  applyLanguage('en');
 }
 
 export function mountApp(path: string, handler?: FetchHandler) {

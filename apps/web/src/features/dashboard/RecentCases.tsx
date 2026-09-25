@@ -1,6 +1,7 @@
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef, type FilterFn, type SortingState } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ArrowUpDown, Briefcase } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ChainBadge, RiskBadge, StatusBadge } from '@/components/common/badges';
 import { SectionCard } from '@/components/common/cards';
@@ -63,6 +64,7 @@ function SortIcon({ dir }: { dir: false | 'asc' | 'desc' }) {
 }
 
 function CasesTable({ data }: { data: CaseRow[] }) {
+  const { t } = useTranslation();
   const [sorting, setSorting] = useState<SortingState>([{ id: 'lastReportedAt', desc: true }]);
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('');
@@ -125,12 +127,12 @@ function CasesTable({ data }: { data: CaseRow[] }) {
                       <th key={h.id} scope="col" aria-sort={dir === 'asc' ? 'ascending' : dir === 'desc' ? 'descending' : h.column.getCanSort() ? 'none' : undefined} className={cn('px-3 py-2 font-medium', right && 'text-right')}>
                         {h.column.getCanSort() ? (
                           <button type="button" onClick={h.column.getToggleSortingHandler()} className={cn('inline-flex items-center gap-1 rounded uppercase tracking-wide hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring', right && 'flex-row-reverse')}>
-                            {flexRender(h.column.columnDef.header, h.getContext())}
+                            {t(h.column.columnDef.header as string)}
                             <SortIcon dir={dir} />
                             <span className="sr-only">{dir === 'asc' ? ', sorted ascending' : dir === 'desc' ? ', sorted descending' : ', click to sort'}</span>
                           </button>
                         ) : (
-                          flexRender(h.column.columnDef.header, h.getContext())
+                          t(h.column.columnDef.header as string)
                         )}
                       </th>
                     );

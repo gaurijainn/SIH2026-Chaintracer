@@ -1,6 +1,7 @@
 import { ShieldOff } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { EmptyState } from '@/components/common/states';
 import { Button } from '@/components/ui/button';
 import { can, canAny, ROLE_LABELS, type Permission } from '@/lib/permissions';
@@ -30,6 +31,7 @@ export function RequirePermission({ permission, anyOf, children }: { permission?
 }
 
 function Forbidden({ role }: { role?: string }) {
+  const { t } = useTranslation();
   return (
     <EmptyState
       icon={ShieldOff}
@@ -37,7 +39,7 @@ function Forbidden({ role }: { role?: string }) {
       description={`${role ? `Your ${role} role does not include this area.` : 'Your role does not include this area.'} Contact your administrator if you need access.`}
       action={
         <Button asChild variant="outline" size="sm">
-          <Link to="/dashboard">Back to dashboard</Link>
+          <Link to="/dashboard">{t('Back to dashboard')}</Link>
         </Button>
       }
       className="mt-8"

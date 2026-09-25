@@ -1,7 +1,8 @@
 import { Bell, Menu, Moon, PanelLeft, Sun } from 'lucide-react';
 import { useEffect, useRef, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { DemoModeBadge } from '@/components/common/DemoModeBadge';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitch } from '@/components/common/LanguageSwitch';
 import { SearchInput } from '@/components/common/SearchInput';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -10,6 +11,7 @@ import { resolveDark, useUiStore } from '@/stores/ui';
 import { UserMenu } from './UserMenu';
 
 export function Topbar() {
+  const { t } = useTranslation();
   const theme = useUiStore((s) => s.theme);
   const toggleTheme = useUiStore((s) => s.toggleTheme);
   const toggleSidebar = useUiStore((s) => s.toggleSidebar);
@@ -36,29 +38,29 @@ export function Topbar() {
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-background px-3 md:px-4 print:hidden">
-      <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open navigation" onClick={() => setMobileNavOpen(true)}>
+      <Button variant="ghost" size="icon" className="md:hidden" aria-label={t('Open navigation')} onClick={() => setMobileNavOpen(true)}>
         <Menu />
       </Button>
-      <Button variant="ghost" size="icon" className="hidden md:inline-flex" aria-label="Toggle sidebar" onClick={toggleSidebar}>
+      <Button variant="ghost" size="icon" className="hidden md:inline-flex" aria-label={t('Toggle sidebar')} onClick={toggleSidebar}>
         <PanelLeft />
       </Button>
 
       <form role="search" onSubmit={onSearch} className="min-w-[8rem] max-w-md flex-1">
-        <SearchInput ref={searchRef} label="Search address or transaction hash" placeholder="Search address or tx hash…" />
+        <SearchInput ref={searchRef} label={t('Search address or transaction hash')} placeholder={t('Search address or tx hash…')} />
       </form>
       <kbd className="hidden rounded border bg-muted px-1.5 py-0.5 font-mono text-[0.6875rem] text-muted-foreground lg:inline">Ctrl K</kbd>
 
       <div className="ml-auto flex items-center gap-1.5">
-        <DemoModeBadge className="hidden lg:inline-flex" />
-        <Tooltip label="Alerts" side="bottom">
-          <Button asChild variant="ghost" size="icon">
-            <Link to="/alerts" aria-label="Alerts">
+        <LanguageSwitch />
+        <Tooltip label={t('Alerts')} side="bottom">
+          <Button asChild variant="ghost" size="icon" className="hidden sm:inline-flex">
+            <Link to="/alerts" aria-label={t('Alerts')}>
               <Bell />
             </Link>
           </Button>
         </Tooltip>
-        <Tooltip label={dark ? 'Switch to light theme' : 'Switch to dark theme'} side="bottom">
-          <Button variant="ghost" size="icon" aria-label="Toggle theme" onClick={toggleTheme}>
+        <Tooltip label={t(dark ? 'Switch to light theme' : 'Switch to dark theme')} side="bottom">
+          <Button variant="ghost" size="icon" aria-label={t('Toggle theme')} onClick={toggleTheme}>
             {dark ? <Sun /> : <Moon />}
           </Button>
         </Tooltip>

@@ -1,0 +1,12 @@
+{
+  "provider": "chainabuse",
+  "request": {
+    "method": "GET",
+    "url": "https://api.chainabuse.com/v0/reports?address=0x006bc1f189176747b2ae2d774007d03e810498fa&page=1&perPage=20"
+  },
+  "response": {
+    "status": 200,
+    "data": "{\"count\":0,\"reports\":[]}"
+  },
+  "recordedAt": "2026-09-22T21:55:45.831Z"
+}

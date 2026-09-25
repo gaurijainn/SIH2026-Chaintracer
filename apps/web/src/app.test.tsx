@@ -107,14 +107,14 @@ describe('shell', () => {
   it('shows the demo-mode indicator only in replay mode', async () => {
     signIn();
     mount('/dashboard', 'replay');
-    expect((await screen.findAllByText('Demo mode · Replay')).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText('Demo mode (replay)')).length).toBeGreaterThan(0);
   });
 
   it('hides the demo-mode indicator in live mode', async () => {
     signIn();
     mount('/dashboard', 'live');
     await Promise.resolve();
-    expect(screen.queryByText('Demo mode · Replay')).not.toBeInTheDocument();
+    expect(screen.queryByText('Demo mode (replay)')).not.toBeInTheDocument();
   });
 });
 
@@ -122,7 +122,7 @@ describe('QueryClient provider', () => {
   it('serves useQuery to the shell (demo-mode badge reads /health through it) with the configured defaults', async () => {
     signIn();
     mount('/dashboard', 'replay');
-    expect((await screen.findAllByText('Demo mode · Replay')).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText('Demo mode (replay)')).length).toBeGreaterThan(0);
     expect(createQueryClient().getDefaultOptions().queries?.staleTime).toBe(30_000);
   });
 });

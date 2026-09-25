@@ -1,0 +1,127 @@
+{
+  "datasetVersion": "tron-bootstrap-v1-live",
+  "generatedAt": "2026-09-23T05:07:32.488Z",
+  "totals": {
+    "totalCandidates": 527,
+    "finalRows": 500,
+    "highRiskRows": 250,
+    "licitRows": 250,
+    "unusableRows": 0,
+    "duplicateAddressesMerged": 0,
+    "conflicts": 0,
+    "invalidAddresses": 0
+  },
+  "sourceDistribution": {
+    "usdt_blacklist": 235,
+    "tron_negative_sampling": 250,
+    "ofac+usdt_blacklist": 14,
+    "ofac": 1
+  },
+  "timestampRange": {
+    "earliest": "2026-09-23T05:07:32.488Z",
+    "latest": "2026-09-23T05:07:32.488Z"
+  },
+  "featureMissingness": {
+    "dwell_median_min": {
+      "missing": 68,
+      "missingPct": 13.6
+    },
+    "fan_out_1h": {
+      "missing": 0,
+      "missingPct": 0
+    },
+    "fan_in_unique": {
+      "missing": 0,
+      "missingPct": 0
+    },
+    "passthrough_ratio": {
+      "missing": 29,
+      "missingPct": 5.8
+    },
+    "age_at_taint_days": {
+      "missing": 228,
+      "missingPct": 45.6
+    },
+    "activator_label": {
+      "missing": 99,
+      "missingPct": 19.8
+    },
+    "trx_dust_usdt": {
+      "missing": 0,
+      "missingPct": 0
+    },
+    "round_amount_ratio": {
+      "missing": 0,
+      "missingPct": 0
+    },
+    "burst_tx_per_hour": {
+      "missing": 0,
+      "missingPct": 0
+    },
+    "hops_from_victim": {
+      "missing": 500,
+      "missingPct": 100
+    },
+    "hops_to_vasp": {
+      "missing": 500,
+      "missingPct": 100
+    },
+    "sanction_exposure": {
+      "missing": 500,
+      "missingPct": 100
+    },
+    "external_flags": {
+      "missing": 283,
+      "missingPct": 56.6
+    },
+    "shared_mule_cps": {
+      "missing": 0,
+      "missingPct": 0
+    },
+    "cross_case_count": {
+      "missing": 0,
+      "missingPct": 0
+    }
+  },
+  "usableTrainingRows": 500,
+  "sourceCounts": {
+    "addedBlackListAddresses": 4983,
+    "ofacAddresses": 254,
+    "chainabuseEnrichedAddresses": 0
+  },
+  "excluded": {
+    "vaspOrService": 27,
+    "ambiguousOrConflicting": 0,
+    "insufficientActivity": 0
+  },
+  "balanced": true,
+  "scopeNote": "LIVE COLLECTION: real TronGrid AddedBlackList + real OFAC local file + real TronScan account meta + real (budget-capped) Chainabuse reports + real B3 transfer/account data for all B6 features. Recorded to fixtures/ for offline replay.",
+  "excludedRecords": {
+    "conflicts": [],
+    "unmatchedLabels": [],
+    "invalidAddresses": [],
+    "untracedAddresses": []
+  },
+  "liveRunStats": {
+    "runtimeMs": 1025742,
+    "apiCalls": {
+      "trongrid": 1802,
+      "tronscan": 1054,
+      "chainabuse": 0,
+      "ofac": 0
+    },
+    "blacklistDiscovery": {
+      "events": 5000,
+      "pages": 25,
+      "truncated": true
+    },
+    "candidatePoolSize": 700,
+    "negativeCandidatesScreened": 277,
+    "addressValidation": {
+      "mergedHighRiskValid": 5000,
+      "mergedHighRiskInvalid": 0,
+      "candidatePoolInvalid": 0,
+      "rawHexAddressesInFinalOutput": 0
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 
@@ -26,18 +27,19 @@ export function ConfirmDialog({
   onConfirm: () => void;
   children?: ReactNode;
 }) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent title={title} description={description}>
+      <DialogContent title={t(title)} description={description ? t(description) : undefined}>
         {children && <div className="mt-3 text-sm">{children}</div>}
         <div className="mt-5 flex justify-end gap-2">
           <DialogClose asChild>
             <Button variant="outline" disabled={busy}>
-              {cancelLabel}
+              {t(cancelLabel)}
             </Button>
           </DialogClose>
           <Button variant={destructive ? 'destructive' : 'default'} disabled={busy} onClick={onConfirm}>
-            {confirmLabel}
+            {t(confirmLabel)}
           </Button>
         </div>
       </DialogContent>

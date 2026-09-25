@@ -17,7 +17,7 @@ const JSON_BODY = JSON.stringify({ report: { id: 'r2', caseId: 'case-1', version
 type Notice = { id: string; status: string; legalProvision: string | null; submissionId: string | null; approvedById: string | null; approvedAt: string | null; sentAt: string | null; [k: string]: unknown };
 const notice = (over: Partial<Notice> = {}): Notice => ({
   id: 'n1', caseId: 'case-1', vaspId: 'v1', status: 'DRAFT', legalProvision: null, legalCellReviewed: false,
-  body: { vasp: { id: 'v1', name: 'Demo Exchange', jurisdiction: 'Seychelles', contactEmail: 'freeze@demo.example', contactPortal: null }, depositAddresses: ['TVASP'], txHashes: ['0xhash1'], amounts: [{ chain: 'TRON', token: 'USDT', amount: '500', usd: '500' }], alertId: null, requests: { freeze: 'Request to freeze the identified deposit address(es).' } },
+  body: { vasp: { id: 'v1', name: 'Demo Exchange', jurisdiction: 'Seychelles', contactEmail: 'freeze@demo.example', contactPortal: null }, depositAddresses: ['TVASP'], txHashes: ['0xhash1'], amounts: [{ chain: 'TRON', token: 'USDT', amount: '500', usd: '500' }], alertId: null, requestedAt: { utc: '2026-09-25T08:30:00.000Z', ist: { iso: '2026-09-25T08:30:00.000Z', display: '25 Sept 2026, 14:00:00 IST' } }, requests: { freeze: 'Request to freeze the identified deposit address(es).' } },
   submissionId: null, approvedById: null, approvedAt: null, sentAt: null, createdAt: '2026-09-25T00:00:00.000Z', ...over,
 });
 
@@ -170,6 +170,7 @@ describe('F8 freeze notice workflow', () => {
     await user.click(screen.getByRole('button', { name: 'Draft freeze notice' }));
     expect(await screen.findByText('freeze@demo.example')).toBeInTheDocument();
     expect(screen.getByText('0xhash1')).toBeInTheDocument();
+    expect(screen.getByText(/25 Sep[a-z]* 2026, 14:00 IST/)).toBeInTheDocument();
     const [draft] = posts(fm);
     expect(draft!.url.pathname).toBe('/api/v1/cases/case-1/freeze-notices');
     expect(JSON.parse(String(draft!.body))).toEqual({ vaspId: 'v1', alertId: 'al1' });

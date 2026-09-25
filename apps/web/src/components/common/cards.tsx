@@ -1,16 +1,18 @@
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 
 /** Bordered panel with an optional header row. Flat: border only, no heavy shadow. */
 export function SectionCard({ title, description, actions, children, className, bodyClassName }: { title?: string; description?: string; actions?: ReactNode; children?: ReactNode; className?: string; bodyClassName?: string }) {
+  const { t } = useTranslation();
   return (
     <section className={cn('rounded-lg border bg-card text-card-foreground', className)}>
       {(title || actions) && (
         <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
           <div className="min-w-0">
-            {title && <h2 className="truncate text-sm font-semibold">{title}</h2>}
-            {description && <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>}
+            {title && <h2 className="truncate text-sm font-semibold">{t(title)}</h2>}
+            {description && <p className="mt-0.5 text-xs text-muted-foreground">{t(description)}</p>}
           </div>
           {actions && <div className="flex shrink-0 items-center gap-2 print:hidden">{actions}</div>}
         </div>

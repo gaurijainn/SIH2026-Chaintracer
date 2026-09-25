@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Info, TriangleAlert, XCircle, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { STATUS_TONES } from '@/lib/tokens';
@@ -12,6 +13,7 @@ const KIND = {
 
 /** Mount once at the root (outside the router, so in-app links go through `onNavigate`). Errors are announced assertively, everything else politely. */
 export function Toaster({ onNavigate }: { onNavigate?: (to: string) => void }) {
+  const { t: tr } = useTranslation();
   const toasts = useToastStore((s) => s.toasts);
   const dismiss = useToastStore((s) => s.dismiss);
   return (
@@ -24,8 +26,8 @@ export function Toaster({ onNavigate }: { onNavigate?: (to: string) => void }) {
             <Icon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
             <div className="min-w-0 flex-1">
               <p className="font-medium">
-                <span className="sr-only">{k.label}: </span>
-                {t.title}
+                <span className="sr-only">{tr(k.label)}: </span>
+                {tr(t.title)}
               </p>
               {t.description && <p className="mt-0.5 opacity-90">{t.description}</p>}
               {t.action && (
@@ -41,7 +43,7 @@ export function Toaster({ onNavigate }: { onNavigate?: (to: string) => void }) {
                 </button>
               )}
             </div>
-            <button type="button" aria-label="Dismiss notification" onClick={() => dismiss(t.id)} className="rounded p-0.5 opacity-70 hover:opacity-100">
+            <button type="button" aria-label={tr('Dismiss notification')} onClick={() => dismiss(t.id)} className="rounded p-0.5 opacity-70 hover:opacity-100">
               <X className="size-4" />
             </button>
           </div>

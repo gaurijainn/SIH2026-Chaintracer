@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { formatIst } from '@/lib/datetime';
 import type { Chain, RiskBand } from '@/lib/tokens';
 
 export const CHAIN_LIST: Chain[] = ['TRON', 'ETH', 'BSC', 'POLYGON', 'BTC'];
@@ -372,4 +373,4 @@ const EXPLORERS: Record<Chain, (addr: string) => string> = {
 export const explorerUrl = (chain: string, addr: string): string | null => (chain in EXPLORERS ? EXPLORERS[chain as Chain](addr) : null);
 
 export const formatUsdValue = (n: number | null) => (n === null ? 'unknown' : n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: n >= 100 ? 0 : 2 }));
-export const formatWhen = (ms: number) => new Date(ms).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' }) + ' IST';
+export const formatWhen = (ms: number) => formatIst(ms);

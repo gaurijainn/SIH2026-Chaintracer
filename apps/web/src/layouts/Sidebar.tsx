@@ -1,5 +1,6 @@
 import { Radar } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/cn';
@@ -9,13 +10,14 @@ import { useUiStore } from '@/stores/ui';
 import { NAV_ITEMS } from './nav';
 
 function Brand({ collapsed }: { collapsed: boolean }) {
+  const { t } = useTranslation();
   return (
     <div className={cn('flex h-14 shrink-0 items-center gap-2.5 border-b border-sidebar-border px-4', collapsed && 'justify-center px-0')}>
       <Radar className="size-5 shrink-0 text-primary" aria-hidden="true" />
       {!collapsed && (
         <div className="min-w-0 leading-tight">
-          <p className="truncate text-sm font-semibold">Chain Tracer</p>
-          <p className="truncate text-[0.6875rem] text-muted-foreground">PS 26183 · Investigations</p>
+          <p className="truncate text-sm font-semibold">{t('Chain Tracer')}</p>
+          <p className="truncate text-[0.6875rem] text-muted-foreground">{t('PS 26183 · Investigations')}</p>
         </div>
       )}
     </div>
@@ -23,12 +25,14 @@ function Brand({ collapsed }: { collapsed: boolean }) {
 }
 
 function NavList({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {
+  const { t } = useTranslation();
   const role = useAuthStore((s) => s.user?.role);
   const items = NAV_ITEMS.filter((i) => !i.anyOf || canAny(role, i.anyOf));
   return (
-    <nav aria-label="Primary" className="flex-1 overflow-y-auto p-2">
+    <nav aria-label={t('Primary')} className="flex-1 overflow-y-auto p-2">
       <ul className="space-y-0.5">
-        {items.map(({ to, label, icon: Icon }) => {
+        {items.map(({ to, label: en, icon: Icon }) => {
+          const label = t(en);
           const link = (
             <NavLink
               to={to}
@@ -66,11 +70,12 @@ export function Sidebar() {
 
 /** Below md the same navigation opens as a left drawer. */
 export function MobileNav() {
+  const { t } = useTranslation();
   const open = useUiStore((s) => s.mobileNavOpen);
   const setOpen = useUiStore((s) => s.setMobileNavOpen);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent variant="left" title="Navigation" description="Main navigation">
+      <DialogContent variant="left" title={t('Navigation')} description={t('Main navigation')}>
         <div className="flex h-full flex-col">
           <Brand collapsed={false} />
           <NavList collapsed={false} onNavigate={() => setOpen(false)} />

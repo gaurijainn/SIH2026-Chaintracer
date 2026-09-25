@@ -143,7 +143,7 @@ const noticeBodySchema = z
     txHashes: z.array(z.string()).optional(),
     amounts: z.array(z.object({ chain: z.string(), token: z.string(), amount: z.string(), usd: z.string().nullable() }).passthrough()).optional(),
     alertId: z.string().nullable().optional(),
-    requestedAt: z.object({ utc: z.string(), ist: z.string() }).partial().optional(),
+    requestedAt: z.object({ utc: z.string(), ist: z.object({ iso: z.string(), display: z.string() }) }).partial().optional(),
     requests: z.record(z.string(), z.string()).optional(),
   })
   .passthrough();
