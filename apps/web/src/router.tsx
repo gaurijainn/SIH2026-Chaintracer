@@ -10,7 +10,8 @@ import { LoginPage } from '@/pages/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
 import { CaseDetailPage } from '@/features/cases/CaseDetailPage';
-import { AlertsPage, CasesPage, ReportsPage, VaspsPage, WatchlistPage } from '@/pages/placeholders';
+import { AlertsPage } from '@/features/alerts/AlertsPage';
+import { CasesPage, ReportsPage, VaspsPage, WatchlistPage } from '@/pages/placeholders';
 import { SettingsPage } from '@/pages/SettingsPage';
 
 const gate = (permission: Permission, el: ReactElement) => <RequirePermission permission={permission}>{el}</RequirePermission>;

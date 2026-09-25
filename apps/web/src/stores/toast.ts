@@ -8,6 +8,8 @@ export interface Toast {
   kind: ToastKind;
   title: string;
   description?: string;
+  /** Optional in-app link, e.g. "Open case". */
+  action?: { label: string; to: string };
 }
 
 interface ToastState {

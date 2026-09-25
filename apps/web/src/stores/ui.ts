@@ -8,6 +8,9 @@ interface UiState {
   sidebarCollapsed: boolean;
   /** Mobile drawer; never persisted. */
   mobileNavOpen: boolean;
+  /** User opted in to the CRITICAL alert beep (needs a click first, so it is off until chosen). */
+  alertSoundEnabled: boolean;
+  setAlertSoundEnabled: (on: boolean) => void;
   setTheme: (t: ThemePreference) => void;
   toggleTheme: () => void;
   toggleSidebar: () => void;
@@ -28,6 +31,8 @@ export const useUiStore = create<UiState>()(
       theme: 'dark',
       sidebarCollapsed: false,
       mobileNavOpen: false,
+      alertSoundEnabled: false,
+      setAlertSoundEnabled: (alertSoundEnabled) => set({ alertSoundEnabled }),
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });
@@ -38,7 +43,7 @@ export const useUiStore = create<UiState>()(
     }),
     {
       name: 'ps26183.ui',
-      partialize: (s) => ({ theme: s.theme, sidebarCollapsed: s.sidebarCollapsed }),
+      partialize: (s) => ({ theme: s.theme, sidebarCollapsed: s.sidebarCollapsed, alertSoundEnabled: s.alertSoundEnabled }),
       onRehydrateStorage: () => (state) => applyTheme(state?.theme ?? 'dark'),
     },
   ),

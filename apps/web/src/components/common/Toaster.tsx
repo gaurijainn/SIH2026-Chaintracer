@@ -10,8 +10,8 @@ const KIND = {
   error: { icon: XCircle, tone: STATUS_TONES.danger, label: 'Error' },
 } satisfies Record<ToastKind, unknown>;
 
-/** Mount once at the root. Errors are announced assertively, everything else politely. */
-export function Toaster() {
+/** Mount once at the root (outside the router, so in-app links go through `onNavigate`). Errors are announced assertively, everything else politely. */
+export function Toaster({ onNavigate }: { onNavigate?: (to: string) => void }) {
   const toasts = useToastStore((s) => s.toasts);
   const dismiss = useToastStore((s) => s.dismiss);
   return (
@@ -28,6 +28,18 @@ export function Toaster() {
                 {t.title}
               </p>
               {t.description && <p className="mt-0.5 opacity-90">{t.description}</p>}
+              {t.action && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    dismiss(t.id);
+                    onNavigate?.(t.action!.to);
+                  }}
+                  className="mt-1.5 inline-block rounded font-medium underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
+                >
+                  {t.action.label}
+                </button>
+              )}
             </div>
             <button type="button" aria-label="Dismiss notification" onClick={() => dismiss(t.id)} className="rounded p-0.5 opacity-70 hover:opacity-100">
               <X className="size-4" />

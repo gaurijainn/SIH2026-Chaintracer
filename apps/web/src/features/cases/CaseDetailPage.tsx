@@ -1,6 +1,6 @@
 import { Briefcase } from 'lucide-react';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { StatusBadge } from '@/components/common/badges';
 import { PageHeader } from '@/components/common/PageHeader';
 import { EmptyState, ErrorState, LoadingState } from '@/components/common/states';
@@ -21,6 +21,11 @@ export function CaseDetailPage() {
   const { id = '' } = useParams();
   const view = useCaseView(id);
   const [picked, setPicked] = useState<string | null>(null);
+  // Alerts deep-link here with the alert's own chain + address (F7); the graph selects that node once it has loaded.
+  const [search] = useSearchParams();
+  const fc = search.get('focusChain');
+  const fa = search.get('focusAddr');
+  const focus = fc && fa ? { chain: fc, addr: fa } : null;
 
   const c = view.data;
   const trace = c ? (c.traces.find((t) => t.id === picked) ?? c.traces.find((t) => t.status === 'COMPLETED') ?? c.traces[0]) : undefined;
@@ -65,7 +70,7 @@ export function CaseDetailPage() {
             </label>
           )}
           <RequirePermission permission="graph:read">
-            <GraphExplorer key={trace.id} caseId={c.id} trace={trace} />
+            <GraphExplorer key={trace.id} caseId={c.id} trace={trace} focus={focus} />
             <AttributionView key={`attribution-${trace.id}`} trace={trace} />
           </RequirePermission>
         </div>

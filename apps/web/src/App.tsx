@@ -17,7 +17,7 @@ export function App({ queryClient, router }: { queryClient: QueryClient; router?
     <QueryClientProvider client={queryClient}>
       <TooltipProvider delayDuration={200}>
         <RouterProvider router={r} />
-        <Toaster />
+        <Toaster onNavigate={(to) => void r.navigate(to)} />
       </TooltipProvider>
     </QueryClientProvider>
   );

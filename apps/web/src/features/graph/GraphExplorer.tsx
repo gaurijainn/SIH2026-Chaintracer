@@ -61,7 +61,7 @@ const passesFilters = (ev: HopEvent, f: GraphFilters) => {
   return true;
 };
 
-export function GraphExplorer({ caseId, trace }: { caseId: string; trace: ExplorerTrace }) {
+export function GraphExplorer({ caseId, trace, focus = null }: { caseId: string; trace: ExplorerTrace; focus?: { chain: string; addr: string } | null }) {
   const can = useCan();
   const canvas = useRef<GraphCanvasHandle>(null);
   const [draft, setDraft] = useState<GraphFilters>(NO_FILTERS);
@@ -107,6 +107,17 @@ export function GraphExplorer({ caseId, trace }: { caseId: string; trace: Explor
   const nodeById = useMemo(() => new Map((full?.nodes ?? []).map((n) => [n.id, n])), [full]);
   const watched = useMemo(() => new Set((watchlist.data ?? []).map((w) => vaspKey(w.chain, w.addr))), [watchlist.data]);
   const isWatched = (n: GNode) => watched.has(vaspKey(n.chain, n.addr));
+
+  // ---- deep link from an alert: select its address once, when the graph first loads ----
+  const focusApplied = useRef(false);
+  useEffect(() => {
+    if (!focus || focusApplied.current || !full) return;
+    focusApplied.current = true;
+    const key = vaspKey(focus.chain, focus.addr);
+    const match = full.nodes.find((n) => vaspKey(n.chain, n.addr) === key);
+    if (match) setSelectedId(match.id);
+    else setNotice({ tone: 'warn', text: `The address from that alert (${focus.chain} ${shortAddr(focus.addr)}) is not in this trace's graph. It may belong to another trace of this case, or be hidden by a filter.` });
+  }, [focus, full]);
 
   // ---- replay ----
   useEffect(() => {
