@@ -1,4 +1,4 @@
-import { Check, Copy, Download, ExternalLink, Eye, GitBranch, Lasso, Maximize2, Pause, Play, RotateCcw, Route, Radio, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { Check, Copy, Download, ExternalLink, Eye, GitBranch, Lasso, Maximize2, Pause, Play, RotateCcw, Route, Radio, ShieldAlert, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChainBadge, RiskBadge, StatusBadge } from '@/components/common/badges';
 import { EmptyState, ErrorState, LoadingState } from '@/components/common/states';
@@ -9,6 +9,7 @@ import { Can, useCan } from '@/features/auth/access';
 import { cn } from '@/lib/cn';
 import type { Chain } from '@/lib/tokens';
 import { filtersActive, NO_FILTERS, useAddToWatchlist, useCaseWatchlist, useTraceGraph, useVaspIndex, type AddResult, type GraphFilters } from './api';
+import { WalletProfile } from '@/features/wallet/WalletProfile';
 import { GraphCanvas, type GraphCanvasHandle, type LayoutKind } from './GraphCanvas';
 import {
   buildGraph, CHAIN_LIST, explorerUrl, formatUsdValue, formatWhen, heaviestPath, hiddenChildren, mergeHop, rootIds, ROLE_META, shortAddr, timeRange, vaspKey, visibleGraph,
@@ -83,6 +84,7 @@ export function GraphExplorer({ caseId, trace }: { caseId: string; trace: Explor
   const [copied, setCopied] = useState<string | null>(null);
   const [notice, setNotice] = useState<{ tone: 'ok' | 'warn' | 'error'; text: string } | null>(null);
   const [layoutMs, setLayoutMs] = useState<number | null>(null);
+  const [profileId, setProfileId] = useState<string | null>(null);
 
   // ---- data: API graph + live hops, merged idempotently ----
   const [liveHops, setLiveHops] = useState<HopEvent[]>([]);
@@ -386,6 +388,7 @@ export function GraphExplorer({ caseId, trace }: { caseId: string; trace: Explor
                 onCopy={() => void copy(shownSelected)}
                 onExpand={() => expand(shownSelected.id)}
                 onToggleMulti={() => toggleMulti(shownSelected.id)}
+                onProfile={() => setProfileId(shownSelected.id)}
                 onWatch={() => addToWatchlist([shownSelected.id])}
                 canWrite={hasWatchWrite}
               />
@@ -427,6 +430,7 @@ export function GraphExplorer({ caseId, trace }: { caseId: string; trace: Explor
           {shown.nodes.length > 100 && <p className="mt-1 text-xs text-muted-foreground">Showing the first 100 of {shown.nodes.length} nodes.</p>}
         </details>
       )}
+      <WalletProfile node={profileId ? (nodeById.get(profileId) ?? null) : null} graph={full ?? { traceId: trace.id, nodes: [], edges: [] }} traceId={trace.id} onClose={() => setProfileId(null)} />
       {layoutMs !== null && (
         <p className="text-[0.7rem] text-muted-foreground" data-testid="layout-ms">
           Layout took {layoutMs} ms.
@@ -504,9 +508,9 @@ function Legend() {
   );
 }
 
-function SidePanel({ node, graph, shown, progressive, copied, watched, inMulti, busy, canWrite, onClose, onCopy, onExpand, onToggleMulti, onWatch }: {
+function SidePanel({ node, graph, shown, progressive, copied, watched, inMulti, busy, canWrite, onClose, onCopy, onExpand, onToggleMulti, onWatch, onProfile }: {
   node: GNode; graph: GraphModel; shown: GraphModel; progressive: boolean; copied: boolean; watched: boolean; inMulti: boolean; busy: boolean; canWrite: boolean;
-  onClose: () => void; onCopy: () => void; onExpand: () => void; onToggleMulti: () => void; onWatch: () => void;
+  onClose: () => void; onCopy: () => void; onExpand: () => void; onToggleMulti: () => void; onWatch: () => void; onProfile: () => void;
 }) {
   const url = explorerUrl(node.chain, node.addr);
   const incoming = graph.edges.filter((e) => e.target === node.id);
@@ -557,6 +561,9 @@ function SidePanel({ node, graph, shown, progressive, copied, watched, inMulti, 
       </dl>
 
       <div className="mt-3 flex flex-wrap gap-2">
+        <Button type="button" size="sm" onClick={onProfile}>
+          <ShieldAlert className="size-4" aria-hidden="true" /> Wallet profile
+        </Button>
         <Button type="button" size="sm" variant="outline" onClick={onCopy}>
           {copied ? <Check className="size-4" aria-hidden="true" /> : <Copy className="size-4" aria-hidden="true" />} {copied ? 'Copied' : 'Copy address'}
         </Button>
@@ -601,7 +608,6 @@ function SidePanel({ node, graph, shown, progressive, copied, watched, inMulti, 
           </ul>
         </div>
       )}
-      <p className="mt-3 text-[0.7rem] text-muted-foreground">Wallet risk explanations are added in a later step.</p>
     </aside>
   );
 }
